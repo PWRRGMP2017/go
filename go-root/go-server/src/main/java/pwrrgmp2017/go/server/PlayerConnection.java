@@ -1,9 +1,22 @@
 package pwrrgmp2017.go.server;
 
-import java.net.Socket;
-
-public class PlayerConnection extends Thread
+public abstract class PlayerConnection extends Thread
 {
-	Socket socket;
 	Player player;
+
+	void addMessageFromGameModel(String msg)
+	{
+		//TODO
+	}
+
+	String translateMessage(String msg)
+	{
+		//TODO
+		return null;
+	}
+
+	String getPlayerInfo()
+	{
+		return player.getInfo();
+	}
 }

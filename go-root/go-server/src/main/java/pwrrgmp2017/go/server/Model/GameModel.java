@@ -1,23 +1,16 @@
 package pwrrgmp2017.go.server.Model;
 
-public class GameModel
+public abstract class GameModel
 {
 	private GameBoard board;
 	private boolean[][] possibleMovements;
-
-	GameModel()
-	{
-		board= new GameBoard();
-	}
 
 	public boolean[][] getPossibleMovements()
 	{
 		return possibleMovements;
 	}
 
-	public String addMovement(String move)
-	{
-		//TODO 
-		return move;
-	}
+	public abstract String addMovement(String move);
+
+	public abstract String calculate();
 }

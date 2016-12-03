@@ -15,7 +15,9 @@ createGame(): Game
 addPlayerConnection(): PlayerConnection
 --
 games: List&lt;Game&gt;
-playerConnections: List&lt;PlayerConnection&gt;
+playingPlayers: List&lt;PlayerConnection&gt;
+waitingPlayers: List&lt;PlayerConnection&gt;
+choosingPlayers: List&lt;PlayerConnection&gt;
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -315,6 +317,10 @@ Move
     </coordinates>
     <panel_attributes>GameBoard
 --
+size: int
+board=new Field[][]
+--
+GameBoard(int size)
 
 
 
@@ -458,16 +464,19 @@ possibleMoves
     <id>UMLClass</id>
     <coordinates>
       <x>1729</x>
-      <y>21</y>
+      <y>7</y>
       <w>105</w>
       <h>98</h>
     </coordinates>
-    <panel_attributes>Stone
+    <panel_attributes>&lt;&lt;enum&gt;&gt;
+Field
 --
+WHITESTONE
+BLACKSTONE
+EMPTY
 
 
 
---
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -504,12 +513,15 @@ possibleMoves
     <id>Relation</id>
     <coordinates>
       <x>1617</x>
-      <y>42</y>
+      <y>14</y>
       <w>126</w>
-      <h>21</h>
+      <h>35</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>160.0;10.0;10.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m2=1
+m1=size^2
+</panel_attributes>
+    <additional_attributes>160.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -561,7 +573,7 @@ add
       <h>175</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;230.0;130.0;230.0;130.0;150.0;230.0;150.0;230.0;10.0;290.0;10.0</additional_attributes>
+    <additional_attributes>10.0;230.0;130.0;230.0;130.0;160.0;230.0;160.0;230.0;10.0;290.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -630,5 +642,29 @@ add
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>637</x>
+      <y>469</y>
+      <w>203</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>Może po prostu umieścić PlayerConnection pomiędzy GamesManager, a Game? To by dużo uprościło
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1099</x>
+      <y>196</y>
+      <w>196</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>Trzeba poważnie przemyśleć działanie, ilość i tworzenie fabryk/builderów!
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>

@@ -9,5 +9,6 @@
   <modules>
     <module>go-client</module>
     <module>go-server</module>
+    <module>go-game</module>
   </modules>
 </project>

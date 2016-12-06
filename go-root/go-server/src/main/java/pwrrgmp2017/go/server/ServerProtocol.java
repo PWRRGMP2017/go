@@ -8,6 +8,6 @@ public class ServerProtocol extends Thread
 
 	ServerProtocol()
 	{
-		//TODO
+		// TODO
 	}
 }

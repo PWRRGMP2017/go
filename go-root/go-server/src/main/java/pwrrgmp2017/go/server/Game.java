@@ -1,13 +1,14 @@
 package pwrrgmp2017.go.server;
 
+import pwrrgmp2017.go.game.GameController;
+import pwrrgmp2017.go.game.GameStates.GameState;
+import pwrrgmp2017.go.game.Model.GameModel;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
-import pwrrgmp2017.go.server.GameStates.GameState;
-import pwrrgmp2017.go.server.Model.GameModel;
 
 public class Game extends Thread
 {
 	GameState state;
-	ControllerGame controller;
+	GameController controller;
 	PlayerConnection player1;
 	PlayerConnection player2;
 	private boolean[][] possibleMovements;
@@ -15,22 +16,24 @@ public class Game extends Thread
 	Game(GameModel model, String thread)
 	{
 		super(thread);
-		controller= new ControllerGame(model, this);
+		controller = new GameController(model);
 		start();
 	}
 
-	//Gdzieś trzeba użyc synchronizacji w przypadku gdy oba playerzy w tym samym momencie będą chcieli dac wiadomośc/zakonczyc program
+	// Gdzieś trzeba użyc synchronizacji w przypadku gdy oba playerzy w tym
+	// samym momencie będą chcieli dac wiadomośc/zakonczyc program
 	@Override
 	public void run()
 	{
-		while(true)
+		while (true)
 		{
 			try
 			{
-				wait(); //czeka na notify() innego wątku i współpracuje z GameController
-				//TODO 
+				wait(); // czeka na notify() innego wątku i współpracuje z
+						// GameController
+				// TODO
 			}
-			catch(InterruptedException e)
+			catch (InterruptedException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -46,36 +49,35 @@ public class Game extends Thread
 	public void addTurnMessage(PlayerConnection player, String msg) throws BadPlayerException
 	{
 		boolean isWhite;
-		if(player==this.player1)
+		if (player == this.player1)
 		{
-			isWhite= true;
+			isWhite = true;
+		}
+		else if (player == this.player2)
+		{
+			isWhite = false;
 		}
 		else
-			if(player==this.player2)
-			{
-				isWhite= false;
-			}
-			else
-				throw new BadPlayerException();
-		//Zastosowanie wzorca State ze sprawdzeniem możliwości wykonania ruchu
+			throw new BadPlayerException();
+		// Zastosowanie wzorca State ze sprawdzeniem możliwości wykonania ruchu
 	}
 
 	public void addExitMessage(PlayerConnection player) throws BadPlayerException
 	{
 		boolean isWhite;
-		if(player==this.player1)
+		if (player == this.player1)
 		{
-			isWhite= true;
+			isWhite = true;
+		}
+		else if (player == this.player2)
+		{
+			isWhite = false;
 		}
 		else
-			if(player==this.player2)
-			{
-				isWhite= false;
-			}
-			else
-				throw new BadPlayerException();
-		//Zastosowanie wzorca State
-		//Wiadomośc do GamesManager?
+			throw new BadPlayerException();
+		// Zastosowanie wzorca State
+		// Wiadomośc do GamesManager?
 	}
-	//Co z ponowieniem gry? Ilośc partii z konkretna osoba? Raczej w GameManager nie? Wtedy przyda się lista gier pewnie :D
+	// Co z ponowieniem gry? Ilośc partii z konkretna osoba? Raczej w
+	// GameManager nie? Wtedy przyda się lista gier pewnie :D
 }

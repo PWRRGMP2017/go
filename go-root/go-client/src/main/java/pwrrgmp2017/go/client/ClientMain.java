@@ -4,7 +4,7 @@ package pwrrgmp2017.go.client;
  * Hello world!
  *
  */
-public class App 
+public class ClientMain 
 {
     public static void main( String[] args )
     {

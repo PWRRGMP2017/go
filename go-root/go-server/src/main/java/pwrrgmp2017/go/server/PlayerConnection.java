@@ -8,17 +8,17 @@ public abstract class PlayerConnection extends Thread
 
 	void addMessage(String msg)
 	{
-		//TODO
+		// TODO
 	}
 
 	Game setMatch(Game match) // Ustawia match, z którym będzie sie komunikował
 	{
-		return this.match= match;
+		return this.match = match;
 	}
 
 	String translateMessage(String msg)
 	{
-		//TODO
+		// TODO
 		return null;
 	}
 

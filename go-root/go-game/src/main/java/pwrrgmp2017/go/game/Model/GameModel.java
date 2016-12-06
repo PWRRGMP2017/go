@@ -1,4 +1,4 @@
-package pwrrgmp2017.go.server.Model;
+package pwrrgmp2017.go.game.Model;
 
 public abstract class GameModel
 {

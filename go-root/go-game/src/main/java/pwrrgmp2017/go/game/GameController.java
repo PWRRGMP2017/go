@@ -11,13 +11,18 @@ public class GameController
 		this.model = model;
 	}
 
-	public boolean[][] getPossibleMovements()
+	public boolean[][] getPossibleMovements(String colour)
 	{
-		return model.getPossibleMovements();
+		return model.getPossibleMovements(colour);
 	}
 
 	String addMovement(String move)
 	{
 		return model.addMovement(move);
+	}
+
+	boolean isTurnPossible(int x, int y)
+	{
+		return model.isTurnPossible(x, y);
 	}
 }

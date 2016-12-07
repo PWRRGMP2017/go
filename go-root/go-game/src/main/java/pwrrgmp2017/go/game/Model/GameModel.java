@@ -5,6 +5,7 @@ public abstract class GameModel
 	private GameBoard board;
 	private boolean[][] possibleMovementsWhite;
 	private boolean[][] possibleMovementsBlack;
+	private boolean WhiteTurn;
 
 	public boolean[][] getPossibleMovements(String colour)
 	{
@@ -33,4 +34,9 @@ public abstract class GameModel
 	public abstract String calculate();
 
 	public abstract boolean isTurnPossible(int x, int y);
+
+	public boolean isWhiteTurn()
+	{
+		return WhiteTurn;
+	}
 }

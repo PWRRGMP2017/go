@@ -2,18 +2,12 @@ package pwrrgmp2017.go.server;
 
 public abstract class PlayerConnection extends Thread
 {
-	Player player;
-	Game match;
+	PlayerInfo player;
 	// ID Player for GamesManager?
 
 	void addMessage(String msg)
 	{
 		// TODO
-	}
-
-	Game setMatch(Game match) // Ustawia match, z którym będzie sie komunikował
-	{
-		return this.match = match;
 	}
 
 	String translateMessage(String msg)
@@ -22,8 +16,8 @@ public abstract class PlayerConnection extends Thread
 		return null;
 	}
 
-	String getPlayerInfo()
+	String getPlayerName()
 	{
-		return player.getInfo();
+		return player.getName();
 	}
 }

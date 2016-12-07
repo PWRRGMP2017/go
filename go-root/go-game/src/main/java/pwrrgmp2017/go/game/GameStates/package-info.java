@@ -5,4 +5,4 @@
  * @author Robert Gawlik
  *
  */
-package pwrrgmp2017.go.server.GameStates;
+package pwrrgmp2017.go.game.GameStates;

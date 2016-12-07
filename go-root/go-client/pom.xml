@@ -28,4 +28,16 @@
     	<version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
+  <build>
+  	<plugins>
+  		<plugin>
+		    <groupId>com.zenjava</groupId>
+		    <artifactId>javafx-maven-plugin</artifactId>
+		    <version>8.7.0</version>
+		    <configuration>
+		        <mainClass>pwrrgmp2017.go.client.ClientMain</mainClass>
+		    </configuration>
+		</plugin>
+  	</plugins>
+  </build>
 </project>

@@ -18,6 +18,7 @@ public class ServerMain
 		if (args.length != 1)
 		{
 			printUsage();
+			return;
 		}
 
 		int port;

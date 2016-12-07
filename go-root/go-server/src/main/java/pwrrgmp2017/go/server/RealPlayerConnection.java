@@ -36,8 +36,11 @@ public class RealPlayerConnection extends PlayerConnection
 		{
 			throw e;
 		}
+
+		this.start();
 	}
 
+	@Override
 	public void run()
 	{
 		String message;

@@ -17,7 +17,7 @@ public class Server extends Thread
 
 	Server(int port) throws IllegalArgumentException, IOException
 	{
-		if (port < 5001)
+		if (port < 5001 && port != 0)
 		{
 			LOGGER.log(Level.SEVERE, "Post must be greater than 5000: {0}", port);
 			throw new IllegalArgumentException();
@@ -28,6 +28,7 @@ public class Server extends Thread
 
 		LOGGER.log(Level.INFO, "Server is starting.");
 		serverSocket = new ServerSocket(port);
+		this.port = serverSocket.getLocalPort();
 
 		this.start();
 	}

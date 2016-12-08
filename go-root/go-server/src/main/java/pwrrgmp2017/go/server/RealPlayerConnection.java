@@ -30,7 +30,6 @@ public class RealPlayerConnection extends PlayerConnection
 		{
 			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			output = new PrintWriter(socket.getOutputStream(), true);
-			output.println("WELCOME");
 		}
 		catch (IOException e)
 		{

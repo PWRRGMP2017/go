@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 
 public class GamesManager
 {
+	private static final Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
+
 	private List<Game> games;
 	private ConcurrentHashMap<String, PlayerConnection> choosingPlayers;
 	private List<PlayerConnection> playingPlayers;
@@ -42,6 +45,14 @@ public class GamesManager
 		for (PlayerConnection connection : waitingPlayers)
 		{
 			connection.close();
+			try
+			{
+				connection.join();
+			}
+			catch (InterruptedException e)
+			{
+				LOGGER.warning("Interrupted join: " + e.getMessage());
+			}
 		}
 
 		for (Game game : games)

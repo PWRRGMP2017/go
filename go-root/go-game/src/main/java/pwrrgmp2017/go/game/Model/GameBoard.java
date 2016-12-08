@@ -1,5 +1,7 @@
 package pwrrgmp2017.go.game.Model;
 
+import java.util.Arrays;
+
 import pwrrgmp2017.go.game.Exception.KOException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 
@@ -7,9 +9,10 @@ public class GameBoard
 {
 	private Field[][] board;
 	private int size;
-	int xKO, yKO;
+	private int xKO, yKO;
+	private boolean[][] chain; //zachłanna inicjalizacja, w celu zmniejszenia liczby ciągłego inicjowania nowych tablic
 
-	enum Field
+	public enum Field
 	{
 		WHITESTONE, BLACKSTONE, EMPTY, WHITETERRITORY, BLACKTERRITORY, WALL;
 	}
@@ -18,6 +21,7 @@ public class GameBoard
 	{
 		this.size= size;
 		this.board= new Field[size+2][size+2];
+		this.chain= new boolean[size][size];
 		for(int i= 1; i<size+1; i++)
 		{
 			for(int j= 1; j<size+1; j++)
@@ -36,12 +40,12 @@ public class GameBoard
 		yKO= 0;
 	}
 
-	int getSize()
+	public int getSize()
 	{
 		return size;
 	}
 
-	boolean[][] getPossibleMovements(Field playerField) throws BadFieldException
+	public boolean[][] getPossibleMovements(Field playerField) throws BadFieldException
 	{
 		Field concurField;
 		switch(playerField)
@@ -65,94 +69,165 @@ public class GameBoard
 					possibleMovements[i-1][j-1]= false;
 					continue;
 				}
+				board[i][j]=playerField; //zmienna musi byc na moment zmieniona, by sprawdzic zabicie łańcuchów
 				if(!isChainKilled(playerField, concurField, i, j)) //jeśli łańcuch nie będzie zabity
 				{
 					possibleMovements[i-1][j-1]=true;
-					continue;
 				}
 				else //jeśli łańcuch gracza będzie zabity odbywa się sprawdzenie, czy w ten sposób któryś łańcuch przeciwnika będzie zabity
 				{
 					possibleMovements[i-1][j-1]=false;
-					board[i][j]=playerField; //zmienna musi byc na moment zmieniona, by sprawdzic zabicie łańcuchów przeciwnika
-					if(board[i+1][j]==concurField)
+					try
 					{
-						if(isChainKilled(concurField, playerField, i, j))
-							possibleMovements[i-1][j-1]=true;
-						else if(board[i-1][j]==concurField )
+						if(board[i+1][j]==concurField)
 						{
 							if(isChainKilled(concurField, playerField, i, j))
 								possibleMovements[i-1][j-1]=true;
-							else if(board[i][j+1]==concurField)
+							else if(board[i-1][j]==concurField )
 							{
 								if(isChainKilled(concurField, playerField, i, j))
 									possibleMovements[i-1][j-1]=true;
-								else if(board[i][j-1]==concurField)
+								else if(board[i][j+1]==concurField)
 								{
 									if(isChainKilled(concurField, playerField, i, j))
 										possibleMovements[i-1][j-1]=true;
+									else if(board[i][j-1]==concurField)
+									{
+										if(isChainKilled(concurField, playerField, i, j))
+											possibleMovements[i-1][j-1]=true;
+									}
 								}
 							}
 						}
 					}
-					board[i][j]=Field.EMPTY;
+					catch(KOException e)
+					{
+						possibleMovements[i-1][j-1]=false;
+					}
 				}
+				board[i][j]=Field.EMPTY;
 			}
 		}
 		return possibleMovements;
 	}
 
-	private boolean isChainKilled(Field playerField, Field concurField, int i, int j)
+	private boolean isChainKilled(Field playerField, Field concurField, int i, int j) throws KOException
 	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	private boolean isChainKilled(boolean[][] chain)
-	{
-		
-		return false;
-	}
-
-	private boolean isKillingOther(Field concur, int x, int y) throws KOException
-	{
-		if(board[x+1][y]==concur)
-			if(isKilling(x+1, y))
-				return true;
-		if(board[x-1][y]==concur)
-			if(isKilling(x-1, y))
-				return true;
-		if(board[x][y+1]==concur)
-			if(isKilling(x, y+1))
-				return true;
-		if(board[x][y-1]==concur)
-			if(isKilling(x, y-1))
-				return true;
-		return false;
-	}
-
-	boolean isKilling(int x, int y) throws KOException
-	{
-		Field concurField, playerField;
-		switch(board[x][y])
-		{
-		case WHITESTONE:
-			concurField= Field.BLACKSTONE;
-			playerField= Field.WHITESTONE;
-			break;
-		case BLACKSTONE:
-			concurField= Field.WHITESTONE;
-			playerField= Field.BLACKSTONE;
-			break;
-		default:
+		if(board[i][j]==concurField)
 			return false;
-		}
-		if( (board[x+1][y]==concurField || board[x+1][y]==Field.WALL) //sprawdzenie oddechów danego pola
-		        && (board[x][y+1]==concurField || board[x][y+1]==Field.WALL)
-		        && (board[x][y-1]==concurField || board[x][y-1]==Field.WALL)
-		        && (board[x-1][y]==concurField || board[x-1][y]==Field.WALL))
-		{
-			
-		}
+		for(int a=0; a<size; a++)
+			Arrays.fill(chain[a], false);
+		chain[i-1][j-1]=true;
+		isChainKilledRecursive(playerField, concurField, i, j);
 		return false;
+	}
+
+	private boolean isChainKilledRecursive(Field playerField, Field concurField, int i, int j) //rekurencyjna metoda
+	{
+		if(board[i-1][j]!=Field.WALL && !chain[i-2][j-1])
+		{
+			switch(board[i-1][j])
+			{
+			case WHITESTONE:
+				if(playerField==Field.WHITESTONE)
+				{
+					chain[i-2][j-1]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i-1, j))
+						return false;
+				}
+				break;
+			case BLACKSTONE:
+				if(playerField==Field.BLACKSTONE)
+				{
+					chain[i-2][j-1]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i-1, j))
+						return false;
+				}
+				break;
+			case WALL:
+				break;
+			default:
+				return false;
+			}
+		}
+		if(board[i][j-1]!=Field.WALL && !chain[i-1][j-2])
+		{
+			switch(board[i][j-1])
+			{
+			case WHITESTONE:
+				if(playerField==Field.WHITESTONE)
+				{
+					chain[i-1][j-2]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i, j-1))
+						return false;
+				}
+				break;
+			case BLACKSTONE:
+				if(playerField==Field.BLACKSTONE)
+				{
+					chain[i-1][j-2]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i, j-1))
+						return false;
+				}
+				break;
+			case WALL:
+				break;
+			default:
+				return false;
+			}
+		}
+		if(board[i+1][j]!=Field.WALL && !chain[i][j-1])
+		{
+			switch(board[i+1][j])
+			{
+			case WHITESTONE:
+				if(playerField==Field.WHITESTONE)
+				{
+					chain[i][j-1]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i+1, j))
+						return false;
+				}
+				break;
+			case BLACKSTONE:
+				if(playerField==Field.BLACKSTONE)
+				{
+					chain[i][j-1]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i+1, j))
+						return false;
+				}
+				break;
+			case WALL:
+				break;
+			default:
+				return false;
+			}
+		}
+		if(board[i][j+1]!=Field.WALL && !chain[i-1][j])
+		{
+			switch(board[i][j+1])
+			{
+			case WHITESTONE:
+				if(playerField==Field.WHITESTONE)
+				{
+					chain[i-1][j]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i, j+1))
+						return false;
+				}
+				break;
+			case BLACKSTONE:
+				if(playerField==Field.BLACKSTONE)
+				{
+					chain[i-1][j]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i, j+1))
+						return false;
+				}
+				break;
+			case WALL:
+				break;
+			default:
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -60,42 +60,41 @@ public class GameBoard
 		{
 			for(int j= 1; j<size+1; j++)
 			{
-				if(board[i][j]==Field.EMPTY)
-					possibleMovements[i-1][j-1]= true;
-				else
+				if(board[i][j]!=Field.EMPTY) //jeśli pole jest puste
 				{
 					possibleMovements[i-1][j-1]= false;
 					continue;
 				}
-				if(board[i+1][j]==playerField || board[i-1][j]==playerField || board[i][j+1]==playerField || board[i][j-1]==playerField)
+				if(!isChainKilled(playerField, concurField, i, j)) //jeśli łańcuch nie będzie zabity
 				{
-					
-					if(isChainKilled(playerField, concurField, i, j))
-					{
-						
-					}
-					else
-					{
-						
-					}
+					possibleMovements[i-1][j-1]=true;
+					continue;
 				}
-				else if( (board[i+1][j]==concurField || board[i+1][j]==Field.WALL) //sprawdzenie czy kamyk jest zamknięty
-				        && (board[i][j+1]==concurField || board[i][j+1]==Field.WALL)
-				        && (board[i][j-1]==concurField || board[i][j-1]==Field.WALL)
-				        && (board[i-1][j]==concurField || board[i-1][j]==Field.WALL))
+				else //jeśli łańcuch gracza będzie zabity odbywa się sprawdzenie, czy w ten sposób któryś łańcuch przeciwnika będzie zabity
 				{
-					try
+					possibleMovements[i-1][j-1]=false;
+					board[i][j]=playerField; //zmienna musi byc na moment zmieniona, by sprawdzic zabicie łańcuchów przeciwnika
+					if(board[i+1][j]==concurField)
 					{
-						if(!isKillingOther(concurField, i, j))
+						if(isChainKilled(concurField, playerField, i, j))
 							possibleMovements[i-1][j-1]=true;
+						else if(board[i-1][j]==concurField )
+						{
+							if(isChainKilled(concurField, playerField, i, j))
+								possibleMovements[i-1][j-1]=true;
+							else if(board[i][j+1]==concurField)
+							{
+								if(isChainKilled(concurField, playerField, i, j))
+									possibleMovements[i-1][j-1]=true;
+								else if(board[i][j-1]==concurField)
+								{
+									if(isChainKilled(concurField, playerField, i, j))
+										possibleMovements[i-1][j-1]=true;
+								}
+							}
+						}
 					}
-					catch(KOException e)
-					{
-						possibleMovements[i-1][j-1]=false;
-					}
-				}
-				else
-				{
+					board[i][j]=Field.EMPTY;
 				}
 			}
 		}

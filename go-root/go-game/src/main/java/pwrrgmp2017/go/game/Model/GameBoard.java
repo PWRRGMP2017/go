@@ -2,7 +2,6 @@ package pwrrgmp2017.go.game.Model;
 
 import java.util.Arrays;
 
-import pwrrgmp2017.go.game.Exception.KOException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 
 public class GameBoard
@@ -69,6 +68,11 @@ public class GameBoard
 					possibleMovements[i-1][j-1]= false;
 					continue;
 				}
+				if(i==xKO && j==yKO) //jeśli pole powoduje KO
+				{
+					possibleMovements[i-1][j-1]= false;
+					continue;
+				}
 				board[i][j]=playerField; //zmienna musi byc na moment zmieniona, by sprawdzic zabicie łańcuchów
 				if(!isChainKilled(playerField, concurField, i, j)) //jeśli łańcuch nie będzie zabity
 				{
@@ -77,32 +81,25 @@ public class GameBoard
 				else //jeśli łańcuch gracza będzie zabity odbywa się sprawdzenie, czy w ten sposób któryś łańcuch przeciwnika będzie zabity
 				{
 					possibleMovements[i-1][j-1]=false;
-					try
+					if(board[i+1][j]==concurField)
 					{
-						if(board[i+1][j]==concurField)
+						if(isChainKilled(concurField, playerField, i, j))
+							possibleMovements[i-1][j-1]=true;
+						else if(board[i-1][j]==concurField )
 						{
 							if(isChainKilled(concurField, playerField, i, j))
 								possibleMovements[i-1][j-1]=true;
-							else if(board[i-1][j]==concurField )
+							else if(board[i][j+1]==concurField)
 							{
 								if(isChainKilled(concurField, playerField, i, j))
 									possibleMovements[i-1][j-1]=true;
-								else if(board[i][j+1]==concurField)
+								else if(board[i][j-1]==concurField)
 								{
 									if(isChainKilled(concurField, playerField, i, j))
 										possibleMovements[i-1][j-1]=true;
-									else if(board[i][j-1]==concurField)
-									{
-										if(isChainKilled(concurField, playerField, i, j))
-											possibleMovements[i-1][j-1]=true;
-									}
 								}
 							}
 						}
-					}
-					catch(KOException e)
-					{
-						possibleMovements[i-1][j-1]=false;
 					}
 				}
 				board[i][j]=Field.EMPTY;
@@ -111,114 +108,59 @@ public class GameBoard
 		return possibleMovements;
 	}
 
-	private boolean isChainKilled(Field playerField, Field concurField, int i, int j) throws KOException
+	private boolean isChainKilled(Field playerField, Field concurField, int i, int j)
 	{
 		if(board[i][j]==concurField)
 			return false;
 		for(int a=0; a<size; a++)
 			Arrays.fill(chain[a], false);
 		chain[i-1][j-1]=true;
-		isChainKilledRecursive(playerField, concurField, i, j);
-		return false;
+		return isChainKilledRecursive(playerField, concurField, i, j);
 	}
 
 	private boolean isChainKilledRecursive(Field playerField, Field concurField, int i, int j) //rekurencyjna metoda
 	{
-		if(board[i-1][j]!=Field.WALL && !chain[i-2][j-1])
+		if(board[i-1][j]!=Field.WALL)
 		{
-			switch(board[i-1][j])
-			{
-			case WHITESTONE:
-				if(playerField==Field.WHITESTONE)
-				{
-					chain[i-2][j-1]=true;
-					if(!isChainKilledRecursive(playerField, concurField, i-1, j))
-						return false;
-				}
-				break;
-			case BLACKSTONE:
-				if(playerField==Field.BLACKSTONE)
-				{
-					chain[i-2][j-1]=true;
-					if(!isChainKilledRecursive(playerField, concurField, i-1, j))
-						return false;
-				}
-				break;
-			case WALL:
-				break;
-			default:
+			if(!isChainKilledRecursiveTwo(playerField, concurField, i-1, j))
 				return false;
-			}
 		}
-		if(board[i][j-1]!=Field.WALL && !chain[i-1][j-2])
+		if(board[i][j-1]!=Field.WALL)
 		{
-			switch(board[i][j-1])
-			{
-			case WHITESTONE:
-				if(playerField==Field.WHITESTONE)
-				{
-					chain[i-1][j-2]=true;
-					if(!isChainKilledRecursive(playerField, concurField, i, j-1))
-						return false;
-				}
-				break;
-			case BLACKSTONE:
-				if(playerField==Field.BLACKSTONE)
-				{
-					chain[i-1][j-2]=true;
-					if(!isChainKilledRecursive(playerField, concurField, i, j-1))
-						return false;
-				}
-				break;
-			case WALL:
-				break;
-			default:
+			if(!isChainKilledRecursiveTwo(playerField, concurField, i, j-1))
 				return false;
-			}
 		}
-		if(board[i+1][j]!=Field.WALL && !chain[i][j-1])
+		if(board[i+1][j]!=Field.WALL)
 		{
-			switch(board[i+1][j])
-			{
-			case WHITESTONE:
-				if(playerField==Field.WHITESTONE)
-				{
-					chain[i][j-1]=true;
-					if(!isChainKilledRecursive(playerField, concurField, i+1, j))
-						return false;
-				}
-				break;
-			case BLACKSTONE:
-				if(playerField==Field.BLACKSTONE)
-				{
-					chain[i][j-1]=true;
-					if(!isChainKilledRecursive(playerField, concurField, i+1, j))
-						return false;
-				}
-				break;
-			case WALL:
-				break;
-			default:
+			if(!isChainKilledRecursiveTwo(playerField, concurField, i+1, j))
 				return false;
-			}
 		}
-		if(board[i][j+1]!=Field.WALL && !chain[i-1][j])
+		if(board[i][j+1]!=Field.WALL)
 		{
-			switch(board[i][j+1])
+			if(!isChainKilledRecursiveTwo(playerField, concurField, i, j+1))
+				return false;
+		}
+		return true;
+	}
+	private boolean isChainKilledRecursiveTwo(Field playerField, Field concurField, int i, int j)
+	{
+		if(!chain[i-1][j-1])
+		{
+			switch(board[i][j])
 			{
 			case WHITESTONE:
 				if(playerField==Field.WHITESTONE)
 				{
-					chain[i-1][j]=true;
-					if(!isChainKilledRecursive(playerField, concurField, i, j+1))
+					chain[i-1][j-1]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i, j))
 						return false;
 				}
 				break;
 			case BLACKSTONE:
 				if(playerField==Field.BLACKSTONE)
 				{
-					chain[i-1][j]=true;
-					if(!isChainKilledRecursive(playerField, concurField, i, j+1))
+					chain[i-1][j-1]=true;
+					if(!isChainKilledRecursive(playerField, concurField, i, j))
 						return false;
 				}
 				break;

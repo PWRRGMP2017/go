@@ -63,13 +63,14 @@ public class ServerMain
 				{
 					LOGGER.warning("Problem occured while closing the server: " + e.getMessage());
 				}
-				return;
+				break;
 			}
 			else
 			{
 				LOGGER.warning("Unknown input: " + input);
 			}
 		}
+		scanner.close();
 	}
 
 	private static void printUsage()

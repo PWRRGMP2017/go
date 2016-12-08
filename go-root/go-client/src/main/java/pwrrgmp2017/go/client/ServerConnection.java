@@ -10,30 +10,26 @@ import java.util.logging.Logger;
 
 public class ServerConnection
 {
-	private static final Logger LOGGER = Logger.getLogger(ClientMain.class.getName());
+	protected static final Logger LOGGER = Logger.getLogger(ClientMain.class.getName());
 
-	private Socket socket;
-	private BufferedReader input;
-	private PrintWriter output;
+	protected String hostname;
+	protected int port;
 
-	public ServerConnection(String hostname, int port)
+	protected Socket socket;
+	protected BufferedReader input;
+	protected PrintWriter output;
+
+	public ServerConnection(String hostname, int port) throws IOException
 	{
+		this.hostname = hostname;
+		this.port = port;
+
 		LOGGER.log(Level.INFO, "Server connection is starting.");
-		try
-		{
-			socket = new Socket(hostname, port);
-			LOGGER.log(Level.INFO, "Server connection is ok.");
 
-			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			output = new PrintWriter(socket.getOutputStream(), true);
+		createSocket();
+		createInputOutput();
 
-			System.out.println("Server says: " + input.readLine());
-		}
-		catch (IOException e)
-		{
-			LOGGER.log(Level.SEVERE, "Could not connect to server: " + e.getMessage());
-			return;
-		}
+		LOGGER.log(Level.INFO, "Server connection is ok.");
 	}
 
 	public String receive() throws IOException
@@ -46,7 +42,7 @@ public class ServerConnection
 		output.println(message);
 	}
 
-	private void endConnection()
+	public void close()
 	{
 		LOGGER.info("Ending server connection.");
 		try
@@ -57,5 +53,16 @@ public class ServerConnection
 		{
 			LOGGER.warning("Could not close socket: " + e.getMessage());
 		}
+	}
+
+	protected void createSocket() throws IOException
+	{
+		this.socket = new Socket(hostname, port);
+	}
+
+	protected void createInputOutput() throws IOException
+	{
+		this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		this.output = new PrintWriter(socket.getOutputStream(), true);
 	}
 }

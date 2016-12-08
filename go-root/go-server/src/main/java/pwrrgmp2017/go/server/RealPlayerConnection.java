@@ -44,7 +44,7 @@ public class RealPlayerConnection extends PlayerConnection
 	public void run()
 	{
 		String message;
-		while (true)
+		while (!isInterrupted())
 		{
 			try
 			{
@@ -55,22 +55,32 @@ public class RealPlayerConnection extends PlayerConnection
 				if (message.startsWith("LEAVE"))
 				{
 					LOGGER.warning("Player " + getPlayerName() + " wants to leave.");
-					endConnection();
+					close();
 					return;
 				}
 			}
 			catch (IOException e)
 			{
+				if (isInterrupted())
+				{
+					LOGGER.finer("Player " + getPlayerName() + " connection thread interrupted.");
+					break;
+				}
 				LOGGER.warning("Player " + getPlayerName() + " connection error: " + e.getMessage());
-				endConnection();
+				close();
 				return;
 			}
 		}
 	}
 
-	private void endConnection()
+	@Override
+	public void close()
 	{
 		LOGGER.warning("Ending player " + getPlayerName() + " connection.");
+
+		output.println("exit");
+
+		this.interrupt();
 		try
 		{
 			socket.close();

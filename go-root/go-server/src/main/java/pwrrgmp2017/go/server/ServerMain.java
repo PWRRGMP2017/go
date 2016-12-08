@@ -1,9 +1,8 @@
 package pwrrgmp2017.go.server;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.logging.Level;
+import java.security.InvalidParameterException;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 /**
@@ -28,41 +27,47 @@ public class ServerMain
 		}
 		catch (NumberFormatException e)
 		{
-			LOGGER.log(Level.SEVERE, "Port must be a number: {0}", args[0]);
+			LOGGER.severe("Port must be a number: " + args[0]);
 			return;
 		}
 
-		if (port < 5001)
-		{
-			LOGGER.log(Level.SEVERE, "Post must be greater than 5000: {0}", port);
-			return;
-		}
-
-		LOGGER.log(Level.INFO, "Server is starting.");
-		ServerSocket serverSocket;
+		Server server;
 		try
 		{
-			serverSocket = new ServerSocket(port);
-			LOGGER.log(Level.INFO, "Server is running.");
+			server = new Server(port);
 		}
 		catch (IOException e)
 		{
-			LOGGER.log(Level.SEVERE, "Could not create server socket: " + e.getMessage());
+			LOGGER.severe("Could not create server socket: " + e.getMessage());
+			return;
+		}
+		catch (InvalidParameterException e)
+		{
+			LOGGER.severe("Invalid argument: " + e.getMessage());
 			return;
 		}
 
-		Socket playerSocket;
+		Scanner scanner = new Scanner(System.in);
+		String input;
 		while (true)
 		{
-			try
+			input = scanner.nextLine();
+			if (input.equalsIgnoreCase("exit"))
 			{
-				playerSocket = serverSocket.accept();
-				new RealPlayerConnection(playerSocket);
+				LOGGER.info("Server is exiting.");
+				try
+				{
+					server.close();
+				}
+				catch (IOException e)
+				{
+					LOGGER.warning("Problem occured while closing the server: " + e.getMessage());
+				}
+				return;
 			}
-			catch (IOException e)
+			else
 			{
-				LOGGER.log(Level.WARNING, "Could not accept client connection: " + e.getMessage());
-				// Continue
+				LOGGER.warning("Unknown input: " + input);
 			}
 		}
 	}

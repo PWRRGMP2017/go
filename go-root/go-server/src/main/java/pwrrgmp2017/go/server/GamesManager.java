@@ -1,5 +1,7 @@
 package pwrrgmp2017.go.server;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,17 +12,52 @@ import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 public class GamesManager
 {
 	private List<Game> games;
-	private ConcurrentHashMap<String, PlayerConnection> chosingPlayers;
+	private ConcurrentHashMap<String, PlayerConnection> choosingPlayers;
 	private List<PlayerConnection> playingPlayers;
 	private LinkedList<PlayerConnection> waitingPlayers;
 
 	GamesManager()
 	{
 		games = new ArrayList<Game>();
-		chosingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
+		choosingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		playingPlayers = new ArrayList<PlayerConnection>();
-		//waitingPlayers = (LinkedHashMap<String, PlayerConnection>) Collections.synchronizedMap(new LinkedHashMap<String,PlayerConnection>());
-		waitingPlayers= new LinkedList<PlayerConnection>();
+		// waitingPlayers = (LinkedHashMap<String, PlayerConnection>)
+		// Collections.synchronizedMap(new
+		// LinkedHashMap<String,PlayerConnection>());
+		waitingPlayers = new LinkedList<PlayerConnection>();
+	}
+
+	public void closeAllConnections()
+	{
+		for (PlayerConnection connection : playingPlayers)
+		{
+			connection.close();
+		}
+
+		for (PlayerConnection connection : choosingPlayers.values())
+		{
+			connection.close();
+		}
+
+		for (PlayerConnection connection : waitingPlayers)
+		{
+			connection.close();
+		}
+
+		for (Game game : games)
+		{
+			// TODO
+		}
+
+		playingPlayers.clear();
+		choosingPlayers.clear();
+		waitingPlayers.clear();
+		games.clear();
+	}
+
+	public void createPlayerConnection(Socket socket) throws IOException
+	{
+		waitingPlayers.add(new RealPlayerConnection(socket));
 	}
 
 	public void createGame(PlayerConnection player, PlayerConnection opponent, Object typeGame) // enum?

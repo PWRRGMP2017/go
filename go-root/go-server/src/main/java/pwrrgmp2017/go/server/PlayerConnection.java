@@ -20,4 +20,6 @@ public abstract class PlayerConnection extends Thread
 	{
 		return player.getName();
 	}
+
+	public abstract void close();
 }

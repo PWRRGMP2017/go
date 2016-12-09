@@ -10,9 +10,9 @@ public abstract class GameModel
 	public boolean[][] getPossibleMovements(String colour)
 	{
 		if (colour.equals("Black"))
-			return possibleMovementsBlack;
+			return possibleMovementsBlack.clone();
 		else if (colour.equals("White"))
-			return possibleMovementsWhite;
+			return possibleMovementsWhite.clone();
 		else
 		{
 			int size = board.getSize();

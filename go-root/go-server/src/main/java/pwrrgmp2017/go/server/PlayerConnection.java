@@ -1,6 +1,8 @@
 package pwrrgmp2017.go.server;
 
-public abstract class PlayerConnection extends Thread
+import pwrrgmp2017.go.server.playerobserver.IPlayerObservable;
+
+public abstract class PlayerConnection extends Thread implements IPlayerObservable
 {
 	PlayerInfo player;
 	// ID Player for GamesManager?
@@ -22,4 +24,6 @@ public abstract class PlayerConnection extends Thread
 	}
 
 	public abstract void close();
+
+	public abstract PlayerInfo getPlayerInfo();
 }

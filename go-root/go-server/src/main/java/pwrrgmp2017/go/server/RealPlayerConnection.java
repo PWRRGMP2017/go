@@ -5,17 +5,26 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import pwrrgmp2017.go.server.playerobserver.IPlayerObserver;
+import pwrrgmp2017.go.server.playerobserver.PlayerEvent;
 
 public class RealPlayerConnection extends PlayerConnection
 {
-	private static final Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
+	protected static final Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 
-	Socket socket;
-	BufferedReader input;
-	PrintWriter output;
+	protected Socket socket;
+	protected BufferedReader input;
+	protected PrintWriter output;
 
-	static int id = 0;
+	protected static int id = 0;
+
+	protected ConcurrentHashMap<String, List<IPlayerObserver>> eventObserverLists;
 
 	public RealPlayerConnection(Socket socket) throws IOException
 	{
@@ -26,6 +35,7 @@ public class RealPlayerConnection extends PlayerConnection
 
 		this.socket = socket;
 		this.player = new PlayerInfo(Integer.toString(id++));
+
 		try
 		{
 			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -35,6 +45,8 @@ public class RealPlayerConnection extends PlayerConnection
 		{
 			throw e;
 		}
+
+		this.eventObserverLists = new ConcurrentHashMap<String, List<IPlayerObserver>>();
 
 		this.start();
 	}
@@ -87,6 +99,42 @@ public class RealPlayerConnection extends PlayerConnection
 		catch (IOException e)
 		{
 			LOGGER.warning("Could not close socket " + getPlayerName() + ": " + e.getMessage());
+		}
+	}
+
+	@Override
+	public PlayerInfo getPlayerInfo()
+	{
+		return this.player;
+	}
+
+	public void addObserverOn(IPlayerObserver observer, PlayerEvent event)
+	{
+		String eventName = event.getClass().getName();
+
+		synchronized (eventObserverLists)
+		{
+			if (eventObserverLists.get(eventName) == null)
+			{
+				eventObserverLists.put(eventName, Collections.synchronizedList(new LinkedList<IPlayerObserver>()));
+			}
+
+			eventObserverLists.get(eventName).add(observer);
+		}
+	}
+
+	public void removeObserverOn(IPlayerObserver observer, PlayerEvent event)
+	{
+		String eventName = event.getClass().getName();
+
+		synchronized (eventObserverLists)
+		{
+			if (eventObserverLists.get(eventName) == null)
+			{
+				return;
+			}
+
+			eventObserverLists.get(eventName).remove(observer);
 		}
 	}
 }

@@ -6,10 +6,10 @@ import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 
 public class GameBoard
 {
-	private Field[][] board;
+	private Field[][] board, boardTeritories;
 	private int size;
 	private int xKO, yKO;
-	private boolean[][] chain; //zachłanna inicjalizacja, w celu zmniejszenia liczby ciągłego inicjowania nowych tablic
+	private boolean[][] chain; //zachłanna inicjalizacja, w celu zmniejszenia liczby ciągłego deklarowania nowych tablic
 
 	public enum Field
 	{

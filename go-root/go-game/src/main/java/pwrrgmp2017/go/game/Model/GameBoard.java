@@ -172,4 +172,15 @@ public class GameBoard
 		}
 		return true;
 	}
+
+	public Field[][] getBoardTeritories()
+	{
+		return boardTeritories;
+	}
+
+	@SuppressWarnings("unused")
+	private void setBoardTeritories(Field[][] boardTeritories)
+	{
+		this.boardTeritories = boardTeritories;
+	}
 }

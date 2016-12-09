@@ -71,16 +71,22 @@ public class GameBoardTest
 	}
 	
 	@Test
-	public void areTestsWellSetUp()
+	public void areTestsWellSetUpTest()
 	{
 		if(classBoard==null)
 			fail();
+		if(constructor==null)
+			fail();
 		if(board==null)
+			fail();
+		if(boardReal==null)
+			fail();
+		if(fields==null)
 			fail();
 	}
 	
 	@Test
-	public void IsBoardInitialisedClean()
+	public void IsBoardInitialisedCleanTest()
 	{
 		
 		try
@@ -98,7 +104,7 @@ public class GameBoardTest
 	}
 	
 	@Test
-	public void isGetPossibleMovementsReturningWellInSimpleSituation()
+	public void isGetPossibleMovementsReturningWellInSimpleSituationTest()
 	{
 
 		try
@@ -152,7 +158,7 @@ public class GameBoardTest
 	}
 	
 	@Test
-	public void isGetPossibleMovementsReturningWellInSimpleNoBriefs()
+	public void isGetPossibleMovementsReturningWellInSimpleNoLibertiesTest()
 	{
 
 		try
@@ -169,6 +175,166 @@ public class GameBoardTest
 			field.set(boardReal, boardArray);
 			moves=boardReal.getPossibleMovements(Field.WHITESTONE);
 			Assert.assertEquals(false, moves[4][4]); // niemożliwe położenie kamienia w miejscu bez oddechów
+		}
+		catch (IllegalArgumentException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (BadFieldException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (NoSuchFieldException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (SecurityException e)
+		{
+			e.printStackTrace();
+			fail();
+		}	
+	}
+	
+	@Test
+	public void isGetPossibleMovementsReturningWellInChainNoLibertiesTest()
+	{
+
+		try
+		{
+			java.lang.reflect.Field field=boardReal.getClass().getDeclaredField("board");
+			field.setAccessible(true);
+			Field[][] boardArray;
+			boardArray = (Field[][]) field.get(boardReal);
+			boardArray[4][5]=Field.WHITESTONE;
+			boardArray[3][5]=Field.WHITESTONE;
+			boardArray[6][5]=Field.BLACKSTONE;
+			boardArray[5][4]=Field.BLACKSTONE;
+			boardArray[4][4]=Field.BLACKSTONE;
+			boardArray[3][4]=Field.BLACKSTONE;
+			boardArray[2][5]=Field.BLACKSTONE;
+			boardArray[5][6]=Field.BLACKSTONE;
+			boardArray[4][6]=Field.BLACKSTONE;
+			boardArray[3][6]=Field.WHITESTONE;
+			boardArray[2][6]=Field.BLACKSTONE;
+			boardArray[3][7]=Field.BLACKSTONE;
+			boardArray[15][5]=Field.WHITESTONE;
+			field.set(boardReal, boardArray);
+			moves=boardReal.getPossibleMovements(Field.WHITESTONE);
+			Assert.assertEquals(false, moves[4][4]); // niemożliwe położenie kamienia w miejscu bez oddechów
+			moves=boardReal.getPossibleMovements(Field.BLACKSTONE);
+			Assert.assertEquals(true, moves[4][4]);
+		}
+		catch (IllegalArgumentException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (BadFieldException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (NoSuchFieldException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (SecurityException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		
+	}
+	
+	@Test
+	public void isGetPossibleMovementsReturningWellInChainNoLibertiesWithKillingConcurrentChainTest()
+	{
+
+		try
+		{
+			java.lang.reflect.Field field=boardReal.getClass().getDeclaredField("board");
+			field.setAccessible(true);
+			Field[][] boardArray;
+			boardArray = (Field[][]) field.get(boardReal);
+			boardArray[4][5]=Field.WHITESTONE;
+			boardArray[3][5]=Field.WHITESTONE;
+			boardArray[6][5]=Field.BLACKSTONE;
+			boardArray[5][4]=Field.BLACKSTONE;
+			boardArray[4][4]=Field.BLACKSTONE;
+			boardArray[3][4]=Field.BLACKSTONE;
+			boardArray[2][5]=Field.BLACKSTONE;
+			boardArray[5][6]=Field.BLACKSTONE;
+			boardArray[4][6]=Field.BLACKSTONE;
+			boardArray[3][6]=Field.WHITESTONE;
+			boardArray[2][6]=Field.BLACKSTONE;
+			boardArray[3][7]=Field.BLACKSTONE;
+			boardArray[6][4]=Field.WHITESTONE;
+			boardArray[6][6]=Field.WHITESTONE;
+			boardArray[7][5]=Field.WHITESTONE;
+			field.set(boardReal, boardArray);
+			moves=boardReal.getPossibleMovements(Field.WHITESTONE);
+			Assert.assertEquals(true, moves[4][4]); // możliwe położenie kamienia, kiedy zabija się łańcuch przeciwnika
+			moves=boardReal.getPossibleMovements(Field.BLACKSTONE);
+			Assert.assertEquals(true, moves[4][4]);
+		}
+		catch (IllegalArgumentException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (IllegalAccessException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (BadFieldException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (NoSuchFieldException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		catch (SecurityException e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+		
+	}
+	
+	@Test
+	public void isGetPossibleMovementsReturningFalseOnKOFieldTest()
+	{
+		try
+		{
+			java.lang.reflect.Field field1=boardReal.getClass().getDeclaredField("xKO");
+			java.lang.reflect.Field field2=boardReal.getClass().getDeclaredField("yKO");
+			field1.setAccessible(true);
+			field2.setAccessible(true);
+			int x, y;
+			x = 5;
+			y = 5;
+			field1.set(boardReal, x);
+			field2.set(boardReal, y);
+			moves=boardReal.getPossibleMovements(Field.WHITESTONE);
+			Assert.assertEquals(false, moves[4][4]); // możliwe położenie kamienia, kiedy zabija się łańcuch przeciwnika
 		}
 		catch (IllegalArgumentException e)
 		{

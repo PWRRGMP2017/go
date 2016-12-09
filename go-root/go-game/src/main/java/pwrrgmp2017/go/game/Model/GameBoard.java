@@ -83,19 +83,19 @@ public class GameBoard
 					possibleMovements[i-1][j-1]=false;
 					if(board[i+1][j]==concurField)
 					{
-						if(isChainKilled(concurField, playerField, i, j))
+						if(isChainKilled(concurField, playerField, i+1, j))
 							possibleMovements[i-1][j-1]=true;
 						else if(board[i-1][j]==concurField )
 						{
-							if(isChainKilled(concurField, playerField, i, j))
+							if(isChainKilled(concurField, playerField, i-1, j))
 								possibleMovements[i-1][j-1]=true;
 							else if(board[i][j+1]==concurField)
 							{
-								if(isChainKilled(concurField, playerField, i, j))
+								if(isChainKilled(concurField, playerField, i, j+1))
 									possibleMovements[i-1][j-1]=true;
 								else if(board[i][j-1]==concurField)
 								{
-									if(isChainKilled(concurField, playerField, i, j))
+									if(isChainKilled(concurField, playerField, i, j-1))
 										possibleMovements[i-1][j-1]=true;
 								}
 							}

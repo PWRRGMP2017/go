@@ -271,15 +271,15 @@ public class GameBoardTest
 			Field[][] boardArray;
 			boardArray = (Field[][]) field.get(boardReal);
 			boardArray[4][5]=Field.WHITESTONE;
-			boardArray[3][5]=Field.WHITESTONE;
-			boardArray[6][5]=Field.BLACKSTONE;
-			boardArray[5][4]=Field.BLACKSTONE;
-			boardArray[4][4]=Field.BLACKSTONE;
-			boardArray[3][4]=Field.BLACKSTONE;
-			boardArray[2][5]=Field.BLACKSTONE;
-			boardArray[5][6]=Field.BLACKSTONE;
-			boardArray[4][6]=Field.BLACKSTONE;
-			boardArray[3][6]=Field.WHITESTONE;
+			boardArray[3][5]=Field.WHITESTONE;	//  12345678
+			boardArray[6][5]=Field.BLACKSTONE;	//1 --------
+			boardArray[5][4]=Field.BLACKSTONE;	//2 ----BB--
+			boardArray[4][4]=Field.BLACKSTONE;	//3 ---BWWB-
+			boardArray[3][4]=Field.BLACKSTONE;	//4 ---BWB--
+			boardArray[2][5]=Field.BLACKSTONE;	//5 ---B_B--
+			boardArray[5][6]=Field.BLACKSTONE;	//6 ---WBW--
+			boardArray[4][6]=Field.BLACKSTONE;	//7 ----W---
+			boardArray[3][6]=Field.WHITESTONE;	//8 --------
 			boardArray[2][6]=Field.BLACKSTONE;
 			boardArray[3][7]=Field.BLACKSTONE;
 			boardArray[6][4]=Field.WHITESTONE;

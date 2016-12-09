@@ -3,8 +3,10 @@ package pwrrgmp2017.go.server;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -16,33 +18,25 @@ public class GamesManager
 
 	private List<Game> games;
 	private ConcurrentHashMap<String, PlayerConnection> choosingPlayers;
-	private List<PlayerConnection> playingPlayers;
-	private LinkedList<PlayerConnection> waitingPlayers;
+	private ConcurrentHashMap<String, PlayerConnection> playingPlayers;
+	private Map<String, PlayerConnection> waitingPlayers;
 
 	GamesManager()
 	{
 		games = new ArrayList<Game>();
 		choosingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
-		playingPlayers = new ArrayList<PlayerConnection>();
-		// waitingPlayers = (LinkedHashMap<String, PlayerConnection>)
-		// Collections.synchronizedMap(new
-		// LinkedHashMap<String,PlayerConnection>());
-		waitingPlayers = new LinkedList<PlayerConnection>();
+		playingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
+		waitingPlayers = Collections.synchronizedMap(new LinkedHashMap<String, PlayerConnection>());
 	}
 
 	public void closeAllConnections()
 	{
-		for (PlayerConnection connection : playingPlayers)
+		for (PlayerConnection connection : playingPlayers.values())
 		{
 			connection.close();
 		}
 
 		for (PlayerConnection connection : choosingPlayers.values())
-		{
-			connection.close();
-		}
-
-		for (PlayerConnection connection : waitingPlayers)
 		{
 			connection.close();
 			try
@@ -53,6 +47,11 @@ public class GamesManager
 			{
 				LOGGER.warning("Interrupted join: " + e.getMessage());
 			}
+		}
+
+		for (PlayerConnection connection : waitingPlayers.values())
+		{
+			connection.close();
 		}
 
 		for (Game game : games)
@@ -68,20 +67,17 @@ public class GamesManager
 
 	public void createPlayerConnection(Socket socket) throws IOException
 	{
-		waitingPlayers.add(new RealPlayerConnection(socket));
+		// choosingPlayers.add(new RealPlayerConnection(socket));
+		choosingPlayers.put("test", new RealPlayerConnection(socket));
 	}
 
-	public void createGame(PlayerConnection player, PlayerConnection opponent, Object typeGame) // enum?
-	{
-		// opponent także jako singleton bot
-	}
-
-	public void deletePlayer(PlayerConnection player) throws LostPlayerConnection
+	public void createGame(PlayerConnection player, PlayerConnection opponent, Object typeGame)
 	{
 
 	}
-	// Nie przemyślane do końca, trzeba wymyślec zasady funkcjonowania
-	// wybierania i tworzenia gier, wychodzenia graczy lub zakończenia gier,
-	// łączenia graczy ze sobą, oczekiwania na przygotowanie graczy do gry,
-	// itp....
+
+	private void deletePlayer(PlayerConnection player) throws LostPlayerConnection
+	{
+
+	}
 }

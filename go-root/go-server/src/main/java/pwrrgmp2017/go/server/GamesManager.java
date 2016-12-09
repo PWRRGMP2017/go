@@ -3,14 +3,12 @@ package pwrrgmp2017.go.server;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
+import pwrrgmp2017.go.server.Exceptions.SameNameException;
 
 public class GamesManager
 {
@@ -19,14 +17,15 @@ public class GamesManager
 	private List<Game> games;
 	private ConcurrentHashMap<String, PlayerConnection> choosingPlayers;
 	private ConcurrentHashMap<String, PlayerConnection> playingPlayers;
-	private Map<String, PlayerConnection> waitingPlayers;
+	private ConcurrentHashMap<String, PlayerConnection> waitingPlayers;
 
 	GamesManager()
 	{
 		games = new ArrayList<Game>();
 		choosingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		playingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
-		waitingPlayers = Collections.synchronizedMap(new LinkedHashMap<String, PlayerConnection>());
+		//waitingPlayers = (LinkedHashMap<String, PlayerConnection>) Collections.synchronizedMap(new LinkedHashMap<String, PlayerConnection>());
+		waitingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 	}
 
 	public void closeAllConnections()
@@ -70,14 +69,50 @@ public class GamesManager
 		// choosingPlayers.add(new RealPlayerConnection(socket));
 		choosingPlayers.put("test", new RealPlayerConnection(socket));
 	}
+	
+	public synchronized void addChoosingPlayer(PlayerConnection player) throws SameNameException //synchronizacja dla uniknięcia dodawania w tym samym czasie 2 tych samych imion
+	{
+		String name=player.getPlayerName();
+		if(waitingPlayers.containsKey(name))
+			throw new SameNameException();
+		if(playingPlayers.containsKey(name))
+			throw new SameNameException();
+		if(choosingPlayers.putIfAbsent(player.getName(), player)!=null)
+			throw new SameNameException();
+	}
+	
+	public boolean inviteSecondPlayer(String invitedName, PlayerConnection inviter, String gameInfo)
+	{
+		return false;
+	}
+	
+	public void waitForGame(PlayerConnection player, String gameInfo)
+	{
+		PlayerConnection secondPlayer;
+		while(true)
+		{
+			secondPlayer=waitingPlayers.putIfAbsent(gameInfo, player);
+			if(secondPlayer!=null)
+			{
+				if(waitingPlayers.remove(gameInfo, secondPlayer)==false) //if the secondPlayer disappeared, try again
+					continue;
+				else
+				{
+					createGame(player, secondPlayer, gameInfo);
+				}
+			}
+			break;
+		}
+	}
+	
 
-	public void createGame(PlayerConnection player, PlayerConnection opponent, Object typeGame)
+	public void createGame(PlayerConnection player, PlayerConnection opponent, String gameInfo)
 	{
 
 	}
 
 	private void deletePlayer(PlayerConnection player) throws LostPlayerConnection
 	{
-
+		//TODO
 	}
 }

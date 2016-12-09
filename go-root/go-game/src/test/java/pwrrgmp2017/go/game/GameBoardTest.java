@@ -26,6 +26,8 @@ public class GameBoardTest
 	GameBoard boardReal;
 	boolean[][] moves =null;
 	java.lang.reflect.Field[] fields;
+	Field[][] boardArray;
+	java.lang.reflect.Field field;
 	
 	@Before
 	public void setUp() throws Exception
@@ -42,6 +44,8 @@ public class GameBoardTest
 			}
 			board= constructor.newInstance(19);
 			boardReal=(GameBoard) board;
+			field=boardReal.getClass().getDeclaredField("board");
+			field.setAccessible(true);
 		}
 		catch(NoSuchMethodException e)
 		{
@@ -106,12 +110,8 @@ public class GameBoardTest
 	@Test
 	public void isGetPossibleMovementsReturningWellInSimpleSituationTest()
 	{
-
 		try
 		{
-			java.lang.reflect.Field field=boardReal.getClass().getDeclaredField("board");
-			field.setAccessible(true);
-			Field[][] boardArray;
 			boardArray = (Field[][]) field.get(boardReal);
 			boardArray[5][6]=Field.BLACKSTONE;
 			boardArray[4][2]=Field.BLACKSTONE;
@@ -131,30 +131,20 @@ public class GameBoardTest
 		}
 		catch (IllegalArgumentException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (IllegalAccessException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (BadFieldException e)
 		{
-			e.printStackTrace();
-			fail();
-		}
-		catch (NoSuchFieldException e)
-		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (SecurityException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
-		
 	}
 	
 	@Test
@@ -163,9 +153,6 @@ public class GameBoardTest
 
 		try
 		{
-			java.lang.reflect.Field field=boardReal.getClass().getDeclaredField("board");
-			field.setAccessible(true);
-			Field[][] boardArray;
 			boardArray = (Field[][]) field.get(boardReal);
 			boardArray[5][6]=Field.BLACKSTONE;
 			boardArray[5][4]=Field.BLACKSTONE;
@@ -178,40 +165,27 @@ public class GameBoardTest
 		}
 		catch (IllegalArgumentException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (IllegalAccessException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (BadFieldException e)
 		{
-			e.printStackTrace();
-			fail();
-		}
-		catch (NoSuchFieldException e)
-		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (SecurityException e)
 		{
-			e.printStackTrace();
-			fail();
-		}	
+			fail(e.getMessage());
+		}
 	}
 	
 	@Test
 	public void isGetPossibleMovementsReturningWellInChainNoLibertiesTest()
 	{
-
 		try
 		{
-			java.lang.reflect.Field field=boardReal.getClass().getDeclaredField("board");
-			field.setAccessible(true);
-			Field[][] boardArray;
 			boardArray = (Field[][]) field.get(boardReal);
 			boardArray[4][5]=Field.WHITESTONE;
 			boardArray[3][5]=Field.WHITESTONE;
@@ -234,41 +208,27 @@ public class GameBoardTest
 		}
 		catch (IllegalArgumentException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (IllegalAccessException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (BadFieldException e)
 		{
-			e.printStackTrace();
-			fail();
-		}
-		catch (NoSuchFieldException e)
-		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (SecurityException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
-		
 	}
 	
 	@Test
 	public void isGetPossibleMovementsReturningWellInChainNoLibertiesWithKillingConcurrentChainTest()
 	{
-
 		try
 		{
-			java.lang.reflect.Field field=boardReal.getClass().getDeclaredField("board");
-			field.setAccessible(true);
-			Field[][] boardArray;
 			boardArray = (Field[][]) field.get(boardReal);
 			boardArray[4][5]=Field.WHITESTONE;
 			boardArray[3][5]=Field.WHITESTONE;	//  12345678
@@ -293,30 +253,20 @@ public class GameBoardTest
 		}
 		catch (IllegalArgumentException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (IllegalAccessException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (BadFieldException e)
 		{
-			e.printStackTrace();
-			fail();
-		}
-		catch (NoSuchFieldException e)
-		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (SecurityException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
-		
 	}
 	
 	@Test
@@ -338,29 +288,23 @@ public class GameBoardTest
 		}
 		catch (IllegalArgumentException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (IllegalAccessException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (BadFieldException e)
 		{
-			e.printStackTrace();
-			fail();
-		}
-		catch (NoSuchFieldException e)
-		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
 		catch (SecurityException e)
 		{
-			e.printStackTrace();
-			fail();
+			fail(e.getMessage());
 		}
-		
+		catch (NoSuchFieldException e)
+		{
+			fail(e.getMessage());
+		}
 	}
 }

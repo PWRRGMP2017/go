@@ -5,6 +5,7 @@ import pwrrgmp2017.go.server.playerobserver.IPlayerObservable;
 public abstract class PlayerConnection extends Thread implements IPlayerObservable
 {
 	PlayerInfo player;
+	String gameInfo;
 	// ID Player for GamesManager?
 
 	void addMessage(String msg)
@@ -26,4 +27,7 @@ public abstract class PlayerConnection extends Thread implements IPlayerObservab
 	public abstract void close();
 
 	public abstract PlayerInfo getPlayerInfo();
+	
+	public abstract void invite(String inviterName, String gameInfo);
+
 }

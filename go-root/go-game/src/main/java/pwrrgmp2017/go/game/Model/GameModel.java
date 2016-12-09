@@ -1,12 +1,20 @@
 package pwrrgmp2017.go.game.Model;
 
+import pwrrgmp2017.go.game.GameStates.GameState;
+
 public abstract class GameModel
 {
 	private GameBoard board;
 	private boolean[][] possibleMovementsWhite;
 	private boolean[][] possibleMovementsBlack;
 	private boolean WhiteTurn;
+	private GameState state;
 
+	GameModel(GameState state)
+	{
+		this.state=state;
+	}
+	
 	public boolean[][] getPossibleMovements(String colour)
 	{
 		if (colour.equals("Black"))

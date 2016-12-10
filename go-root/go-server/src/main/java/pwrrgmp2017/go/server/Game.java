@@ -3,13 +3,14 @@ package pwrrgmp2017.go.server;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.GameStates.GameState;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
+import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;
 
 public class Game extends Thread
 {
-	GameState state;
-	GameController controller;
-	PlayerConnection player1;
-	PlayerConnection player2;
+	private GameState state;
+	private GameController controller;
+	private PlayerConnection player1;
+	private PlayerConnection player2;
 	private boolean[][] possibleMovements;
 
 	Game(GameController controller, String thread)
@@ -79,4 +80,26 @@ public class Game extends Thread
 	}
 	// Co z ponowieniem gry? Ilośc partii z konkretna osoba? Raczej w
 	// GameManager nie? Wtedy przyda się lista gier pewnie :D
+
+	public void setPlayers(PlayerConnection player, PlayerConnection opponent) throws OverridePlayersException
+	{
+		if(this.player1==null || this.player2==null)
+			throw new OverridePlayersException();
+		
+		this.player1=player;
+		this.player2=opponent;
+	}
+	
+	public PlayerConnection getPlayerConnection(int player)
+	{
+		switch(player)
+		{
+		case 1:
+			return player1;
+		case 2:
+			return player2;
+		default:
+			return null;
+		}
+	}
 }

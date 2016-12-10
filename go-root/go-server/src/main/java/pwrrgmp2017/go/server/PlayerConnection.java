@@ -23,11 +23,21 @@ public abstract class PlayerConnection extends Thread implements IPlayerObservab
 	{
 		return player.getName();
 	}
+	
+	void setPlayerName(String name)
+	{
+		player.setPlayerName(name);
+	}
+	
+	String getGameInfo()
+	{
+		return gameInfo;
+	}
 
 	public abstract void close();
 
 	public abstract PlayerInfo getPlayerInfo();
 	
-	public abstract void invite(String inviterName, String gameInfo);
+	public abstract boolean invite(String inviterName, String gameInfo);
 
 }

@@ -13,6 +13,7 @@ import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Builder.GameBuilderDirector;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
+import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
 
 public class GamesManager
@@ -37,10 +38,11 @@ public class GamesManager
 
 	public void closeAllConnections()
 	{
+		for (Game game : games)
+			deleteGame(game);
+		
 		for (PlayerConnection connection : playingPlayers.values())
-		{
 			connection.close();
-		}
 
 		for (PlayerConnection connection : choosingPlayers.values())
 		{
@@ -56,14 +58,7 @@ public class GamesManager
 		}
 
 		for (PlayerConnection connection : waitingPlayers.values())
-		{
 			connection.close();
-		}
-
-		for (Game game : games)
-		{
-			// TODO
-		}
 
 		playingPlayers.clear();
 		choosingPlayers.clear();
@@ -77,9 +72,8 @@ public class GamesManager
 		choosingPlayers.put("test", new RealPlayerConnection(socket));
 	}
 	
-	public synchronized void addChoosingPlayer(PlayerConnection player) throws SameNameException //synchronizacja dla uniknięcia dodawania w tym samym czasie 2 tych samych imion
+	public synchronized void addChoosingPlayer(PlayerConnection player, String name) throws SameNameException //synchronizacja dla uniknięcia dodawania w tym samym czasie 2 tych samych imion
 	{
-		String name=player.getPlayerName();
 		for(Entry<String, PlayerConnection> p : waitingPlayers.entrySet())
 		{
 			if(p.getValue().getGameInfo().equals(name))
@@ -89,6 +83,7 @@ public class GamesManager
 			throw new SameNameException();
 		if(choosingPlayers.putIfAbsent(player.getName(), player)!=null)
 			throw new SameNameException();
+		player.setPlayerName(name);
 	}
 	
 	public boolean inviteSecondPlayer(String invitedName, PlayerConnection inviter, String gameInfo) throws BadPlayerException
@@ -104,6 +99,7 @@ public class GamesManager
 	public void waitForGame(PlayerConnection player, String gameInfo) throws BadPlayerException
 	{
 		PlayerConnection secondPlayer;
+		choosingPlayers.remove(player.getPlayerName());
 		while(true)
 		{
 			secondPlayer=waitingPlayers.putIfAbsent(gameInfo, player);
@@ -120,25 +116,32 @@ public class GamesManager
 		}
 	}
 	
-
 	public void createGame(PlayerConnection player, PlayerConnection opponent, String gameInfo) throws BadPlayerException //Playe'rzy nie mogą byc w zadnej mapie
 	{
 		if(playingPlayers.putIfAbsent(player.getPlayerName(), player) == null)
 			throw new BadPlayerException();
 		if(playingPlayers.putIfAbsent(opponent.getPlayerName(), opponent) == null)
 			throw new BadPlayerException();
+		
 		GameBuilderDirector director=GameBuilderDirector.getInstance();
 		GameController  gameController= director.createGame(gameInfo);
 		Game game= new Game(gameController, threadCount.toString());
 		threadCount++;
 		games.add(game);
-		//TODO
+		try
+		{
+			game.setPlayers(player, opponent);
+		}
+		catch (OverridePlayersException e)
+		{
+			e.printStackTrace(); //Nigdy sie nie wykona
+		}
 	}
 
 	public void deleteGame(Game game)
 	{
-		PlayerConnection player1=game.player1;
-		PlayerConnection player2=game.player2;
+		PlayerConnection player1=game.getPlayerConnection(1);
+		PlayerConnection player2=game.getPlayerConnection(2);
 		try
 		{
 			game.addExitMessage(player1);

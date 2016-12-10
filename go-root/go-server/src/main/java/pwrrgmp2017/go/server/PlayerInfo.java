@@ -32,4 +32,9 @@ public class PlayerInfo
 	{
 		this.playingGame = game;
 	}
+
+	public void setPlayerName(String name)
+	{
+		this.name=name;
+	}
 }

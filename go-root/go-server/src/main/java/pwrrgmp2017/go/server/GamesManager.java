@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Logger;
 
+import pwrrgmp2017.go.game.GameController;
+import pwrrgmp2017.go.game.Builder.GameBuilderDirector;
+import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
 
@@ -17,7 +22,8 @@ public class GamesManager
 	private List<Game> games;
 	private ConcurrentHashMap<String, PlayerConnection> choosingPlayers;
 	private ConcurrentHashMap<String, PlayerConnection> playingPlayers;
-	private ConcurrentHashMap<String, PlayerConnection> waitingPlayers;
+	private ConcurrentSkipListMap<String, PlayerConnection> waitingPlayers;
+	Integer threadCount;
 
 	GamesManager()
 	{
@@ -25,7 +31,8 @@ public class GamesManager
 		choosingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		playingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		//waitingPlayers = (LinkedHashMap<String, PlayerConnection>) Collections.synchronizedMap(new LinkedHashMap<String, PlayerConnection>());
-		waitingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
+		waitingPlayers = new ConcurrentSkipListMap<String, PlayerConnection>();
+		threadCount=1;
 	}
 
 	public void closeAllConnections()
@@ -73,20 +80,28 @@ public class GamesManager
 	public synchronized void addChoosingPlayer(PlayerConnection player) throws SameNameException //synchronizacja dla uniknięcia dodawania w tym samym czasie 2 tych samych imion
 	{
 		String name=player.getPlayerName();
-		if(waitingPlayers.containsKey(name))
-			throw new SameNameException();
+		for(Entry<String, PlayerConnection> p : waitingPlayers.entrySet())
+		{
+			if(p.getValue().getGameInfo().equals(name))
+				throw new SameNameException();
+		}
 		if(playingPlayers.containsKey(name))
 			throw new SameNameException();
 		if(choosingPlayers.putIfAbsent(player.getName(), player)!=null)
 			throw new SameNameException();
 	}
 	
-	public boolean inviteSecondPlayer(String invitedName, PlayerConnection inviter, String gameInfo)
+	public boolean inviteSecondPlayer(String invitedName, PlayerConnection inviter, String gameInfo) throws BadPlayerException
 	{
-		return false;
+		if(!choosingPlayers.contains(inviter))
+			throw new BadPlayerException();
+		PlayerConnection invited=choosingPlayers.get(invitedName);
+		if(invited==null)
+			throw new BadPlayerException();
+		return invited.invite(inviter.getPlayerName(), gameInfo);
 	}
 	
-	public void waitForGame(PlayerConnection player, String gameInfo)
+	public void waitForGame(PlayerConnection player, String gameInfo) throws BadPlayerException
 	{
 		PlayerConnection secondPlayer;
 		while(true)
@@ -106,13 +121,45 @@ public class GamesManager
 	}
 	
 
-	public void createGame(PlayerConnection player, PlayerConnection opponent, String gameInfo)
+	public void createGame(PlayerConnection player, PlayerConnection opponent, String gameInfo) throws BadPlayerException //Playe'rzy nie mogą byc w zadnej mapie
 	{
-
+		if(playingPlayers.putIfAbsent(player.getPlayerName(), player) == null)
+			throw new BadPlayerException();
+		if(playingPlayers.putIfAbsent(opponent.getPlayerName(), opponent) == null)
+			throw new BadPlayerException();
+		GameBuilderDirector director=GameBuilderDirector.getInstance();
+		GameController  gameController= director.createGame(gameInfo);
+		Game game= new Game(gameController, threadCount.toString());
+		threadCount++;
+		games.add(game);
+		//TODO
 	}
 
-	private void deletePlayer(PlayerConnection player) throws LostPlayerConnection
+	public void deleteGame(Game game)
 	{
-		//TODO
+		PlayerConnection player1=game.player1;
+		PlayerConnection player2=game.player2;
+		try
+		{
+			game.addExitMessage(player1);
+			game.addExitMessage(player2);
+		}
+		catch (BadPlayerException e)
+		{
+			e.printStackTrace();
+		}
+		games.remove(game);
+		playingPlayers.remove(player1.getPlayerName());
+		playingPlayers.remove(player2.getPlayerName());
+	}
+	
+	public void deletePlayer(PlayerConnection player) throws LostPlayerConnection
+	{
+		String playerName=player.getPlayerName();
+		String gameInfo=player.getGameInfo();
+		if(choosingPlayers.remove(playerName, player)==false)
+			if(waitingPlayers.remove(gameInfo, player)==false)
+				if(playingPlayers.remove(playerName, player)==false)
+					throw new LostPlayerConnection();
 	}
 }

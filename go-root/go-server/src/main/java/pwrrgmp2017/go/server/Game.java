@@ -2,7 +2,6 @@ package pwrrgmp2017.go.server;
 
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.GameStates.GameState;
-import pwrrgmp2017.go.game.Model.GameModel;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 
 public class Game extends Thread
@@ -13,10 +12,10 @@ public class Game extends Thread
 	PlayerConnection player2;
 	private boolean[][] possibleMovements;
 
-	Game(GameModel model, String thread)
+	Game(GameController controller, String thread)
 	{
 		super(thread);
-		controller = new GameController(model);
+		this.controller = controller;
 		start();
 	}
 

@@ -81,7 +81,7 @@ public class GamesManager
 		}
 		if(playingPlayers.containsKey(name))
 			throw new SameNameException();
-		if(choosingPlayers.putIfAbsent(player.getName(), player)!=null)
+		if(choosingPlayers.putIfAbsent(name, player)!=null)
 			throw new SameNameException();
 		player.setPlayerName(name);
 	}

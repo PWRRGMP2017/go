@@ -60,6 +60,13 @@ public class RealPlayerConnection extends PlayerConnection
 			try
 			{
 				message = input.readLine();
+				if (message == null)
+				{
+					LOGGER.warning("Client closed the connection.");
+					close();
+					return;
+				}
+
 				output.println("Received: " + message);
 				LOGGER.info("Received from client " + getPlayerName() + ": " + message);
 
@@ -136,5 +143,12 @@ public class RealPlayerConnection extends PlayerConnection
 
 			eventObserverLists.get(eventName).remove(observer);
 		}
+	}
+
+	@Override
+	public boolean invite(String inviterName, String gameInfo)
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

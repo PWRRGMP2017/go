@@ -6,7 +6,7 @@ public class GameBuilderDirector
 {
 	
 	
-	private static GameBuilderDirector INSTANCE;
+	private volatile static GameBuilderDirector INSTANCE;
 	
 	private GameBuilderDirector()
 	{
@@ -15,7 +15,24 @@ public class GameBuilderDirector
 	
 	public static GameBuilderDirector getInstance()
 	{
-		// TODO Auto-generated method stub
+		if(INSTANCE==null)
+		{
+			try
+			{
+				synchronized(GameBuilderDirector.class)
+				{
+					if(INSTANCE==null)
+					{
+						INSTANCE= new GameBuilderDirector();
+					}
+				}
+			}
+			catch(RuntimeException e)
+			{
+				System.out.println(e.getMessage());
+				INSTANCE= null;
+			}
+		}
 		return INSTANCE;
 	}
 

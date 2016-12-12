@@ -76,7 +76,7 @@ public class GamesManager
 	{
 		for(Entry<String, PlayerConnection> p : waitingPlayers.entrySet())
 		{
-			if(p.getValue().getGameInfo().equals(name))
+			if(p.getValue().getPlayerName().equals(name))
 				throw new SameNameException();
 		}
 		if(playingPlayers.containsKey(name))
@@ -116,12 +116,14 @@ public class GamesManager
 		}
 	}
 	
+	
 	public void createGame(PlayerConnection player, PlayerConnection opponent, String gameInfo) throws BadPlayerException //Playe'rzy nie mogą byc w zadnej mapie
 	{
 		if(playingPlayers.putIfAbsent(player.getPlayerName(), player) == null)
 			throw new BadPlayerException();
-		if(playingPlayers.putIfAbsent(opponent.getPlayerName(), opponent) == null)
-			throw new BadPlayerException();
+		if(opponent != null)
+			if(playingPlayers.putIfAbsent(opponent.getPlayerName(), opponent) == null)
+				throw new BadPlayerException();
 		
 		GameBuilderDirector director=GameBuilderDirector.getInstance();
 		GameController  gameController= director.createGame(gameInfo);

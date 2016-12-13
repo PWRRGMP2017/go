@@ -36,6 +36,7 @@ public class ServerTest
 		}
 
 		server.close();
+		clientSocket.close();
 
 		assertEquals("exit", input.readLine());
 	}

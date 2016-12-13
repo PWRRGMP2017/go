@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Logger;
 
 import pwrrgmp2017.go.game.GameController;
-import pwrrgmp2017.go.game.Builder.GameBuilderDirector;
+import pwrrgmp2017.go.game.Builder.GameFactory;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;
@@ -125,7 +125,7 @@ public class GamesManager
 			if(playingPlayers.putIfAbsent(opponent.getPlayerName(), opponent) == null)
 				throw new BadPlayerException();
 		
-		GameBuilderDirector director=GameBuilderDirector.getInstance();
+		GameFactory director=GameFactory.getInstance();
 		GameController  gameController= director.createGame(gameInfo); //gameinfo: bot/opponent?, Japan/Chinese/...?, boardSize=?, komi(std=6,5pkt)?, czasNaRuch??, 
 		Game game= new Game(gameController, threadCount.toString());
 		threadCount++;

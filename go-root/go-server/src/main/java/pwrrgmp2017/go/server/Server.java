@@ -14,6 +14,7 @@ public class Server extends Thread
 
 	private int port;
 	private ServerSocket serverSocket;
+	private PlayerFactory factory;
 
 	Server(int port) throws IllegalArgumentException, IOException
 	{

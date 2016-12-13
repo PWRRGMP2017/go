@@ -1,5 +1,6 @@
 package pwrrgmp2017.go.game.Model;
 
+import pwrrgmp2017.go.game.GameStates.BeginningState;
 import pwrrgmp2017.go.game.GameStates.GameState;
 
 public abstract class GameModel
@@ -9,10 +10,13 @@ public abstract class GameModel
 	private boolean[][] possibleMovementsBlack;
 	private boolean WhiteTurn;
 	private GameState state;
+	float komi;
 
-	GameModel(GameState state)
+	GameModel(GameBoard board, float komi)
 	{
-		this.state=state;
+		this.board=board;
+		this.komi=komi;
+		state=new BeginningState();
 	}
 	
 	public boolean[][] getPossibleMovements(String colour)
@@ -39,7 +43,7 @@ public abstract class GameModel
 
 	public abstract String addMovement(String move);
 
-	public abstract String calculate();
+	public abstract String calculateTerritory();
 
 	public abstract boolean isTurnPossible(int x, int y);
 

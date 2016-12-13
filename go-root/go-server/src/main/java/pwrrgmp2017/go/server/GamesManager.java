@@ -126,7 +126,7 @@ public class GamesManager
 				throw new BadPlayerException();
 		
 		GameBuilderDirector director=GameBuilderDirector.getInstance();
-		GameController  gameController= director.createGame(gameInfo);
+		GameController  gameController= director.createGame(gameInfo); //gameinfo: bot/opponent?, Japan/Chinese/...?, boardSize=?, komi(std=6,5pkt)?, czasNaRuch??, 
 		Game game= new Game(gameController, threadCount.toString());
 		threadCount++;
 		games.add(game);

@@ -1,6 +1,11 @@
 package pwrrgmp2017.go.game.Builder;
 
+import pwrrgmp2017.go.game.BotGameController;
 import pwrrgmp2017.go.game.GameController;
+import pwrrgmp2017.go.game.Model.ChineseGameModel;
+import pwrrgmp2017.go.game.Model.GameBoard;
+import pwrrgmp2017.go.game.Model.GameModel;
+import pwrrgmp2017.go.game.Model.JapanGameModel;
 
 public class GameBuilderDirector
 {
@@ -10,7 +15,6 @@ public class GameBuilderDirector
 	
 	private GameBuilderDirector()
 	{
-		
 	}
 	
 	public static GameBuilderDirector getInstance()
@@ -36,10 +40,41 @@ public class GameBuilderDirector
 		return INSTANCE;
 	}
 
-	public GameController createGame(String gameInfo)
+	public GameController createGame(String GameInfo)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String param=GameInfo.substring(6, 8);
+		GameBoard board=new GameBoard(Integer.parseUnsignedInt(param));
+		param=GameInfo.substring(12, 14);
+		float komi=Float.parseFloat(param);
+		GameModel model;
+		switch(GameInfo.substring(0, 4))
+		{
+		case "JAPAN":
+			model= new JapanGameModel(board, komi);
+			break;
+		case "CHINE":
+			model= new ChineseGameModel(board, komi);
+			break;
+		default:
+			model= new JapanGameModel(board, komi);
+		}
+		GameController controller;
+		switch(GameInfo.charAt(10))
+		{
+		case 'S':
+		case 'P':
+		case 'O':
+			controller= new GameController(model);
+			break;
+		case 'M':
+		case 'B':
+			controller= new BotGameController(model);
+			break;
+		default:
+			controller= new GameController(model);
+		}
+		
+		return controller;
 	}
 
 }

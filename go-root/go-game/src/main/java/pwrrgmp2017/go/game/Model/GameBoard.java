@@ -16,7 +16,7 @@ public class GameBoard
 		WHITESTONE, BLACKSTONE, EMPTY, WHITETERRITORY, BLACKTERRITORY, WALL;
 	}
 
-	GameBoard(int size)
+	public GameBoard(int size)
 	{
 		this.size= size;
 		this.board= new Field[size+2][size+2];

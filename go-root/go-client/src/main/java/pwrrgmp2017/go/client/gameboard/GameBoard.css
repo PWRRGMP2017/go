@@ -1,0 +1,33 @@
+#titleLabel {
+	-fx-font-weight: bold;
+}
+
+#blackPlayerName {
+	-fx-font-weight: bold;
+	-fx-text-fill: black;
+	-fx-background-color: white;
+}
+
+#whitePlayerName {
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+	-fx-background-color: black;
+}
+
+#versusLabel {
+	-fx-font-weight: bold;
+	-fx-text-fill: darkorange;
+}
+
+#currentStateLabel {
+	-fx-font-weight: bold;
+}
+
+#stateLabel {
+	-fx-text-fill: blue;
+}
+
+#gameBoardGrid {
+	-fx-background-color: rgb(163,68,5);	
+}
+}

@@ -7,27 +7,27 @@ import pwrrgmp2017.go.game.Model.GameBoard;
 import pwrrgmp2017.go.game.Model.GameModel;
 import pwrrgmp2017.go.game.Model.JapanGameModel;
 
-public class GameBuilderDirector
+public class GameFactory
 {
 	
 	
-	private volatile static GameBuilderDirector INSTANCE;
+	private volatile static GameFactory INSTANCE;
 	
-	private GameBuilderDirector()
+	private GameFactory()
 	{
 	}
 	
-	public static GameBuilderDirector getInstance()
+	public static GameFactory getInstance()
 	{
 		if(INSTANCE==null)
 		{
 			try
 			{
-				synchronized(GameBuilderDirector.class)
+				synchronized(GameFactory.class)
 				{
 					if(INSTANCE==null)
 					{
-						INSTANCE= new GameBuilderDirector();
+						INSTANCE= new GameFactory();
 					}
 				}
 			}

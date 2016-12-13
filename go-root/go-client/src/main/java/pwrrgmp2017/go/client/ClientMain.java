@@ -1,5 +1,7 @@
 package pwrrgmp2017.go.client;
 
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,7 +19,7 @@ public class ClientMain extends Application
 	}
 
 	@Override
-	public void start(Stage primaryStage) throws Exception
+	public void start(Stage primaryStage) throws IOException
 	{
 		Parent root = FXMLLoader.load(getClass().getResource("login/login.fxml"));
 

@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER" hgap="10.0" maxHeight="150.0" maxWidth="500.0" minHeight="150.0" minWidth="500.0" prefHeight="150.0" prefWidth="500.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.60" fx:controller="pwrrgmp2017.go.client.login.LoginController">
+<GridPane alignment="CENTER" hgap="10.0" maxHeight="150.0" maxWidth="500.0" minHeight="150.0" minWidth="500.0" prefHeight="150.0" prefWidth="500.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.60" fx:controller="pwrrgmp2017.go.client.login.LoginController" stylesheets="@Login.css">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="55.0" prefWidth="100.0" />
@@ -26,14 +26,14 @@
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
    <children>
-      <Label text="PWr RG &amp; MP 2017 - Go Client" GridPane.columnSpan="2147483647" />
+      <Label fx:id="welcomeLabel" text="PWr RG &amp; MP 2017 - Go Client" GridPane.columnSpan="2147483647" />
       <Label text="Your Name:" GridPane.rowIndex="1" />
       <Label text="Server Address:" GridPane.rowIndex="2" />
       <Label text="Server Port:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
       <TextField fx:id="playerNameField" text="Player" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
       <TextField fx:id="serverAddressField" text="localhost" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <TextField fx:id="serverPortField" text="5001" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-      <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
+      <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
          <children>
             <Button fx:id="exitButton" mnemonicParsing="false" onAction="#handleExit" text="Exit" />
             <Button fx:id="connectButton" mnemonicParsing="false" onAction="#handleConnect" text="Connect" />

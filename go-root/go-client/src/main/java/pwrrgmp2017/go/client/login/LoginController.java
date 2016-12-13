@@ -1,16 +1,14 @@
 package pwrrgmp2017.go.client.login;
 
-import java.util.logging.Logger;
-
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class LoginController
 {
-	private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
-
 	@FXML
 	private TextField playerNameField;
 
@@ -38,6 +36,16 @@ public class LoginController
 	{
 		String playerName = playerNameField.getText();
 		String serverAddress = serverAddressField.getText();
+
+		if (playerName.isEmpty() || serverAddress.isEmpty() || serverPortField.getText().isEmpty())
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setHeaderText("Error while parsing fields");
+			alert.setContentText("All fields must be filled!");
+			alert.showAndWait();
+			return;
+		}
+
 		int serverPort;
 
 		try
@@ -46,13 +54,19 @@ public class LoginController
 		}
 		catch (NumberFormatException e)
 		{
-			LOGGER.warning("Port must be a number!");
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setHeaderText("Error while parsing fields");
+			alert.setContentText("Port must be a number!");
+			alert.showAndWait();
 			return;
 		}
 
 		if (serverPort < 1024)
 		{
-			LOGGER.warning("Port must be greater than 1023!");
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setHeaderText("Error while parsing fields");
+			alert.setContentText("Port must be greater than 1024!");
+			alert.showAndWait();
 			return;
 		}
 	}

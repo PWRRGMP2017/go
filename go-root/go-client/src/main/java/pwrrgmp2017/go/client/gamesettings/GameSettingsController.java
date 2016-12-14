@@ -51,6 +51,7 @@ public class GameSettingsController
 		boardSizeChoiceBox.getItems().add("19x19");
 		boardSizeChoiceBox.getItems().add("13x13");
 		boardSizeChoiceBox.getItems().add("9x9");
+		boardSizeChoiceBox.getSelectionModel().selectFirst();
 	}
 
 	@FXML

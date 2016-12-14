@@ -1,7 +1,5 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
-import java.security.InvalidParameterException;
-
 /**
  * Interface for messages in server-client communication.
  */
@@ -25,6 +23,10 @@ public abstract class ProtocolMessage
 	public static final ProtocolMessage getProtocolMessage(String message)
 	{
 		String[] parts = message.split(DELIMITER);
+		for (String part : parts)
+		{
+			System.out.println(part);
+		}
 
 		if (parts[0].equals(LoginProtocolMessage.getCommand()))
 		{
@@ -32,11 +34,11 @@ public abstract class ProtocolMessage
 		}
 		else if (parts[0].equals(LoginResponseProtocolMessage.getCommand()))
 		{
-			return new LoginResponseProtocolMessage(Boolean.valueOf(parts[1]));
+			return new LoginResponseProtocolMessage(Boolean.valueOf(parts[1]), parts[2]);
 		}
 		else
 		{
-			throw new InvalidParameterException();
+			return new UnknownProtocolMessage(message);
 		}
 	}
 

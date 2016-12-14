@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.InvalidParameterException;
 
 import org.junit.Test;
 
@@ -37,6 +38,12 @@ public class ServerConnectionTest
 		connection.send(message);
 		assertEquals(connection.receive(), message);
 		connection.close();
+	}
+
+	@Test(expected = InvalidParameterException.class)
+	public void testDataValidation() throws InvalidParameterException, IOException
+	{
+		new ServerConnection("local", "12345a");
 	}
 
 }

@@ -11,6 +11,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
+import pwrrgmp2017.go.server.connection.PlayerConnection;
+import pwrrgmp2017.go.server.connection.RealPlayerConnection;
 
 public class GamesManagerTest
 {

@@ -2,7 +2,6 @@ package pwrrgmp2017.go.clientserverprotocol;
 
 import static org.junit.Assert.*;
 
-import java.security.InvalidParameterException;
 import java.util.HashSet;
 
 import org.junit.Test;
@@ -28,10 +27,25 @@ public class ProtocolMessageTest
 		assertEquals(sentMessage.getUsername(), ((LoginProtocolMessage) (receivedMessage)).getUsername());
 	}
 
-	@Test(expected = InvalidParameterException.class)
+	@Test
+	public void testLoginResponseProtocolMessage()
+	{
+		LoginResponseProtocolMessage sentMessage = new LoginResponseProtocolMessage(false, "Because yes");
+		assertEquals("Because yes", sentMessage.getReason());
+		assertEquals(false, sentMessage.getIsAccepted());
+
+		ProtocolMessage receivedMessage = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		LoginResponseProtocolMessage loginResponseProtocolMessage = (LoginResponseProtocolMessage) receivedMessage;
+		assertEquals(sentMessage.getIsAccepted(), loginResponseProtocolMessage.getIsAccepted());
+		assertEquals(sentMessage.getReason(), loginResponseProtocolMessage.getReason());
+	}
+
+	@Test
 	public void testWrongMessage()
 	{
-		ProtocolMessage.getProtocolMessage("asdasdf;qwerty");
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage("asdasdf;qwerty");
+		assertEquals("asdasdf;qwerty", message.getFullMessage());
+		assertTrue(message instanceof UnknownProtocolMessage);
 	}
 
 }

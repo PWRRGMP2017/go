@@ -1,4 +1,6 @@
-package pwrrgmp2017.go.server;
+package pwrrgmp2017.go.server.connection;
+
+import pwrrgmp2017.go.server.Game;
 
 /**
  * Contains info about the player.

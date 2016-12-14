@@ -5,18 +5,25 @@ public class LoginResponseProtocolMessage extends ProtocolMessage
 	private static final String COMMAND = "LOGIN RESPONSE";
 
 	private final boolean isAccepted;
+	private final String reason;
 
 	private final String fullMessage;
 
-	public LoginResponseProtocolMessage(boolean isAccepted)
+	public LoginResponseProtocolMessage(boolean isAccepted, String reason)
 	{
 		this.isAccepted = isAccepted;
-		this.fullMessage = COMMAND + getDelimiter() + isAccepted;
+		this.reason = reason;
+		this.fullMessage = COMMAND + getDelimiter() + isAccepted + getDelimiter() + reason;
 	}
 
 	public boolean getIsAccepted()
 	{
 		return isAccepted;
+	}
+
+	public String getReason()
+	{
+		return reason;
 	}
 
 	public static String getCommand()

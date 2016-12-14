@@ -4,6 +4,7 @@ import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.GameStates.GameState;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;
+import pwrrgmp2017.go.server.connection.PlayerConnection;
 
 public class Game extends Thread
 {

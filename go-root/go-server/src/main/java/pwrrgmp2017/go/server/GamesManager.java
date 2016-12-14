@@ -16,6 +16,7 @@ import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
 import pwrrgmp2017.go.server.connection.LogPlayerHandler;
+import pwrrgmp2017.go.server.connection.NotYetPlayingPlayerHandler;
 import pwrrgmp2017.go.server.connection.PlayerConnection;
 import pwrrgmp2017.go.server.connection.RealPlayerConnection;
 
@@ -84,6 +85,10 @@ public class GamesManager
 		if (choosingPlayers.putIfAbsent(name, player) != null)
 			throw new SameNameException();
 		player.setPlayerName(name);
+
+		NotYetPlayingPlayerHandler handler = new NotYetPlayingPlayerHandler((RealPlayerConnection) player, this);
+		Thread thread = new Thread(handler);
+		thread.start();
 	}
 
 	public boolean inviteSecondPlayer(String invitedName, PlayerConnection inviter, String gameInfo)

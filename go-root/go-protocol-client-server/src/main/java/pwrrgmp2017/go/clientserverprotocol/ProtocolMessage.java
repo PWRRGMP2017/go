@@ -36,6 +36,10 @@ public abstract class ProtocolMessage
 		{
 			return new LoginResponseProtocolMessage(Boolean.valueOf(parts[1]), parts[2]);
 		}
+		else if (parts[0].equals(ExitProtocolMessage.getCommand()))
+		{
+			return new ExitProtocolMessage();
+		}
 		else
 		{
 			return new UnknownProtocolMessage(message);

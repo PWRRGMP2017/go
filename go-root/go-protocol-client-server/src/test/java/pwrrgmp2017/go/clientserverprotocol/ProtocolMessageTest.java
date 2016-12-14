@@ -15,6 +15,7 @@ public class ProtocolMessageTest
 		HashSet<String> hashSet = new HashSet<>();
 		assertTrue(hashSet.add(LoginProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(LoginResponseProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(ExitProtocolMessage.getCommand()));
 	}
 
 	@Test
@@ -38,6 +39,16 @@ public class ProtocolMessageTest
 		LoginResponseProtocolMessage loginResponseProtocolMessage = (LoginResponseProtocolMessage) receivedMessage;
 		assertEquals(sentMessage.getIsAccepted(), loginResponseProtocolMessage.getIsAccepted());
 		assertEquals(sentMessage.getReason(), loginResponseProtocolMessage.getReason());
+	}
+
+	@Test
+	public void testExitProtocolMessage()
+	{
+		ExitProtocolMessage sentMessage = new ExitProtocolMessage();
+
+		ProtocolMessage receivedMessage = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		ExitProtocolMessage exitProtocolMessage = (ExitProtocolMessage) receivedMessage;
+		assertEquals(sentMessage.getFullMessage(), exitProtocolMessage.getFullMessage());
 	}
 
 	@Test

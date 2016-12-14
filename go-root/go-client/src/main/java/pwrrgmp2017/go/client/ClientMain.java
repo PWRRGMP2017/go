@@ -31,4 +31,34 @@ public class ClientMain extends Application
 		primaryStage.setResizable(false);
 		primaryStage.show();
 	}
+
+	public static Parent moveToScene(Stage stage, String fxml)
+	{
+		Parent newRoot = null;
+		try
+		{
+			newRoot = FXMLLoader.load(ClientMain.class.getResource(fxml));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.exit(0);
+		}
+
+		Scene scene = stage.getScene();
+		if (scene == null)
+		{
+			scene = new Scene(newRoot);
+			stage.setScene(scene);
+		}
+		else
+		{
+			stage.getScene().setRoot(newRoot);
+		}
+
+		stage.sizeToScene();
+		stage.setResizable(false);
+
+		return newRoot;
+	}
 }

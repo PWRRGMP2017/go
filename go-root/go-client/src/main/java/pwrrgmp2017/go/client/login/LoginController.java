@@ -7,16 +7,23 @@ import java.util.Observer;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import pwrrgmp2017.go.client.ClientMain;
 import pwrrgmp2017.go.client.ServerConnection;
+import pwrrgmp2017.go.client.gamesettings.GameSettingsController;
 
 public class LoginController implements Observer
 {
+	private ServerConnection serverConnection;
+
 	@FXML
 	private TextField playerNameField;
 
@@ -49,10 +56,9 @@ public class LoginController implements Observer
 		String serverAddress = serverAddressField.getText();
 		String serverPort = serverPortField.getText();
 
-		ServerConnection connection = null;
 		try
 		{
-			connection = new ServerConnection(serverAddress, serverPort);
+			serverConnection = new ServerConnection(serverAddress, serverPort);
 		}
 		catch (InvalidParameterException e)
 		{
@@ -73,7 +79,7 @@ public class LoginController implements Observer
 
 		disableControls();
 
-		LoginHandler loginHandler = new LoginHandler(connection, playerName);
+		LoginHandler loginHandler = new LoginHandler(serverConnection, playerName);
 		loginHandler.addObserver(this);
 		Thread loginHandlerThread = new Thread(loginHandler);
 		loginHandlerThread.start();
@@ -99,24 +105,22 @@ public class LoginController implements Observer
 					alert.setHeaderText("Server response");
 					alert.setContentText("Logged successfully.");
 					alert.showAndWait();
+					moveToGameSettingsScene();
 				});
 			}
 			else
 			{
+				serverConnection.close();
+				serverConnection = null;
 				Platform.runLater(() ->
 				{
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setHeaderText("Server response");
 					alert.setContentText("Login failed: " + loginHandler.getReason());
 					alert.showAndWait();
+					enableControls();
 				});
 			}
-
-			Platform.runLater(() ->
-			{
-				enableControls();
-			});
-			loginHandler.getServerConnection().close();
 		}
 
 	}
@@ -131,4 +135,39 @@ public class LoginController implements Observer
 		loginPane.setDisable(false);
 	}
 
+	private Parent moveToGameSettingsScene()
+	{
+		FXMLLoader loader = new FXMLLoader(ClientMain.class.getResource("gamesettings/GameSettings.fxml"));
+
+		Parent newRoot = null;
+		try
+		{
+			newRoot = loader.load();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.exit(0);
+		}
+
+		GameSettingsController controller = loader.<GameSettingsController>getController();
+		controller.initData(serverConnection, playerNameField.getText());
+
+		Stage stage = (Stage) loginPane.getScene().getWindow();
+		Scene scene = stage.getScene();
+		if (scene == null)
+		{
+			scene = new Scene(newRoot);
+			stage.setScene(scene);
+		}
+		else
+		{
+			stage.getScene().setRoot(newRoot);
+		}
+
+		stage.sizeToScene();
+		stage.setResizable(false);
+
+		return newRoot;
+	}
 }

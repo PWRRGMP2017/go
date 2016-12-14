@@ -1,7 +1,6 @@
 package pwrrgmp2017.go.server.connection;
 
 import java.io.IOException;
-import java.util.Observable;
 import java.util.logging.Logger;
 
 import pwrrgmp2017.go.clientserverprotocol.LoginProtocolMessage;
@@ -10,12 +9,12 @@ import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.server.GamesManager;
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
 
-public class LogPlayerHandler extends Observable implements Runnable
+public class LogPlayerHandler implements Runnable
 {
-	protected static final Logger LOGGER = Logger.getLogger(LogPlayerHandler.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(LogPlayerHandler.class.getName());
 
-	private RealPlayerConnection connection;
-	private GamesManager gamesManager;
+	private final RealPlayerConnection connection;
+	private final GamesManager gamesManager;
 
 	public LogPlayerHandler(RealPlayerConnection connection, GamesManager gamesManager)
 	{
@@ -34,10 +33,16 @@ public class LogPlayerHandler extends Observable implements Runnable
 		catch (IOException e)
 		{
 			LOGGER.warning("Could not receive message from client: " + e.getMessage());
+			connection.close();
 			return;
 		}
 
-		System.out.println(message);
+		if (message == null)
+		{
+			LOGGER.warning("Client unexpectedly close the connection.");
+			connection.close();
+			return;
+		}
 
 		ProtocolMessage genericMessage = ProtocolMessage.getProtocolMessage(message);
 		LoginResponseProtocolMessage response;
@@ -55,6 +60,7 @@ public class LogPlayerHandler extends Observable implements Runnable
 			{
 				response = new LoginResponseProtocolMessage(false, "The name is already taken.");
 				connection.send(response.getFullMessage());
+				connection.close();
 				return;
 			}
 		}
@@ -63,6 +69,7 @@ public class LogPlayerHandler extends Observable implements Runnable
 			LOGGER.warning("Got wrong message from client: " + genericMessage.getFullMessage());
 			response = new LoginResponseProtocolMessage(false, "Wrong message received.");
 			connection.send(response.getFullMessage());
+			connection.close();
 			return;
 		}
 	}

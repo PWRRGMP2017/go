@@ -49,7 +49,7 @@
             <Button mnemonicParsing="false" text="Search For Player" />
          </children>
       </HBox>
-      <Label text="Kami:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+      <Label text="Komi:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
       <TextField alignment="CENTER_RIGHT" text="6.5" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       <Label text="Bot:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
       <CheckBox alignment="CENTER" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />

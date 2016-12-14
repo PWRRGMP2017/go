@@ -1,5 +1,6 @@
 package pwrrgmp2017.go.server.playerobserver;
 
+import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.server.Game;
 import pwrrgmp2017.go.server.PlayerConnection;
 import pwrrgmp2017.go.server.PlayerInfo;
@@ -8,9 +9,9 @@ public abstract class PlayerEvent
 {
 	protected final PlayerConnection playerConnection;
 	protected final PlayerInfo playerInfo;
-	protected final String message;
+	protected final ProtocolMessage message;
 
-	public PlayerEvent(PlayerConnection playerConnection, String message)
+	public PlayerEvent(PlayerConnection playerConnection, ProtocolMessage message)
 	{
 		this.message = message;
 		this.playerConnection = playerConnection;
@@ -27,7 +28,7 @@ public abstract class PlayerEvent
 		return playerInfo;
 	}
 
-	public String getMessage()
+	public ProtocolMessage getProtocolMessage()
 	{
 		return message;
 	}

@@ -10,5 +10,6 @@
     <module>go-client</module>
     <module>go-server</module>
     <module>go-game</module>
+    <module>go-protocol-client-server</module>
   </modules>
 </project>

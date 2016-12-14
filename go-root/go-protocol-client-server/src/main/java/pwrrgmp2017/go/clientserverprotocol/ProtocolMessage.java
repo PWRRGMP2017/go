@@ -23,10 +23,10 @@ public abstract class ProtocolMessage
 	public static final ProtocolMessage getProtocolMessage(String message)
 	{
 		String[] parts = message.split(DELIMITER);
-		for (String part : parts)
-		{
-			System.out.println(part);
-		}
+		// for (String part : parts)
+		// {
+		// System.out.println(part);
+		// }
 
 		if (parts[0].equals(LoginProtocolMessage.getCommand()))
 		{

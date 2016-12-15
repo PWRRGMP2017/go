@@ -15,6 +15,7 @@ import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
+import pwrrgmp2017.go.server.Exceptions.tooLateToBackPlayerException;
 import pwrrgmp2017.go.server.connection.LogPlayerHandler;
 import pwrrgmp2017.go.server.connection.NotYetPlayingPlayerHandler;
 import pwrrgmp2017.go.server.connection.PlayerConnection;
@@ -122,6 +123,16 @@ public class GamesManager
 			}
 			break;
 		}
+	}
+	
+	public void stopWaiting(PlayerConnection player, String gameInfo) throws tooLateToBackPlayerException
+	{
+		if(waitingPlayers.remove(gameInfo, player))
+		{
+			choosingPlayers.put(player.getPlayerName(), player);
+		}
+		else
+			throw new tooLateToBackPlayerException();
 	}
 
 	public void createGame(PlayerConnection player, PlayerConnection opponent, String gameInfo)

@@ -24,7 +24,7 @@ public class GameBoardTest
 	Method method;
 	Object board;
 	GameBoard boardReal;
-	boolean[][] moves =null;
+	boolean[][] moves;
 	java.lang.reflect.Field[] fields;
 	Field[][] boardArray;
 	java.lang.reflect.Field field;
@@ -72,6 +72,7 @@ public class GameBoardTest
 	@After
 	public void tearDown() throws Exception
 	{
+		
 	}
 	
 	@Test
@@ -105,6 +106,48 @@ public class GameBoardTest
 			for(int j=0; j<19; j++)
 				assertEquals(true, moves[i][j]);
 		assertSame(moves.length, 19);
+	}
+	
+	@Test
+	public void Test()
+	{
+		if(!boardReal.makeMovement(2, 2, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(3, 2, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(7, 7, Field.WHITESTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(7, 5, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(3, 14, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		try
+		{
+			moves=boardReal.getPossibleMovements(Field.BLACKSTONE);
+			assertSame(moves[1][1], false);
+			assertSame(moves[2][1], false);
+			assertSame(moves[6][6], false);
+			assertSame(moves[6][4], false);
+			assertSame(moves[2][13], false);
+			assertSame(moves[3][14], true);
+			assertSame(moves[11][11], true);
+		}
+		catch (BadFieldException e)
+		{
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void aTest()
+	{
+		
+	}
+	
+	@Test
+	public void bTest()
+	{
+		
 	}
 	
 	@Test

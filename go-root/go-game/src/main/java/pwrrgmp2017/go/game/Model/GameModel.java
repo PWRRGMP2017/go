@@ -2,6 +2,7 @@ package pwrrgmp2017.go.game.Model;
 
 import pwrrgmp2017.go.game.GameStates.BeginningState;
 import pwrrgmp2017.go.game.GameStates.GameState;
+import pwrrgmp2017.go.game.GameStates.GameStateEnum;
 
 public abstract class GameModel
 {
@@ -47,8 +48,8 @@ public abstract class GameModel
 
 	public abstract boolean isTurnPossible(int x, int y);
 
-	public boolean isWhiteTurn()
+	public GameStateEnum getState()
 	{
-		return WhiteTurn;
+		return state.getState();
 	}
 }

@@ -1,16 +1,18 @@
 package pwrrgmp2017.go.game.GameStates;
 
+import pwrrgmp2017.go.game.Model.GameModel;
+
 public interface GameState
 {
 	
-	abstract GameState makeMovement();
+	GameState makeMovement(GameModel model);
 	
-	abstract GameState pass();
+	GameState pass(GameModel model);
 	
-	abstract GameState initialiseGame();
+	GameState initialiseGame(GameModel model);
 	
-	abstract GameState resign();
+	GameState resign(GameModel model);
 	
-	abstract GameStateEnum getState();
+	GameStateEnum getState();
 	
 }

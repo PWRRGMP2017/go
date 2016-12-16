@@ -1,29 +1,31 @@
 package pwrrgmp2017.go.game.GameStates;
 
+import pwrrgmp2017.go.game.Model.GameModel;
+
 public class EndState implements GameState
 {
 
 	@Override
-	public GameState makeMovement()
+	public GameState makeMovement(GameModel model)
 	{
 		return this;
 	}
 
 	@Override
-	public GameState pass()
+	public GameState pass(GameModel model)
 	{
 		return this;
 	}
 
 	@Override
-	public GameState initialiseGame()
+	public GameState initialiseGame(GameModel model)
 	{
 		return new BeginningState();
 		
 	}
 
 	@Override
-	public GameState resign()
+	public GameState resign(GameModel model)
 	{
 		return this;
 	}

@@ -6,7 +6,7 @@ import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 
 public class GameBoard
 {
-	private Field[][] board, boardTeritories;
+	private Field[][] board;
 	private int size;
 	private int xKO, yKO;
 	private boolean[][] chain; //zachłanna inicjalizacja, w celu zmniejszenia liczby ciągłego deklarowania nowych tablic
@@ -43,6 +43,61 @@ public class GameBoard
 	{
 		return size;
 	}
+	
+	public boolean makeMovement(int i, int j, Field playerField, Field concurField)
+	{
+		if(!isMovePossible(playerField, concurField, i, j))
+			return false;
+		else
+		{
+			board[i][j]=playerField;
+			if(board[i+1][j]==concurField)
+			{
+				if(isChainKilled(concurField, playerField, i+1, j))
+					killChain(concurField, i+1, j);
+				else if(board[i-1][j]==concurField )
+				{
+					if(isChainKilled(concurField, playerField, i-1, j))
+						killChain(concurField, i+1, j);
+					else if(board[i][j+1]==concurField)
+					{
+						if(isChainKilled(concurField, playerField, i, j+1))
+							killChain(concurField, i+1, j);
+						else if(board[i][j-1]==concurField)
+						{
+							if(isChainKilled(concurField, playerField, i, j-1))
+								killChain(concurField, i+1, j);
+						}
+					}
+				}
+			}
+			return true;
+		}
+	}
+	
+	private void killChain(Field concurField, int i, int j)
+	{
+		if(concurField==board[i+1][j])
+		{
+			board[i+1][j]=Field.EMPTY;
+			killChain(concurField, i+1, j);
+		}
+		if(concurField==board[i-1][j])
+		{
+			board[i-1][j]=Field.EMPTY;
+			killChain(concurField, i-1, j);
+		}
+		if(concurField==board[i][j+1])
+		{
+			board[i][j+1]=Field.EMPTY;
+			killChain(concurField, i, j+1);
+		}
+		if(concurField==board[i][j-1])
+		{
+			board[i][j-1]=Field.EMPTY;
+			killChain(concurField, i, j-1);
+		}
+	}
 
 	public boolean[][] getPossibleMovements(Field playerField) throws BadFieldException
 	{
@@ -63,49 +118,55 @@ public class GameBoard
 		{
 			for(int j= 1; j<size+1; j++)
 			{
-				if(board[i][j]!=Field.EMPTY) //jeśli pole jest puste
-				{
-					possibleMovements[i-1][j-1]= false;
-					continue;
-				}
-				if(i==xKO && j==yKO) //jeśli pole powoduje KO
-				{
-					possibleMovements[i-1][j-1]= false;
-					continue;
-				}
-				board[i][j]=playerField; //zmienna musi byc na moment zmieniona, by sprawdzic zabicie łańcuchów
-				if(!isChainKilled(playerField, concurField, i, j)) //jeśli łańcuch nie będzie zabity
-				{
-					possibleMovements[i-1][j-1]=true;
-				}
-				else //jeśli łańcuch gracza będzie zabity odbywa się sprawdzenie, czy w ten sposób któryś łańcuch przeciwnika będzie zabity
-				{
-					possibleMovements[i-1][j-1]=false;
-					if(board[i+1][j]==concurField)
-					{
-						if(isChainKilled(concurField, playerField, i+1, j))
-							possibleMovements[i-1][j-1]=true;
-						else if(board[i-1][j]==concurField )
-						{
-							if(isChainKilled(concurField, playerField, i-1, j))
-								possibleMovements[i-1][j-1]=true;
-							else if(board[i][j+1]==concurField)
-							{
-								if(isChainKilled(concurField, playerField, i, j+1))
-									possibleMovements[i-1][j-1]=true;
-								else if(board[i][j-1]==concurField)
-								{
-									if(isChainKilled(concurField, playerField, i, j-1))
-										possibleMovements[i-1][j-1]=true;
-								}
-							}
-						}
-					}
-				}
-				board[i][j]=Field.EMPTY;
+				possibleMovements[i-1][j-1]=isMovePossible(playerField, concurField, i, j);
 			}
 		}
 		return possibleMovements;
+	}
+	
+	private boolean isMovePossible(Field playerField, Field concurField, int i, int j)
+	{
+		boolean move;
+		if(board[i][j]!=Field.EMPTY) //jeśli pole jest puste
+		{
+			return false;
+		}
+		if(i==xKO && j==yKO) //jeśli pole powoduje KO
+		{
+			return false;
+		}
+		board[i][j]=playerField; //zmienna musi byc na moment zmieniona, by sprawdzic zabicie łańcuchów
+		if(!isChainKilled(playerField, concurField, i, j)) //jeśli łańcuch nie będzie zabity
+		{
+			board[i][j]=Field.EMPTY;
+			return true;
+		}
+		else //jeśli łańcuch gracza będzie zabity odbywa się sprawdzenie, czy w ten sposób któryś łańcuch przeciwnika będzie zabity
+		{
+			move=false;
+			if(board[i+1][j]==concurField)
+			{
+				if(isChainKilled(concurField, playerField, i+1, j))
+					move=true;
+				else if(board[i-1][j]==concurField )
+				{
+					if(isChainKilled(concurField, playerField, i-1, j))
+						move=true;
+					else if(board[i][j+1]==concurField)
+					{
+						if(isChainKilled(concurField, playerField, i, j+1))
+							move=true;
+						else if(board[i][j-1]==concurField)
+						{
+							if(isChainKilled(concurField, playerField, i, j-1))
+								move=true;
+						}
+					}
+				}
+			}
+		}
+		board[i][j]=Field.EMPTY;
+		return move;
 	}
 
 	private boolean isChainKilled(Field playerField, Field concurField, int i, int j)
@@ -173,14 +234,9 @@ public class GameBoard
 		return true;
 	}
 
-	public Field[][] getBoardTeritories()
+	public Field[][] getBoardCopy()
 	{
-		return boardTeritories;
+		return board.clone();
 	}
 
-	@SuppressWarnings("unused")
-	private void setBoardTeritories(Field[][] boardTeritories)
-	{
-		this.boardTeritories = boardTeritories;
-	}
 }

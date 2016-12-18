@@ -10,10 +10,11 @@ public class GameBoard
 	private int size;
 	private int xKO, yKO;
 	private boolean[][] chain; //zachłanna inicjalizacja, w celu zmniejszenia liczby ciągłego deklarowania nowych tablic
+	int whiteCaptives, blackCaptives;
 
 	public enum Field
 	{
-		WHITESTONE, BLACKSTONE, EMPTY, WHITETERRITORY, BLACKTERRITORY, WALL;
+		WHITESTONE, BLACKSTONE, EMPTY, WHITETERRITORY, BLACKTERRITORY, WALL, NONETERRITORY, DEADWHITE, DEADBLACK;
 	}
 
 	public GameBoard(int size)
@@ -37,6 +38,8 @@ public class GameBoard
 		}
 		xKO= 0;
 		yKO= 0;
+		whiteCaptives=0;
+		blackCaptives=0;
 	}
 
 	public int getSize()
@@ -48,55 +51,107 @@ public class GameBoard
 	{
 		if(!isMovePossible(playerField, concurField, i, j))
 			return false;
-		else
-		{
-			board[i][j]=playerField;
-			if(board[i+1][j]==concurField)
-			{
-				if(isChainKilled(concurField, playerField, i+1, j))
-					killChain(concurField, i+1, j);
-				else if(board[i-1][j]==concurField )
-				{
-					if(isChainKilled(concurField, playerField, i-1, j))
-						killChain(concurField, i+1, j);
-					else if(board[i][j+1]==concurField)
-					{
-						if(isChainKilled(concurField, playerField, i, j+1))
-							killChain(concurField, i+1, j);
-						else if(board[i][j-1]==concurField)
-						{
-							if(isChainKilled(concurField, playerField, i, j-1))
-								killChain(concurField, i+1, j);
-						}
-					}
-				}
-			}
+		
+		board[i][j]=playerField;
+		
+		if(tryKO(i, j, playerField, concurField))
 			return true;
+		
+		if(board[i+1][j]==concurField)
+		{
+			if(isChainKilled(concurField, playerField, i+1, j))
+				killChain(concurField, i+1, j);
 		}
+		if(board[i-1][j]==concurField)
+		{
+			if(isChainKilled(concurField, playerField, i-1, j))
+				killChain(concurField, i-1, j);
+		}
+		if(board[i][j+1]==concurField)
+		{
+			if(isChainKilled(concurField, playerField, i, j+1))
+				killChain(concurField, i, j+1);
+		}
+		if(board[i][j-1]==concurField)
+		{
+			if(isChainKilled(concurField, playerField, i, j-1))
+				killChain(concurField, i, j-1);
+		}
+		xKO=0;
+		yKO=0;
+		return true;
 	}
 	
 	private void killChain(Field concurField, int i, int j)
 	{
+		board[i][j]=Field.EMPTY;
+		addCaptive(concurField);
 		if(concurField==board[i+1][j])
 		{
-			board[i+1][j]=Field.EMPTY;
 			killChain(concurField, i+1, j);
 		}
 		if(concurField==board[i-1][j])
 		{
-			board[i-1][j]=Field.EMPTY;
 			killChain(concurField, i-1, j);
 		}
 		if(concurField==board[i][j+1])
 		{
-			board[i][j+1]=Field.EMPTY;
 			killChain(concurField, i, j+1);
 		}
 		if(concurField==board[i][j-1])
 		{
-			board[i][j-1]=Field.EMPTY;
 			killChain(concurField, i, j-1);
 		}
+	}
+
+	private void addCaptive(Field field) //metoda dodająca do liczby zabranych kamieni kolejny kamień
+	{
+		if(field==Field.BLACKSTONE)
+			blackCaptives++;
+		else if(field==Field.WHITESTONE)
+			whiteCaptives++;
+	}
+	
+	private boolean tryKO(int i, int j, Field playerField, Field concurField)
+	{
+		if(board[i+1][j]==concurField && board[i-1][j]==concurField && board[i][j+1]==concurField && board[i][j-1]==concurField)
+		{
+			int KO_Stones=0, KOi=0, KOj=0;
+			if(board[i+1][j+1]==playerField && board[i+1][j-1]==playerField && board[i+2][j]==playerField)
+			{
+				KO_Stones++;
+				KOi=i+1;
+				KOj=j;
+			}
+			if(board[i-1][j+1]==playerField && board[i-1][j-1]==playerField && board[i-2][j]==playerField)
+			{
+				KO_Stones++;
+				KOi=i-1;
+				KOj=j;
+			}
+			if(board[i-1][j+1]==playerField && board[i+1][j+1]==playerField && board[i][j+2]==playerField)
+			{
+				KO_Stones++;
+				KOi=i;
+				KOj=j+1;
+			}
+			if(board[i-1][j-1]==playerField && board[i+1][j-1]==playerField && board[i][j-2]==playerField)
+			{
+				KO_Stones++;
+				KOi=i;
+				KOj=j-1;
+			}
+			if(KO_Stones==1)
+			{
+				xKO=KOi;
+				yKO=KOj;
+				board[KOi][KOj]=Field.EMPTY;
+				addCaptive(concurField);
+				return true;
+			}
+				
+		}
+		return false;
 	}
 
 	public boolean[][] getPossibleMovements(Field playerField) throws BadFieldException
@@ -148,21 +203,21 @@ public class GameBoard
 			{
 				if(isChainKilled(concurField, playerField, i+1, j))
 					move=true;
-				else if(board[i-1][j]==concurField )
-				{
-					if(isChainKilled(concurField, playerField, i-1, j))
-						move=true;
-					else if(board[i][j+1]==concurField)
-					{
-						if(isChainKilled(concurField, playerField, i, j+1))
-							move=true;
-						else if(board[i][j-1]==concurField)
-						{
-							if(isChainKilled(concurField, playerField, i, j-1))
-								move=true;
-						}
-					}
-				}
+			}
+			if(board[i-1][j]==concurField )
+			{
+				if(isChainKilled(concurField, playerField, i-1, j))
+					move=true;
+			}
+			if(board[i][j+1]==concurField)
+			{
+				if(isChainKilled(concurField, playerField, i, j+1))
+					move=true;
+			}
+			if(board[i][j-1]==concurField)
+			{
+				if(isChainKilled(concurField, playerField, i, j-1))
+					move=true;
 			}
 		}
 		board[i][j]=Field.EMPTY;
@@ -225,8 +280,6 @@ public class GameBoard
 						return false;
 				}
 				break;
-			case WALL:
-				break;
 			default:
 				return false;
 			}
@@ -239,4 +292,13 @@ public class GameBoard
 		return board.clone();
 	}
 
+	public int getBlackCaptives()
+	{
+		return blackCaptives;
+	}
+	
+	public int getWhiteCaptives()
+	{
+		return whiteCaptives;
+	}
 }

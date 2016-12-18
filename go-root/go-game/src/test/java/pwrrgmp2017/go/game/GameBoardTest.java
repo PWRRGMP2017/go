@@ -106,16 +106,19 @@ public class GameBoardTest
 			for(int j=0; j<19; j++)
 				assertEquals(true, moves[i][j]);
 		assertSame(moves.length, 19);
+		assertEquals(0, boardReal.getBlackCaptives());
+		assertEquals(0, boardReal.getWhiteCaptives());
+		assertEquals(19, boardReal.getSize());
 	}
 	
 	@Test
-	public void Test()
+	public void makeMovementSimpleTest()
 	{
 		if(!boardReal.makeMovement(2, 2, Field.BLACKSTONE, Field.WHITESTONE))
 			fail();
 		if(!boardReal.makeMovement(3, 2, Field.BLACKSTONE, Field.WHITESTONE))
 			fail();
-		if(!boardReal.makeMovement(7, 7, Field.WHITESTONE, Field.WHITESTONE))
+		if(!boardReal.makeMovement(7, 7, Field.WHITESTONE, Field.BLACKSTONE))
 			fail();
 		if(!boardReal.makeMovement(7, 5, Field.WHITESTONE, Field.BLACKSTONE))
 			fail();
@@ -139,15 +142,126 @@ public class GameBoardTest
 	}
 	
 	@Test
-	public void aTest()
+	public void isKO_WorkingSimpleTest()
 	{
-		
+		if(!boardReal.makeMovement(1, 2, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(2, 1, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(2, 3, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(3, 1, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(3, 3, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(4, 2, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(3, 2, Field.BLACKSTONE, Field.WHITESTONE)) //kamień zabierany
+			fail();
+		if(!boardReal.makeMovement(2, 2, Field.WHITESTONE, Field.BLACKSTONE)) //ruch włączający zasadę KO
+			fail();
+		try
+		{
+			
+			Field[][] board=boardReal.getBoardCopy();
+			for(int i=1; i<5; i++)
+			{
+				System.out.println();
+				for(int j=1; j<5; j++)
+				{
+					if(board[i][j]==Field.BLACKSTONE)
+						System.out.print('B');
+					else if(board[i][j]==Field.WHITESTONE)
+						System.out.print('W');
+					else
+						System.out.print('-');
+				}
+			}
+			System.out.println();
+			if(board[3][2]!=Field.EMPTY) //sprawdzenie, czy kamień został odebrany
+				fail();
+			moves=boardReal.getPossibleMovements(Field.BLACKSTONE);
+			assertSame(moves[2][1], false); // ruch niemożliwy przez zasadę KO, działający dla board[3][2]
+			if(!boardReal.makeMovement(6, 6, Field.BLACKSTONE, Field.WHITESTONE))
+				fail();
+			if(!boardReal.makeMovement(5, 7, Field.WHITESTONE, Field.BLACKSTONE))
+				fail();
+			if(!boardReal.makeMovement(3, 2, Field.BLACKSTONE, Field.WHITESTONE)) //ruch znowu możliwy
+				fail();
+			board=boardReal.getBoardCopy();
+			for(int i=1; i<5; i++)
+			{
+				System.out.println();
+				for(int j=1; j<5; j++)
+				{
+					if(board[i][j]==Field.BLACKSTONE)
+						System.out.print('B');
+					else if(board[i][j]==Field.WHITESTONE)
+						System.out.print('W');
+					else
+						System.out.print('-');
+				}
+			}
+					
+			if(board[2][2]!=Field.EMPTY) //sprawdzenie, czy kamień został odebrany
+				fail();
+			moves=boardReal.getPossibleMovements(Field.WHITESTONE);
+			assertSame(moves[1][1], false); // ruch niemożliwy przez zasadę KO, działający tym razem dla board[2][2]
+			
+		}
+		catch (BadFieldException e)
+		{
+			fail(e.getMessage());
+		}
 	}
 	
 	@Test
-	public void bTest()
+	public void isKillingChainByMovesSimpleTest()
 	{
+		if(!boardReal.makeMovement(19, 7, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(18, 6, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(18, 5, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(19, 6, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(19, 5, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(18, 4, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(17, 5, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(17, 4, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(16, 4, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(17, 3, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(18, 3, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(19, 3, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(19, 2, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(19, 1, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(18, 1, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(18, 2, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(19, 4, Field.BLACKSTONE, Field.WHITESTONE)) //położenie kamyka usuwającego 3 łańcuchy przeciwnika
+			fail();
 		
+		Field[][] board=boardReal.getBoardCopy();
+		if(board[19][5]!=Field.EMPTY) //sprawdzenie, czy kamień został odebrany
+			fail();
+		if(board[19][6]!=Field.EMPTY) //sprawdzenie, czy kamień został odebrany
+			fail();
+		if(board[19][2]!=Field.EMPTY) //sprawdzenie, czy kamień został odebrany
+			fail();
+		if(board[17][4]!=Field.EMPTY) //sprawdzenie, czy kamień został odebrany
+			fail();
 	}
 	
 	@Test

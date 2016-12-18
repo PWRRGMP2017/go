@@ -1,5 +1,7 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+import pwrrgmp2017.go.game.factory.GameInfo;
+
 /**
  * Interface for messages in server-client communication.
  */
@@ -39,6 +41,21 @@ public abstract class ProtocolMessage
 		else if (parts[0].equals(ExitProtocolMessage.getCommand()))
 		{
 			return new ExitProtocolMessage();
+		}
+		else if (parts[0].equals(InvitationProtocolMessage.getCommand()))
+		{
+			StringBuilder gameInfoString = new StringBuilder();
+			for (int i = 3; i < parts.length; ++i)
+			{
+				gameInfoString.append(parts[i] + GameInfo.DELIMITER);
+			}
+			GameInfo gameInfo = new GameInfo(gameInfoString.toString());
+
+			return new InvitationProtocolMessage(parts[1], parts[2], gameInfo);
+		}
+		else if (parts[0].equals(InvitationResponseProtocolMessage.getCommand()))
+		{
+			return new InvitationResponseProtocolMessage(Boolean.valueOf(parts[1]), parts[2]);
 		}
 		else
 		{

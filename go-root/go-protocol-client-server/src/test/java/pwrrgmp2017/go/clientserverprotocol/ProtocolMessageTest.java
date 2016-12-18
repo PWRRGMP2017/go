@@ -6,6 +6,8 @@ import java.util.HashSet;
 
 import org.junit.Test;
 
+import pwrrgmp2017.go.game.factory.GameInfo;
+
 public class ProtocolMessageTest
 {
 
@@ -47,8 +49,7 @@ public class ProtocolMessageTest
 		ExitProtocolMessage sentMessage = new ExitProtocolMessage();
 
 		ProtocolMessage receivedMessage = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
-		ExitProtocolMessage exitProtocolMessage = (ExitProtocolMessage) receivedMessage;
-		assertEquals(sentMessage.getFullMessage(), exitProtocolMessage.getFullMessage());
+		assertEquals(sentMessage.getFullMessage(), receivedMessage.getFullMessage());
 	}
 
 	@Test
@@ -57,6 +58,39 @@ public class ProtocolMessageTest
 		ProtocolMessage message = ProtocolMessage.getProtocolMessage("asdasdf;qwerty");
 		assertEquals("asdasdf;qwerty", message.getFullMessage());
 		assertTrue(message instanceof UnknownProtocolMessage);
+	}
+
+	@Test
+	public void testInvitationMessage()
+	{
+		GameInfo gameInfo = new GameInfo(19, 6.5f, GameInfo.RulesType.JAPANESE, false);
+		String player1Name = "player1";
+		String player2Name = "player2";
+
+		InvitationProtocolMessage sentMessage = new InvitationProtocolMessage(player1Name, player2Name, gameInfo);
+		assertEquals(player1Name, sentMessage.getFromPlayerName());
+		assertEquals(player2Name, sentMessage.getToPlayerName());
+		assertSame(gameInfo, sentMessage.getGameInfo());
+
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		InvitationProtocolMessage receivedMessage = (InvitationProtocolMessage) message;
+		assertEquals(player1Name, receivedMessage.getFromPlayerName());
+		assertEquals(player2Name, receivedMessage.getToPlayerName());
+		assertEquals(gameInfo, receivedMessage.getGameInfo());
+	}
+
+	@Test
+	public void testInvitationResponseMessage()
+	{
+		String reason = "Player is already invited.";
+		InvitationResponseProtocolMessage sentMessage = new InvitationResponseProtocolMessage(false, reason);
+		assertEquals(false, sentMessage.getIsAccepted());
+		assertEquals(reason, sentMessage.getReason());
+
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		InvitationResponseProtocolMessage receivedMessage = (InvitationResponseProtocolMessage) message;
+		assertEquals(false, receivedMessage.getIsAccepted());
+		assertEquals(reason, receivedMessage.getReason());
 	}
 
 }

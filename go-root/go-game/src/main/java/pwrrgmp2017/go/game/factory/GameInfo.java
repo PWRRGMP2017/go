@@ -5,6 +5,8 @@ package pwrrgmp2017.go.game.factory;
  */
 public class GameInfo
 {
+	public final static String DELIMITER = ";";
+
 	private final int boardSize;
 	private final float komiValue;
 	private final RulesType rulesType;
@@ -23,13 +25,13 @@ public class GameInfo
 		this.komiValue = komiValue;
 		this.rulesType = rulesType;
 		this.isBot = isBot;
-		this.asString = boardSize + ";" + komiValue + ";" + rulesType + ";" + isBot;
+		this.asString = boardSize + DELIMITER + komiValue + DELIMITER + rulesType + DELIMITER + isBot;
 	}
 
 	public GameInfo(String asString) throws IllegalArgumentException
 	{
 		this.asString = asString;
-		String[] parts = asString.split(";");
+		String[] parts = asString.split(DELIMITER);
 
 		try
 		{
@@ -77,5 +79,19 @@ public class GameInfo
 	public String getAsString()
 	{
 		return asString;
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o == null || !(o instanceof GameInfo))
+		{
+			return false;
+		}
+
+		GameInfo other = (GameInfo) o;
+
+		return (this.boardSize == other.boardSize) && (this.komiValue == other.komiValue)
+				&& (this.rulesType == other.rulesType) && (this.isBot == other.isBot);
 	}
 }

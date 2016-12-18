@@ -1,17 +1,18 @@
 package pwrrgmp2017.go.game.Model;
 
+import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 import pwrrgmp2017.go.game.GameStates.BeginningState;
 import pwrrgmp2017.go.game.GameStates.GameState;
 import pwrrgmp2017.go.game.GameStates.GameStateEnum;
+import pwrrgmp2017.go.game.Model.GameBoard.Field;
 
 public abstract class GameModel
 {
 	private GameBoard board;
 	private boolean[][] possibleMovementsWhite;
 	private boolean[][] possibleMovementsBlack;
-	private boolean WhiteTurn;
 	private GameState state;
-	float komi;
+	private float komi;
 
 	GameModel(GameBoard board, float komi)
 	{
@@ -20,36 +21,112 @@ public abstract class GameModel
 		state=new BeginningState();
 	}
 	
-	public boolean[][] getPossibleMovements(String colour)
+	public void initialiseGame()
 	{
-		if (colour.equals("Black"))
-			return possibleMovementsBlack.clone();
-		else if (colour.equals("White"))
-			return possibleMovementsWhite.clone();
-		else
+		state.initialiseGame(this);
+	}
+	
+	public void pass()
+	{
+		state.pass(this);
+	}
+	
+	public void resign()
+	{
+		state.resign(this);
+	}
+	
+	public abstract float calculateScore();
+	
+	public abstract Field[][] getPossibleTerritory();
+	
+	public boolean[][] getPossibleMovements(Field colour) throws BadFieldException
+	{
+		if (colour.equals(Field.BLACKSTONE))
 		{
-			int size = board.getSize();
-			boolean[][] possibleMovements = new boolean[size][size];
-			for (int i = 0; i < size; i++)
-				for (int j = 0; j < size; j++)
+			if(possibleMovementsBlack==null)
+			{
+				try
 				{
-					if (possibleMovementsWhite[i][j] == true || possibleMovementsBlack[i][j] == true)
-						possibleMovements[i][j] = true;
-					else
-						possibleMovements[i][j] = false;
+					possibleMovementsBlack=board.getPossibleMovements(Field.BLACKSTONE);
 				}
-			return possibleMovements;
+				catch (BadFieldException e) {} //nigdy się nie wykona
+			}
+			return possibleMovementsBlack.clone();
 		}
+		else if (colour.equals(Field.WHITESTONE))
+		{
+			if(possibleMovementsBlack==null)
+			{
+				try
+				{
+					possibleMovementsBlack=board.getPossibleMovements(Field.WHITESTONE);
+				}
+				catch (BadFieldException e) {} //nigdy się nie wykona
+			}
+			return possibleMovementsWhite.clone();
+		}
+		else
+			throw new BadFieldException();
 	}
 
-	public abstract String addMovement(String move);
+	public boolean addMovement(int x, int y, Field playerField)
+	{
+		try
+		{
+			this.state=this.state.makeMovement(this, x, y, playerField, board);
+		}
+		catch (BadFieldException e)
+		{
+			return false;
+		}
+		possibleMovementsBlack=null;
+		possibleMovementsWhite=null;
+		return true;
+	}
 
-	public abstract String calculateTerritory();
-
-	public abstract boolean isTurnPossible(int x, int y);
+	public boolean isTurnPossible(int x, int y, Field colour) throws BadFieldException
+	{
+		if (colour==Field.BLACKSTONE)
+		{
+			if(possibleMovementsBlack==null)
+			{
+				try
+				{
+					possibleMovementsBlack=board.getPossibleMovements(Field.BLACKSTONE);
+				}
+				catch (BadFieldException e) {} //nigdy się nie wykona
+			}
+			return possibleMovementsBlack[x][y];
+		}
+		else if (colour==Field.WHITESTONE)
+		{
+			if(possibleMovementsBlack==null)
+			{
+				try
+				{
+					possibleMovementsBlack=board.getPossibleMovements(Field.WHITESTONE);
+				}
+				catch (BadFieldException e) {} //nigdy się nie wykona
+			}
+			return possibleMovementsWhite[x][y];
+		}
+		else
+			throw new BadFieldException();
+	}
 
 	public GameStateEnum getState()
 	{
 		return state.getState();
+	}
+	
+	public Field[][] getBoardCopy()
+	{
+		return board.getBoardCopy();
+	}
+	
+	public float getKomi()
+	{
+		return komi;
 	}
 }

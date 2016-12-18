@@ -4,8 +4,8 @@
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>270</x>
-      <y>90</y>
+      <x>230</x>
+      <y>110</y>
       <w>180</w>
       <h>110</h>
     </coordinates>
@@ -21,8 +21,8 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>270</x>
-      <y>340</y>
+      <x>230</x>
+      <y>360</y>
       <w>180</w>
       <h>110</h>
     </coordinates>
@@ -38,8 +38,8 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>90</x>
-      <y>120</y>
+      <x>50</x>
+      <y>140</y>
       <w>20</w>
       <h>20</h>
     </coordinates>
@@ -49,8 +49,8 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>560</x>
-      <y>340</y>
+      <x>520</x>
+      <y>360</y>
       <w>180</w>
       <h>110</h>
     </coordinates>
@@ -66,8 +66,8 @@ valign=top
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>560</x>
-      <y>90</y>
+      <x>520</x>
+      <y>110</y>
       <w>180</w>
       <h>110</h>
     </coordinates>
@@ -83,8 +83,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>100</x>
-      <y>120</y>
+      <x>60</x>
+      <y>140</y>
       <w>190</w>
       <h>30</h>
     </coordinates>
@@ -94,8 +94,8 @@ valign=top
   <element>
     <id>UMLSpecialState</id>
     <coordinates>
-      <x>90</x>
-      <y>360</y>
+      <x>50</x>
+      <y>380</y>
       <w>20</w>
       <h>20</h>
     </coordinates>
@@ -105,8 +105,8 @@ valign=top
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>700</x>
-      <y>190</y>
+      <x>660</x>
+      <y>210</y>
       <w>130</w>
       <h>170</h>
     </coordinates>
@@ -118,8 +118,8 @@ lt=-&gt;
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>670</x>
-      <y>190</y>
+      <x>630</x>
+      <y>210</y>
       <w>130</w>
       <h>170</h>
     </coordinates>
@@ -132,8 +132,8 @@ makeMovement</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>400</x>
-      <y>150</y>
+      <x>360</x>
+      <y>170</y>
       <w>180</w>
       <h>210</h>
     </coordinates>
@@ -146,8 +146,8 @@ resign
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>440</x>
-      <y>400</y>
+      <x>400</x>
+      <y>420</y>
       <w>140</w>
       <h>50</h>
     </coordinates>
@@ -159,8 +159,8 @@ resign
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>440</x>
-      <y>120</y>
+      <x>400</x>
+      <y>140</y>
       <w>140</w>
       <h>40</h>
     </coordinates>
@@ -171,8 +171,8 @@ initialiseGame</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>100</x>
-      <y>350</y>
+      <x>60</x>
+      <y>370</y>
       <w>190</w>
       <h>40</h>
     </coordinates>
@@ -183,8 +183,8 @@ initialiseGame</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>440</x>
-      <y>190</y>
+      <x>400</x>
+      <y>210</y>
       <w>160</w>
       <h>190</h>
     </coordinates>
@@ -195,8 +195,8 @@ pass(2)</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>440</x>
-      <y>360</y>
+      <x>400</x>
+      <y>380</y>
       <w>140</w>
       <h>40</h>
     </coordinates>
@@ -207,8 +207,8 @@ pass(2)</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>290</x>
-      <y>190</y>
+      <x>250</x>
+      <y>210</y>
       <w>110</w>
       <h>170</h>
     </coordinates>
@@ -219,8 +219,8 @@ initialiseGame</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>570</x>
-      <y>20</y>
+      <x>530</x>
+      <y>40</y>
       <w>100</w>
       <h>90</h>
     </coordinates>
@@ -231,8 +231,8 @@ initialiseGame</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>570</x>
-      <y>440</y>
+      <x>530</x>
+      <y>460</y>
       <w>100</w>
       <h>100</h>
     </coordinates>
@@ -245,8 +245,8 @@ initialiseGame</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>250</x>
-      <y>440</y>
+      <x>210</x>
+      <y>460</y>
       <w>120</w>
       <h>110</h>
     </coordinates>
@@ -259,8 +259,8 @@ makeMovement</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>260</x>
-      <y>20</y>
+      <x>220</x>
+      <y>40</y>
       <w>120</w>
       <h>90</h>
     </coordinates>
@@ -271,8 +271,8 @@ MakeMovement</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>370</x>
-      <y>20</y>
+      <x>330</x>
+      <y>40</y>
       <w>80</w>
       <h>90</h>
     </coordinates>
@@ -283,8 +283,8 @@ pass</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>350</x>
-      <y>190</y>
+      <x>310</x>
+      <y>210</y>
       <w>60</w>
       <h>170</h>
     </coordinates>
@@ -298,8 +298,8 @@ resign</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>370</x>
-      <y>440</y>
+      <x>330</x>
+      <y>460</y>
       <w>80</w>
       <h>100</h>
     </coordinates>
@@ -312,8 +312,8 @@ pass</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>630</x>
-      <y>190</y>
+      <x>590</x>
+      <y>210</y>
       <w>60</w>
       <h>170</h>
     </coordinates>
@@ -324,8 +324,8 @@ pass</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>590</x>
-      <y>190</y>
+      <x>550</x>
+      <y>210</y>
       <w>60</w>
       <h>170</h>
     </coordinates>
@@ -334,5 +334,20 @@ pass</panel_attributes>
 
 pass</panel_attributes>
     <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>600</x>
+      <y>460</y>
+      <w>120</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+
+
+
+acceptTerritory</panel_attributes>
+    <additional_attributes>80.0;10.0;80.0;60.0;30.0;60.0;30.0;10.0</additional_attributes>
   </element>
 </diagram>

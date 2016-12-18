@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Logger;
 
 import pwrrgmp2017.go.game.GameController;
-import pwrrgmp2017.go.game.Builder.GameFactory;
+import pwrrgmp2017.go.game.factory.GameFactory;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;

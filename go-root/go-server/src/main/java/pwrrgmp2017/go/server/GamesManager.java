@@ -159,7 +159,7 @@ public class GamesManager
 		// gameinfo: bot/opponent?, Japan/Chinese/...?, boardSize=?,
 		// komi(std=6,5pkt)?, czasNaRuch??,
 		GameController gameController = director.createGame(gameInfo);
-		Game game = new Game(gameController, Integer.toString(threadCount));
+		Game game = new Game(gameController);
 		threadCount++;
 		games.add(game);
 		try

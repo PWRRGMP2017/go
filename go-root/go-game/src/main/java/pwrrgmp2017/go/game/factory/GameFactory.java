@@ -9,73 +9,68 @@ import pwrrgmp2017.go.game.Model.JapanGameModel;
 
 public class GameFactory
 {
-	
-	
+
 	private volatile static GameFactory INSTANCE;
-	
+
 	private GameFactory()
 	{
 	}
-	
+
 	public static GameFactory getInstance()
 	{
-		if(INSTANCE==null)
+		if (INSTANCE == null)
 		{
 			try
 			{
-				synchronized(GameFactory.class)
+				synchronized (GameFactory.class)
 				{
-					if(INSTANCE==null)
+					if (INSTANCE == null)
 					{
-						INSTANCE= new GameFactory();
+						INSTANCE = new GameFactory();
 					}
 				}
 			}
-			catch(RuntimeException e)
+			catch (RuntimeException e)
 			{
 				System.out.println(e.getMessage());
-				INSTANCE= null;
+				INSTANCE = null;
 			}
 		}
 		return INSTANCE;
 	}
 
-	public GameController createGame(String GameInfo)
+	public GameController createGame(String gameInfoAsString) throws IllegalArgumentException
 	{
-		String param=GameInfo.substring(6, 8);  //wielkośc planszy
-		GameBoard board=new GameBoard(Integer.parseUnsignedInt(param));
-		
-		param=GameInfo.substring(12, 15);  //wielkoś komi
-		float komi=Float.parseFloat(param);
-		
+		GameInfo gameInfo = new GameInfo(gameInfoAsString);
+
+		GameBoard board = new GameBoard(gameInfo.getBoardSize());
+		float komi = gameInfo.getKomiValue();
+
 		GameModel model;
-		switch(GameInfo.substring(0, 4))  // Zasady gry
+		switch (gameInfo.getRulesType()) // Zasady gry
 		{
-		case "JAPAN":
-			model= new JapanGameModel(board, komi);
+		case JAPANESE:
+			model = new JapanGameModel(board, komi);
 			break;
-		case "CHINE":
-			model= new ChineseGameModel(board, komi);
+
+		case CHINESE:
+			model = new ChineseGameModel(board, komi);
 			break;
+
 		default:
-			model= new JapanGameModel(board, komi);
+			model = new JapanGameModel(board, komi);
 		}
-		
+
 		GameController controller;
-		switch(GameInfo.charAt(10))  // gra z/bez bota
+		if (!gameInfo.getIsBot())
 		{
-		case 'M':
-		case 'P':
-			controller= new GameController(model);
-			break;
-		case 'S':
-		case 'B':
-			controller= new BotGameController(model);
-			break;
-		default:
-			controller= new GameController(model);
+			controller = new GameController(model);
 		}
-		
+		else
+		{
+			controller = new BotGameController(model);
+		}
+
 		return controller;
 	}
 

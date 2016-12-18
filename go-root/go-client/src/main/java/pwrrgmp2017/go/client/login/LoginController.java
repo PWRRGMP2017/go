@@ -82,6 +82,7 @@ public class LoginController implements Observer
 		LoginHandler loginHandler = new LoginHandler(serverConnection, playerName);
 		loginHandler.addObserver(this);
 		Thread loginHandlerThread = new Thread(loginHandler);
+		loginHandlerThread.setDaemon(true);
 		loginHandlerThread.start();
 	}
 

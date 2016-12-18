@@ -46,6 +46,7 @@ public class ServerConnection extends Observable implements Runnable
 	public void startReceiving()
 	{
 		thread = new Thread(this);
+		thread.setDaemon(true);
 		thread.start();
 	}
 

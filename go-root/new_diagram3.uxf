@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="14.2.0">
-  <zoom_level>7</zoom_level>
+  <zoom_level>8</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>329</x>
-      <y>273</y>
-      <w>301</w>
-      <h>259</h>
+      <x>376</x>
+      <y>312</y>
+      <w>344</w>
+      <h>296</h>
     </coordinates>
     <panel_attributes>GamesManager
 --
@@ -41,9 +41,9 @@ bg=white</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>154</y>
-      <w>168</w>
-      <h>84</h>
+      <y>176</y>
+      <w>192</w>
+      <h>96</h>
     </coordinates>
     <panel_attributes>ServerStart
 --
@@ -59,10 +59,10 @@ bg=white
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1141</x>
-      <y>28</y>
-      <w>259</w>
-      <h>63</h>
+      <x>1304</x>
+      <y>32</y>
+      <w>296</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>GameFactory
 --
@@ -76,10 +76,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1029</x>
-      <y>329</y>
-      <w>217</w>
-      <h>168</h>
+      <x>1176</x>
+      <y>376</y>
+      <w>248</w>
+      <h>192</h>
     </coordinates>
     <panel_attributes>Game
 --
@@ -101,10 +101,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>686</x>
-      <y>315</y>
-      <w>287</w>
-      <h>175</h>
+      <x>784</x>
+      <y>360</y>
+      <w>328</w>
+      <h>200</h>
     </coordinates>
     <panel_attributes>PlayerConnection
 --
@@ -130,18 +130,15 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1484</x>
+      <x>1696</x>
       <y>0</y>
-      <w>175</w>
-      <h>105</h>
+      <w>200</w>
+      <h>88</h>
     </coordinates>
     <panel_attributes>JapanGameModel
 --
-+addMovement(String move): String 
-+calculateTerritory():String 
-+isTurnPossible(int x, int y): boolean 
-+takePoints(String colour): int
-+acceptTerritory(String colour): void
++calculateScore(): float
++getPossibleTerritory(): Field[][] 
 
 bg=light_gray</panel_attributes>
     <additional_attributes/>
@@ -149,22 +146,22 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1617</x>
-      <y>98</y>
-      <w>21</w>
-      <h>196</h>
+      <x>1848</x>
+      <y>80</y>
+      <w>24</w>
+      <h>272</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 bg=light_gray</panel_attributes>
-    <additional_attributes>10.0;260.0;10.0;10.0</additional_attributes>
+    <additional_attributes>10.0;320.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1904</x>
-      <y>343</y>
-      <w>231</w>
-      <h>98</h>
+      <x>2176</x>
+      <y>392</y>
+      <w>264</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>&lt;&lt;interface&gt;&gt;
 /GameState/
@@ -182,10 +179,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1932</x>
-      <y>434</y>
-      <w>21</w>
-      <h>63</h>
+      <x>2208</x>
+      <y>496</y>
+      <w>24</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 bg=light_gray</panel_attributes>
@@ -194,10 +191,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2205</x>
-      <y>427</y>
-      <w>21</w>
-      <h>70</h>
+      <x>2520</x>
+      <y>488</y>
+      <w>24</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 bg=light_gray</panel_attributes>
@@ -206,10 +203,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>658</x>
-      <y>651</y>
-      <w>168</w>
-      <h>140</h>
+      <x>752</x>
+      <y>744</y>
+      <w>192</w>
+      <h>160</h>
     </coordinates>
     <panel_attributes>PlayerInfo
 --
@@ -231,10 +228,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1288</x>
-      <y>343</y>
-      <w>231</w>
-      <h>182</h>
+      <x>1472</x>
+      <y>392</y>
+      <w>264</w>
+      <h>208</h>
     </coordinates>
     <panel_attributes>GameController
 --
@@ -257,10 +254,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>84</x>
-      <y>231</y>
-      <w>21</w>
-      <h>119</h>
+      <x>96</x>
+      <y>264</y>
+      <w>24</w>
+      <h>136</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
 fg=black
@@ -272,10 +269,10 @@ m1=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1239</x>
-      <y>378</y>
-      <w>63</w>
-      <h>28</h>
+      <x>1416</x>
+      <y>432</y>
+      <w>72</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
 bg=white
@@ -286,10 +283,10 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>966</x>
-      <y>343</y>
-      <w>77</w>
-      <h>28</h>
+      <x>1104</x>
+      <y>392</y>
+      <w>88</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 fg=black
@@ -301,10 +298,10 @@ m1=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>623</x>
-      <y>329</y>
-      <w>77</w>
-      <h>28</h>
+      <x>712</x>
+      <y>376</y>
+      <w>88</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
 fg=black
@@ -316,10 +313,10 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1834</x>
-      <y>371</y>
-      <w>84</w>
-      <h>28</h>
+      <x>2096</x>
+      <y>440</y>
+      <w>96</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
 bg=light_gray
@@ -330,10 +327,10 @@ m2=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1897</x>
-      <y>483</y>
-      <w>98</w>
-      <h>98</h>
+      <x>2168</x>
+      <y>552</y>
+      <w>112</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>Beginning
 --
@@ -345,10 +342,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2149</x>
-      <y>483</y>
-      <w>98</w>
-      <h>28</h>
+      <x>2456</x>
+      <y>552</y>
+      <w>112</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>BlackTurn
 
@@ -359,10 +356,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2261</x>
-      <y>483</y>
-      <w>98</w>
-      <h>28</h>
+      <x>2584</x>
+      <y>552</y>
+      <w>112</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>WhiteTurn
 
@@ -373,10 +370,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1666</x>
-      <y>49</y>
-      <w>315</w>
-      <h>168</h>
+      <x>1912</x>
+      <y>56</y>
+      <w>360</w>
+      <h>192</h>
     </coordinates>
     <panel_attributes>GameBoard
 --
@@ -400,10 +397,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>525</x>
-      <y>49</y>
-      <w>630</w>
-      <h>238</h>
+      <x>600</x>
+      <y>56</y>
+      <w>720</w>
+      <h>272</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 m1=1
@@ -413,10 +410,10 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1393</x>
-      <y>28</y>
-      <w>105</w>
-      <h>28</h>
+      <x>1592</x>
+      <y>32</y>
+      <w>120</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 bg=light_gray
@@ -427,10 +424,10 @@ m1=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2170</x>
-      <y>371</y>
-      <w>224</w>
-      <h>63</h>
+      <x>2480</x>
+      <y>424</y>
+      <w>256</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>PlayerTurn
 --
@@ -441,10 +438,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2282</x>
-      <y>427</y>
-      <w>21</w>
-      <h>70</h>
+      <x>2608</x>
+      <y>488</y>
+      <w>24</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 bg=light_gray</panel_attributes>
@@ -453,10 +450,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1561</x>
-      <y>280</y>
-      <w>280</w>
-      <h>217</h>
+      <x>1784</x>
+      <y>336</y>
+      <w>320</w>
+      <h>232</h>
     </coordinates>
     <panel_attributes>&lt;&lt;abstract&gt;&gt;
 GameModel
@@ -465,16 +462,14 @@ GameModel
 -possibleMovementsWhite: boolean[][] 
 -possibleMovementsBlack: boolean[][]  
 -state: GameState 
--komi: int;
+-komi: float
 --
 +getPossibleMovements(String colour): boolean[][]
-+&lt;abstract&gt; addMovement(String move): String 
-+&lt;abstract&gt; calculateTerritory():String 
-+&lt;abstract&gt; isTurnPossible(int x, int y): boolean 
-+&lt;abstract&gt; takePoints(String colour): int
-+&lt;abstract&gt; acceptTerritory();
-+getState(): boolean 
-
++addMovement(String move): String 
++&lt;abstract&gt; calculateScore(): float
++&lt;abstract&gt; getPossibleTerritory(): Field[][] 
++isTurnPossible(int x, int y): boolean 
++getState(): GameStateEnum
 --
 
 
@@ -486,10 +481,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1512</x>
-      <y>392</y>
-      <w>63</w>
-      <h>28</h>
+      <x>1728</x>
+      <y>464</y>
+      <w>72</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
 bg=light_gray
@@ -500,24 +495,24 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1701</x>
-      <y>210</y>
-      <w>21</w>
-      <h>84</h>
+      <x>1952</x>
+      <y>240</y>
+      <w>24</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
 bg=light_gray
 m1=1
 m2=1</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2051</x>
-      <y>105</y>
-      <w>105</w>
-      <h>98</h>
+      <x>2344</x>
+      <y>120</y>
+      <w>136</w>
+      <h>136</h>
     </coordinates>
     <panel_attributes>&lt;&lt;enum&gt;&gt;
 Field
@@ -526,7 +521,9 @@ WHITE_STONE
 BLACK_STONE
 WHITE_TERRITORY
 BLACK_TERRITORY
-NEUTRAL
+WALL
+EMPTY
+EMPTYTERRITORY
 
 
 
@@ -538,10 +535,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1302</x>
-      <y>581</y>
-      <w>224</w>
-      <h>119</h>
+      <x>1488</x>
+      <y>664</y>
+      <w>256</w>
+      <h>136</h>
     </coordinates>
     <panel_attributes>BotGameController
 --
@@ -558,37 +555,37 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1407</x>
-      <y>518</y>
-      <w>21</w>
-      <h>77</h>
+      <x>1608</x>
+      <y>592</y>
+      <w>24</w>
+      <h>88</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;.
+    <panel_attributes>lt=&lt;&lt;-
 bg=light_gray</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1974</x>
-      <y>112</y>
-      <w>91</w>
-      <h>35</h>
+      <x>2264</x>
+      <y>128</y>
+      <w>96</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 m2=1
 m1=size^2
 
 bg=light_gray</panel_attributes>
-    <additional_attributes>110.0;20.0;10.0;20.0</additional_attributes>
+    <additional_attributes>100.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>49</x>
-      <y>336</y>
-      <w>238</w>
-      <h>119</h>
+      <x>56</x>
+      <y>384</y>
+      <w>272</w>
+      <h>136</h>
     </coordinates>
     <panel_attributes>Server
 --
@@ -608,10 +605,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>280</x>
-      <y>364</y>
-      <w>63</w>
-      <h>28</h>
+      <x>320</x>
+      <y>416</y>
+      <w>72</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 fg=black
@@ -623,10 +620,10 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2128</x>
-      <y>385</y>
-      <w>56</w>
-      <h>21</h>
+      <x>2432</x>
+      <y>440</y>
+      <w>64</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 bg=light_gray</panel_attributes>
@@ -635,10 +632,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>672</x>
-      <y>546</y>
-      <w>126</w>
-      <h>21</h>
+      <x>768</x>
+      <y>624</y>
+      <w>144</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>RealPlayerConnection
 
@@ -649,10 +646,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>728</x>
-      <y>483</y>
-      <w>21</w>
-      <h>77</h>
+      <x>832</x>
+      <y>552</y>
+      <w>24</w>
+      <h>88</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 fg=black
@@ -662,10 +659,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>413</x>
-      <y>224</y>
-      <w>91</w>
-      <h>21</h>
+      <x>472</x>
+      <y>256</y>
+      <w>104</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>/IPlayerObserver/
 
@@ -676,10 +673,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>434</x>
-      <y>238</y>
-      <w>21</w>
-      <h>49</h>
+      <x>496</x>
+      <y>272</y>
+      <w>24</w>
+      <h>56</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 fg=black
@@ -689,10 +686,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>833</x>
-      <y>273</y>
-      <w>21</w>
-      <h>56</h>
+      <x>952</x>
+      <y>312</y>
+      <w>24</w>
+      <h>64</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 fg=black
@@ -702,10 +699,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>805</x>
-      <y>259</y>
-      <w>70</w>
-      <h>21</h>
+      <x>920</x>
+      <y>296</y>
+      <w>80</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>/Thread/
 fg=black
@@ -715,10 +712,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1050</x>
-      <y>273</y>
-      <w>84</w>
-      <h>21</h>
+      <x>1200</x>
+      <y>312</y>
+      <w>96</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>/IPlayerObserver/
 
@@ -729,10 +726,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1071</x>
-      <y>287</y>
-      <w>21</w>
-      <h>56</h>
+      <x>1224</x>
+      <y>328</y>
+      <w>24</w>
+      <h>64</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 fg=black
@@ -742,10 +739,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>875</x>
-      <y>560</y>
-      <w>168</w>
-      <h>147</h>
+      <x>1000</x>
+      <y>640</y>
+      <w>192</w>
+      <h>168</h>
     </coordinates>
     <panel_attributes>/PlayerEvent/
 --
@@ -767,10 +764,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>952</x>
-      <y>483</y>
-      <w>35</w>
-      <h>91</h>
+      <x>1088</x>
+      <y>552</y>
+      <w>40</w>
+      <h>104</h>
     </coordinates>
     <panel_attributes>lt=&lt;-&gt;
 fg=black
@@ -782,10 +779,10 @@ m2=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>679</x>
-      <y>259</y>
-      <w>98</w>
-      <h>21</h>
+      <x>776</x>
+      <y>296</y>
+      <w>112</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>/IPlayerObservable/
 
@@ -796,10 +793,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>728</x>
-      <y>273</y>
-      <w>21</w>
-      <h>56</h>
+      <x>832</x>
+      <y>312</y>
+      <w>24</w>
+      <h>64</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 fg=black
@@ -809,10 +806,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>847</x>
-      <y>812</y>
-      <w>98</w>
-      <h>49</h>
+      <x>968</x>
+      <y>928</y>
+      <w>112</w>
+      <h>56</h>
     </coordinates>
     <panel_attributes>PlayerLoginEvent
 --
@@ -824,10 +821,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>896</x>
-      <y>700</y>
-      <w>21</w>
-      <h>126</h>
+      <x>1024</x>
+      <y>800</y>
+      <w>24</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 fg=black
@@ -837,10 +834,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>959</x>
-      <y>812</y>
-      <w>119</w>
-      <h>49</h>
+      <x>1096</x>
+      <y>928</y>
+      <w>136</w>
+      <h>56</h>
     </coordinates>
     <panel_attributes>PlayerMoveEvent
 --
@@ -853,10 +850,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1001</x>
-      <y>700</y>
-      <w>21</w>
-      <h>126</h>
+      <x>1144</x>
+      <y>800</y>
+      <w>24</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 fg=black
@@ -866,10 +863,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>945</x>
-      <y>700</y>
-      <w>21</w>
-      <h>189</h>
+      <x>1080</x>
+      <y>800</y>
+      <w>24</w>
+      <h>216</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 fg=black
@@ -879,10 +876,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1029</x>
-      <y>490</y>
-      <w>21</w>
-      <h>84</h>
+      <x>1176</x>
+      <y>560</y>
+      <w>24</w>
+      <h>96</h>
     </coordinates>
     <panel_attributes>lt=&lt;..
 fg=black
@@ -892,10 +889,10 @@ bg=white</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>161</x>
-      <y>574</y>
-      <w>147</w>
-      <h>133</h>
+      <x>184</x>
+      <y>656</y>
+      <w>168</w>
+      <h>152</h>
     </coordinates>
     <panel_attributes>PlayerConnectionFactory
 --
@@ -912,10 +909,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>203</x>
-      <y>448</y>
-      <w>21</w>
-      <h>140</h>
+      <x>232</x>
+      <y>512</y>
+      <w>24</w>
+      <h>160</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 fg=black
@@ -927,10 +924,10 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>301</x>
-      <y>560</y>
-      <w>448</w>
-      <h>70</h>
+      <x>344</x>
+      <y>640</y>
+      <w>512</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 fg=black
@@ -942,10 +939,10 @@ m1=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>623</x>
-      <y>511</y>
-      <w>294</w>
-      <h>63</h>
+      <x>712</x>
+      <y>584</y>
+      <w>336</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>lt=&lt;..
 fg=black
@@ -955,10 +952,10 @@ bg=white</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1351</x>
-      <y>84</y>
-      <w>21</w>
-      <h>273</h>
+      <x>1544</x>
+      <y>96</y>
+      <w>24</w>
+      <h>312</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 bg=light_gray
@@ -969,10 +966,10 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1428</x>
-      <y>28</y>
-      <w>21</w>
-      <h>112</h>
+      <x>1632</x>
+      <y>32</y>
+      <w>24</w>
+      <h>128</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 m1=1</panel_attributes>
@@ -981,18 +978,15 @@ m1=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1421</x>
-      <y>126</y>
-      <w>175</w>
-      <h>98</h>
+      <x>1624</x>
+      <y>144</y>
+      <w>200</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>ChineseGameModel
 --
-+addMovement(String move): String 
-+calculateTerritory():String 
-+isTurnPossible(int x, int y): boolean 
-+takePoints(String colour): int
-+acceptTerritory(String colour): void
++calculateScore(): float
++getPossibleTerritory(): Field[][] 
 
 bg=light_gray</panel_attributes>
     <additional_attributes/>
@@ -1000,22 +994,22 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1575</x>
-      <y>217</y>
-      <w>21</w>
-      <h>77</h>
+      <x>1800</x>
+      <y>216</y>
+      <w>24</w>
+      <h>136</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 bg=light_gray</panel_attributes>
-    <additional_attributes>10.0;90.0;10.0;10.0</additional_attributes>
+    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>805</x>
-      <y>483</y>
-      <w>21</w>
-      <h>182</h>
+      <x>920</x>
+      <y>552</y>
+      <w>24</w>
+      <h>208</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
     <additional_attributes>10.0;240.0;10.0;10.0</additional_attributes>
@@ -1023,10 +1017,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2058</x>
-      <y>434</y>
-      <w>21</w>
-      <h>63</h>
+      <x>2352</x>
+      <y>496</y>
+      <w>24</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.
 bg=light_gray</panel_attributes>
@@ -1035,10 +1029,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2023</x>
-      <y>483</y>
-      <w>98</w>
-      <h>98</h>
+      <x>2312</x>
+      <y>552</y>
+      <w>112</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>End
 --

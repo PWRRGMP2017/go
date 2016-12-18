@@ -1,34 +1,28 @@
 package pwrrgmp2017.go.game.Model;
 
+import pwrrgmp2017.go.game.Model.GameBoard.Field;
+
 public class ChineseGameModel extends GameModel
 {
 
 	public ChineseGameModel(GameBoard board, float komi)
 	{
 		super(board, komi);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public String addMovement(String move)
+	public int calculateScore()
 	{
-		// TODO Auto-generated method stub
+		Field[][] board=super.getBoardCopy();
+		//TODO
+		return 0;
+	}
+
+	@Override
+	public Field[][] getPossibleTerritory()
+	{
+		Field[][] board=super.getBoardCopy();
+		// TODO 
 		return null;
 	}
-
-
-	@Override
-	public boolean isTurnPossible(int x, int y)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String calculateTerritory()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

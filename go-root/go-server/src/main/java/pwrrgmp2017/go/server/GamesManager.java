@@ -103,6 +103,16 @@ public class GamesManager
 		// return invited.invite(inviter.getPlayerName(), gameInfo);
 		return false;
 	}
+	
+	public void playBotGame(PlayerConnection player, String gameInfo)
+			throws BadPlayerException
+	{
+		if (!choosingPlayers.contains(player))
+			throw new BadPlayerException();
+		if(!choosingPlayers.remove(player.getPlayerName(), player))
+			throw new BadPlayerException();
+		createGame(player, null, gameInfo);
+	}
 
 	public void waitForGame(PlayerConnection player, String gameInfo) throws BadPlayerException
 	{

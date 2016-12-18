@@ -1,4 +1,4 @@
-package pwrrgmp2017.go.game.Builder;
+package pwrrgmp2017.go.game.factory;
 
 import pwrrgmp2017.go.game.BotGameController;
 import pwrrgmp2017.go.game.GameController;
@@ -42,12 +42,14 @@ public class GameFactory
 
 	public GameController createGame(String GameInfo)
 	{
-		String param=GameInfo.substring(6, 8);
+		String param=GameInfo.substring(6, 8);  //wielkośc planszy
 		GameBoard board=new GameBoard(Integer.parseUnsignedInt(param));
-		param=GameInfo.substring(12, 14);
+		
+		param=GameInfo.substring(12, 15);  //wielkoś komi
 		float komi=Float.parseFloat(param);
+		
 		GameModel model;
-		switch(GameInfo.substring(0, 4))
+		switch(GameInfo.substring(0, 4))  // Zasady gry
 		{
 		case "JAPAN":
 			model= new JapanGameModel(board, komi);
@@ -58,15 +60,15 @@ public class GameFactory
 		default:
 			model= new JapanGameModel(board, komi);
 		}
+		
 		GameController controller;
-		switch(GameInfo.charAt(10))
+		switch(GameInfo.charAt(10))  // gra z/bez bota
 		{
-		case 'S':
+		case 'M':
 		case 'P':
-		case 'O':
 			controller= new GameController(model);
 			break;
-		case 'M':
+		case 'S':
 		case 'B':
 			controller= new BotGameController(model);
 			break;

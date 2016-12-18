@@ -153,7 +153,6 @@ public class ServerConnection extends Observable implements Runnable
 			// Notify observers
 			ProtocolMessage genericMessage = ProtocolMessage.getProtocolMessage(message);
 			LOGGER.info("Received message: " + genericMessage.getFullMessage());
-			System.out.println(countObservers());
 			setChanged();
 			notifyObservers((Object) genericMessage);
 		}

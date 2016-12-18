@@ -204,7 +204,6 @@ public class GameSettingsController implements Observer
 	@Override
 	public void update(Observable o, Object arg)
 	{
-		System.out.println("update");
 		if (o instanceof ServerConnection)
 		{
 			if (arg instanceof IOException)

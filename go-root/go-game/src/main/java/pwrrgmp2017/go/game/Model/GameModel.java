@@ -38,6 +38,8 @@ public abstract class GameModel
 	
 	public abstract float calculateScore();
 	
+	public abstract float calculateScore(Field[][] territory);
+	
 	public abstract Field[][] getPossibleTerritory();
 	
 	public boolean[][] getPossibleMovements(Field colour) throws BadFieldException
@@ -129,4 +131,5 @@ public abstract class GameModel
 	{
 		return komi;
 	}
+	
 }

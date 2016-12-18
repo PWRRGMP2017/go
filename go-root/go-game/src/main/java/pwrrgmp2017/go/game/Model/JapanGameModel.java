@@ -21,10 +21,50 @@ public class JapanGameModel extends GameModel
 	@Override
 	public float calculateScore()
 	{
-		@SuppressWarnings("unused")
-		Field[][] board=super.getBoardCopy();
-		
-		return 0;
+		float points=0;
+		Field[][] territory=this.getPossibleTerritory();
+		for(int i=1; i<territory.length-1; i++)
+			for(int j=1; j<territory.length-1; j++)
+			{
+				switch(territory[i][j])
+				{
+				case BLACKTERRITORY:
+					points++;
+				case WHITETERRITORY:
+					points--;
+				case DEADBLACK:
+					points-=2;
+				case DEADWHITE:
+					points+=2;
+				default:
+					break;
+				}
+			}
+		return points;
+	}
+	
+	@Override
+	public float calculateScore(Field[][] territory)
+	{
+		float points=0;
+		for(int i=1; i<territory.length-1; i++)
+			for(int j=1; j<territory.length-1; j++)
+			{
+				switch(territory[i][j])
+				{
+				case BLACKTERRITORY:
+					points++;
+				case WHITETERRITORY:
+					points--;
+				case DEADBLACK:
+					points-=2;
+				case DEADWHITE:
+					points+=2;
+				default:
+					break;
+				}
+			}
+		return points;
 	}
 
 	@Override

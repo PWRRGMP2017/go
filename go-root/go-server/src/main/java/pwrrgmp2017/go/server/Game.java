@@ -14,9 +14,8 @@ public class Game extends Thread
 	private PlayerConnection player2;
 	private boolean[][] possibleMovements;
 
-	Game(GameController controller, String thread)
+	Game(GameController controller)
 	{
-		super(thread);
 		this.controller = controller;
 		start();
 	}
@@ -84,16 +83,16 @@ public class Game extends Thread
 
 	public void setPlayers(PlayerConnection player, PlayerConnection opponent) throws OverridePlayersException
 	{
-		if(this.player1==null || this.player2==null)
+		if (this.player1 == null || this.player2 == null)
 			throw new OverridePlayersException();
-		
-		this.player1=player;
-		this.player2=opponent;
+
+		this.player1 = player;
+		this.player2 = opponent;
 	}
-	
+
 	public PlayerConnection getPlayerConnection(int player)
 	{
-		switch(player)
+		switch (player)
 		{
 		case 1:
 			return player1;

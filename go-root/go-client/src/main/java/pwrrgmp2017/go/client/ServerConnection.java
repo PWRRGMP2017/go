@@ -6,12 +6,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.InvalidParameterException;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ServerConnection
+import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
+
+public class ServerConnection extends Observable implements Runnable
 {
 	protected static final Logger LOGGER = Logger.getLogger(ClientMain.class.getName());
+
+	protected Thread thread;
 
 	protected String hostname;
 	protected int port;
@@ -31,6 +36,17 @@ public class ServerConnection
 		this.hostname = hostname;
 		this.port = port;
 		connect();
+	}
+
+	public Thread getThread()
+	{
+		return thread;
+	}
+
+	public void startReceiving()
+	{
+		thread = new Thread(this);
+		thread.start();
 	}
 
 	protected void connect() throws IOException
@@ -108,5 +124,38 @@ public class ServerConnection
 	{
 		this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		this.output = new PrintWriter(socket.getOutputStream(), true);
+	}
+
+	@Override
+	public void run()
+	{
+		while (!Thread.interrupted())
+		{
+			// Wait for a message
+			String message = null;
+			try
+			{
+				message = receive();
+			}
+			catch (IOException e)
+			{
+				this.notifyObservers(e);
+				return;
+			}
+
+			if (message == null)
+			{
+				close();
+				this.notifyObservers(new IOException("Server unexpectedly closed the connection."));
+				return;
+			}
+
+			// Notify observers
+			ProtocolMessage genericMessage = ProtocolMessage.getProtocolMessage(message);
+			LOGGER.info("Received message: " + genericMessage.getFullMessage());
+			System.out.println(countObservers());
+			setChanged();
+			notifyObservers((Object) genericMessage);
+		}
 	}
 }

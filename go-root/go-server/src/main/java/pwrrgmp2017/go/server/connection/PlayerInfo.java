@@ -8,11 +8,12 @@ import pwrrgmp2017.go.server.Game;
 public class PlayerInfo
 {
 	private String name;
-	private Game playingGame;
+	private volatile Game playingGame;
 
 	public PlayerInfo(String name)
 	{
 		this.name = name;
+		playingGame = null;
 	}
 
 	public String getName()
@@ -37,6 +38,6 @@ public class PlayerInfo
 
 	public void setPlayerName(String name)
 	{
-		this.name=name;
+		this.name = name;
 	}
 }

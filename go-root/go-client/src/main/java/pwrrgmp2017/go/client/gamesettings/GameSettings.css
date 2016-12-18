@@ -1,3 +1,7 @@
 #titleLabel {
 	-fx-font-weight: bold;
 }
+
+#nameLabel {
+	-fx-font-weight: bold
+}

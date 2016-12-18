@@ -104,6 +104,17 @@ public class GamesManager
 		return false;
 	}
 
+	public PlayerConnection getChoosingPlayer(String playerName) throws BadPlayerException
+	{
+		PlayerConnection playerConnection = choosingPlayers.get(playerName);
+		if (playerConnection == null)
+		{
+			throw new BadPlayerException("The player does not exists or is already playing.");
+		}
+
+		return playerConnection;
+	}
+
 	public void waitForGame(PlayerConnection player, String gameInfo) throws BadPlayerException
 	{
 		PlayerConnection secondPlayer;
@@ -124,10 +135,10 @@ public class GamesManager
 			break;
 		}
 	}
-	
+
 	public void stopWaiting(PlayerConnection player, String gameInfo) throws tooLateToBackPlayerException
 	{
-		if(waitingPlayers.remove(gameInfo, player))
+		if (waitingPlayers.remove(gameInfo, player))
 		{
 			choosingPlayers.put(player.getPlayerName(), player);
 		}

@@ -47,7 +47,7 @@ public class BotGameController extends GameController
 			super.pass();
 		else
 		{
-			movesCounter=rand.nextInt(movesCounter);
+			movesCounter=rand.nextInt(movesCounter-1);
 			for(int i=0; i<moves.length; i++)
 				for(int j=0; j<moves.length; j++)
 				{
@@ -56,10 +56,11 @@ public class BotGameController extends GameController
 						if(movesCounter==0)
 						{
 							super.addMovement(i+1, j+1, botColour);
+							super.lastMoveX=i+1;
+							super.lastMoveY=j+1;
 						}
 						else
 							movesCounter--;
-						
 					}
 				}
 		}

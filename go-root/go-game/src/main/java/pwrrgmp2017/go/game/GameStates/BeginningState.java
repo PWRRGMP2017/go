@@ -15,7 +15,7 @@ public class BeginningState implements GameState
 	}
 
 	@Override
-	public GameState pass(GameModel model) throws GameBegginsException
+	public GameState pass(GameModel model, Field colour) throws GameBegginsException
 	{
 		throw new GameBegginsException();
 	}

@@ -86,6 +86,16 @@ public class GamesManager
 		thread.start();
 	}
 
+	public void playBotGame(PlayerConnection player, String gameInfo)
+			throws BadPlayerException
+	{
+		if (!choosingPlayers.contains(player))
+			throw new BadPlayerException();
+		if(!choosingPlayers.remove(player.getPlayerName(), player))
+			throw new BadPlayerException();
+		createGame(player, null, gameInfo);
+	}
+
 	public PlayerConnection getChoosingPlayer(String playerName) throws BadPlayerException
 	{
 		PlayerConnection playerConnection = choosingPlayers.get(playerName);

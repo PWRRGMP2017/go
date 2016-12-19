@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.game.Model;
 
+import pwrrgmp2017.go.game.Exception.GameBegginsException;
+import pwrrgmp2017.go.game.Exception.GameIsEndedException;
+import pwrrgmp2017.go.game.Exception.GameStillInProgressException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 import pwrrgmp2017.go.game.GameStates.BeginningState;
 import pwrrgmp2017.go.game.GameStates.GameState;
@@ -21,22 +24,24 @@ public abstract class GameModel
 		state=new BeginningState();
 	}
 	
-	public void initialiseGame()
+	public void initialiseGame() throws GameStillInProgressException
 	{
 		state.initialiseGame(this);
 	}
 	
-	public void pass()
+	public void pass() throws GameBegginsException, GameIsEndedException
 	{
 		state.pass(this);
 	}
 	
-	public void resign()
+	public void resign() throws GameIsEndedException
 	{
 		state.resign(this);
 	}
 	
 	public abstract float calculateScore();
+	
+	public abstract float calculateScore(Field[][] territory);
 	
 	public abstract Field[][] getPossibleTerritory();
 	
@@ -76,7 +81,7 @@ public abstract class GameModel
 		{
 			this.state=this.state.makeMovement(this, x, y, playerField, board);
 		}
-		catch (BadFieldException e)
+		catch (BadFieldException | GameBegginsException | GameIsEndedException e)
 		{
 			return false;
 		}
@@ -129,4 +134,15 @@ public abstract class GameModel
 	{
 		return komi;
 	}
+	
+	public int getBlackCaptives()
+	{
+		return board.getBlackCaptives();
+	}
+	
+	public int getWhiteCaptives()
+	{
+		return board.getWhiteCaptives();
+	}
+	
 }

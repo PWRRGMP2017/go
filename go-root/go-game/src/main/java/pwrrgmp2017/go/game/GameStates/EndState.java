@@ -1,5 +1,6 @@
 package pwrrgmp2017.go.game.GameStates;
 
+import pwrrgmp2017.go.game.Exception.GameIsEndedException;
 import pwrrgmp2017.go.game.Model.GameBoard;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
 import pwrrgmp2017.go.game.Model.GameModel;
@@ -8,28 +9,27 @@ public class EndState implements GameState
 {
 
 	@Override
-	public GameState makeMovement(GameModel model, int x, int y, Field playerField, GameBoard board)
+	public GameState makeMovement(GameModel model, int x, int y, Field playerField, GameBoard board) throws GameIsEndedException
 	{
-		return this;
+		throw new GameIsEndedException();
 	}
 
 	@Override
-	public GameState pass(GameModel model)
+	public GameState pass(GameModel model) throws GameIsEndedException
 	{
-		return this;
+		throw new GameIsEndedException();
 	}
 
 	@Override
 	public GameState initialiseGame(GameModel model)
 	{
 		return new BeginningState();
-		
 	}
 
 	@Override
-	public GameState resign(GameModel model)
+	public GameState resign(GameModel model) throws GameIsEndedException
 	{
-		return this;
+		throw new GameIsEndedException();
 	}
 
 	@Override

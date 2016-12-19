@@ -1,12 +1,24 @@
 package pwrrgmp2017.go.game.GameStates;
 
+import pwrrgmp2017.go.game.Exception.GameStillInProgressException;
 import pwrrgmp2017.go.game.Model.GameModel;
 
 public abstract class PlayerTurn implements GameState
 {
-	@Override
-	public GameState initialiseGame(GameModel model)
+	protected boolean pass;
+	public PlayerTurn()
 	{
-		return this;
+		pass=false;
+	}
+	
+	public PlayerTurn(boolean pass)
+	{
+		this.pass=pass;
+	}
+	
+	@Override
+	public GameState initialiseGame(GameModel model) throws GameStillInProgressException
+	{
+		throw new GameStillInProgressException();
 	}
 }

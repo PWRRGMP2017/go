@@ -109,13 +109,11 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		if (receivedMessage.getIsAccepted())
 		{
 			// The invited player accepted the invitation
-			// Tell game manager to create a game here
 
-			// For now, let's just reset state
-			// invitation = null;
-			// connection.getInvitedPlayer().cancelInvitation();
-			// connection.cancelInvitation();
+			// Tell him we are playing
+			connection.getInvitedPlayer().send(receivedMessage.getFullMessage());
 
+			// Tell game manager to create a game
 			try
 			{
 				gamesManager.createGame(connection, gamesManager.getChoosingPlayer(invitation.getToPlayerName()),
@@ -146,12 +144,20 @@ public class NotYetPlayingPlayerHandler implements Runnable
 	 */
 	private boolean handleInvitedResponse(InvitationResponseProtocolMessage receivedMessage)
 	{
-		// Just send the message to the inviting player and let him handle the
-		// rest
+		// Send forward the message to the inviting player
 		connection.getInvitingPlayer().send(receivedMessage.getFullMessage());
-
-		// End the thread and wait for the game to start
-		return true;
+		if (receivedMessage.getIsAccepted())
+		{
+			// End the thread and wait for the game to start
+			return true;
+		}
+		else
+		{
+			// We are not playing
+			connection.getInvitingPlayer().cancelInvitation();
+			connection.cancelInvitation();
+			return false;
+		}
 	}
 
 	private void cleanUp()

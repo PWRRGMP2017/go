@@ -53,4 +53,19 @@ public class GameController
 	{
 		return model.getKomi();
 	}
+	
+	public void initialiseGame()
+	{
+		model.initialiseGame();
+	}
+	
+	public void pass()
+	{
+		model.pass();
+	}
+	
+	public void resign()
+	{
+		model.resign();
+	}
 }

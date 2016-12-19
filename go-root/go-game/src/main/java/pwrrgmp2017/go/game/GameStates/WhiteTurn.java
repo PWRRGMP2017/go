@@ -1,5 +1,7 @@
 package pwrrgmp2017.go.game.GameStates;
 
+import pwrrgmp2017.go.game.Exception.GameBegginsException;
+import pwrrgmp2017.go.game.Exception.GameIsEndedException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 import pwrrgmp2017.go.game.Model.GameBoard;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
@@ -14,10 +16,10 @@ public class WhiteTurn extends PlayerTurn
 	}
 
 	@Override
-	public GameState makeMovement(GameModel model, int x, int y, Field playerField, GameBoard board) throws BadFieldException
+	public GameState makeMovement(GameModel model, int x, int y, Field playerField, GameBoard board) throws BadFieldException, GameBegginsException, GameIsEndedException
 	{
 		if(playerField==Field.WHITESTONE)
-			model.addMovement(x, y, playerField);
+			board.makeMovement(x, y, playerField, Field.BLACKSTONE);
 		else
 			throw new BadFieldException();
 		

@@ -2,6 +2,8 @@ package pwrrgmp2017.go.game;
 
 import java.util.Random;
 
+import pwrrgmp2017.go.game.Exception.GameBegginsException;
+import pwrrgmp2017.go.game.Exception.GameIsEndedException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 import pwrrgmp2017.go.game.GameStates.GameStateEnum;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
@@ -19,10 +21,10 @@ public class BotGameController extends GameController
 	}
 	
 	@Override
-	boolean addMovement(int x, int y, Field playerField)
+	public void addMovement(int x, int y, Field playerField) throws BadFieldException, GameBegginsException, GameIsEndedException
 	{
-		if(!super.addMovement(x, y, playerField))
-			return false;
+		super.addMovement(x, y, playerField);
+
 		if(playerField==Field.BLACKSTONE)
 			botColour=Field.WHITESTONE;
 		else
@@ -64,11 +66,10 @@ public class BotGameController extends GameController
 					}
 				}
 		}
-		return true;
 	}
 	
 	@Override
-	public void pass()
+	public void pass() throws GameBegginsException, GameIsEndedException
 	{
 		super.pass();
 		if(model.getState()!=GameStateEnum.END)

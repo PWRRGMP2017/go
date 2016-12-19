@@ -14,8 +14,8 @@ public class JapanGameModel extends GameModel
 	public JapanGameModel(GameBoard board, float komi)
 	{
 		super(board, komi);
-		chain= new boolean[board.getSize()-2][board.getSize()-2];
-		friendChain= new boolean[board.getSize()-2][board.getSize()-2];
+		chain= new boolean[board.getSize()][board.getSize()];
+		friendChain= new boolean[board.getSize()][board.getSize()];
 	}
 
 	@Override
@@ -40,6 +40,36 @@ public class JapanGameModel extends GameModel
 					break;
 				}
 			}
+		for(int r=0; r<board.length; r++)
+		{
+			System.out.println();
+			for(int t=0; t<board.length; t++)
+			{
+				switch(boardReturn[r][t])
+				{
+				case BLACKSTONE: System.out.print('B');
+					break;
+				case BLACKTERRITORY:System.out.print('P');
+					break;
+				case DEADBLACK:System.out.print('b');
+					break;
+				case DEADWHITE:System.out.print('w');
+					break;
+				case EMPTY:System.out.print('-');
+					break;
+				case NONETERRITORY:System.out.print('_');
+					break;
+				case WALL:System.out.print('X');
+					break;
+				case WHITESTONE:System.out.print('W');
+					break;
+				case WHITETERRITORY:System.out.print('m');
+					break;
+				default:
+					break;
+				}
+			}
+		}
 		points-=super.getKomi();
 		points+=super.getBlackCaptives();
 		points-=super.getWhiteCaptives();
@@ -136,9 +166,9 @@ public class JapanGameModel extends GameModel
 		territoryPoints+=2*takeTerritoryPoints(i+2, j-1);
 		territoryPoints+=2*takeTerritoryPoints(i-2, j+1);
 		territoryPoints+=2*takeTerritoryPoints(i-2, j-1);
-		if(territoryPoints>100)
+		if(territoryPoints>30)
 			boardReturn[i][j]=Field.BLACKTERRITORY;
-		else if(territoryPoints<-100)
+		else if(territoryPoints<-30)
 			boardReturn[i][j]=Field.WHITETERRITORY;
 	}
 	
@@ -167,6 +197,11 @@ public class JapanGameModel extends GameModel
 
 	private void addWholeArea(Field field) //Dodaje w pełni zajęte terytoria do zwracanej planszy
 	{
+		if(field==Field.BLACKSTONE)
+			field=Field.BLACKTERRITORY;
+		else if(field==Field.WHITESTONE)
+			field=Field.WHITETERRITORY;
+		
 		for(int i=0; i<chain.length; i++)
 			for(int j=0; j<chain.length; j++)
 			{
@@ -179,11 +214,14 @@ public class JapanGameModel extends GameModel
 	private Field checkIfAreaIsTerritory(int i, int j)
 	{
 		chain[i-1][j-1]=true;
-		Field field1=checkIfAreaIsTerritoryRecursive(i, j);
-		Field field2=checkIfAreaIsTerritoryRecursive(i, j);
-		Field field3=checkIfAreaIsTerritoryRecursive(i, j);
-		Field field4=checkIfAreaIsTerritoryRecursive(i, j);
-			
+		Field field1=checkIfAreaIsTerritoryRecursive(i+1, j);
+		Field field2=checkIfAreaIsTerritoryRecursive(i, j+1);
+		Field field3=checkIfAreaIsTerritoryRecursive(i-1, j);
+		Field field4=checkIfAreaIsTerritoryRecursive(i, j-1);
+		
+		if(field1==Field.EMPTY && field2==Field.EMPTY && field3==Field.EMPTY &&  field4==Field.EMPTY)
+			return Field.EMPTY;
+		
 		if( (field1==Field.BLACKSTONE || field1==Field.EMPTY)
 			&& (field2==Field.BLACKSTONE || field2==Field.EMPTY)
 			&& (field3==Field.BLACKSTONE || field3==Field.EMPTY)
@@ -200,7 +238,7 @@ public class JapanGameModel extends GameModel
 	
 	private Field checkIfAreaIsTerritoryRecursive(int i, int j)
 	{
-		switch(board[i][j])
+		switch(boardReturn[i][j])
 		{
 		case BLACKSTONE:
 		case DEADWHITE:
@@ -213,6 +251,8 @@ public class JapanGameModel extends GameModel
 				return Field.EMPTY;
 			else
 				return checkIfAreaIsTerritory(i, j);
+		case WALL:
+			return Field.EMPTY;
 		default:
 			return Field.EMPTY;
 		}
@@ -364,9 +404,21 @@ public class JapanGameModel extends GameModel
 	private void checkFriendChainRecursive(int i, int j, Field field, Field concur) throws TheSameChainException //Rekurencyjna metoda wykorzystywana przez checkFriendChain
 	{
 		friendChain[i-1][j-1]=true;
-		if(chain[i-2][j-1]==true || chain[i-1][j-2]==true || chain[i][j-1]==true || chain[i-1][j]==true)
-			throw new TheSameChainException();
-		
+		//if(i-2>-1 && i<chain.length && chain())
+		if(i>1)
+			if(chain[i-2][j-1]==true)
+				throw new TheSameChainException();	
+		if(j>1)
+			if(chain[i-1][j-2]==true)
+				throw new TheSameChainException();
+		if(i<chain.length)
+			if(chain[i][j-1]==true)
+				throw new TheSameChainException();
+		if(j<chain.length)
+			if(chain[i-1][j]==true)
+				throw new TheSameChainException();
+			
+			
 		if(board[i+1][j]==field && !friendChain[i][j-1])
 			checkFriendChainRecursive(i+1, j, field, concur);
 		else if(board[i][j]==Field.EMPTY)

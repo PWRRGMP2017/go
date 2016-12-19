@@ -26,17 +26,17 @@ public abstract class GameModel
 	
 	public void initialiseGame() throws GameStillInProgressException
 	{
-		state.initialiseGame(this);
+		this.state=state.initialiseGame(this);
 	}
 	
 	public void pass() throws GameBegginsException, GameIsEndedException
 	{
-		state.pass(this);
+		this.state=state.pass(this);
 	}
 	
 	public void resign() throws GameIsEndedException
 	{
-		state.resign(this);
+		this.state=state.resign(this);
 	}
 	
 	public abstract float calculateScore();
@@ -75,19 +75,12 @@ public abstract class GameModel
 			throw new BadFieldException();
 	}
 
-	public boolean addMovement(int x, int y, Field playerField)
+	public void addMovement(int x, int y, Field playerField) throws BadFieldException, GameBegginsException, GameIsEndedException 
 	{
-		try
-		{
-			this.state=this.state.makeMovement(this, x, y, playerField, board);
-		}
-		catch (BadFieldException | GameBegginsException | GameIsEndedException e)
-		{
-			return false;
-		}
+		this.state=this.state.makeMovement(this, x, y, playerField, board);
+		
 		possibleMovementsBlack=null;
 		possibleMovementsWhite=null;
-		return true;
 	}
 
 	public boolean isTurnPossible(int x, int y, Field colour) throws BadFieldException

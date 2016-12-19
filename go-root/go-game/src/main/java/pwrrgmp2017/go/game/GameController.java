@@ -26,14 +26,12 @@ public class GameController
 		return model.getPossibleMovements(colour);
 	}
 
-	boolean addMovement(int x, int y, Field playerField)
+	public void addMovement(int x, int y, Field playerField) throws BadFieldException, GameBegginsException, GameIsEndedException
 	{
-		if(!model.addMovement(x, y, playerField))
-			return false;
+		model.addMovement(x, y, playerField);
 		
 		lastMoveX=x;
 		lastMoveY=y;
-		return true;
 	}
 
 	boolean isTurnPossible(int x, int y, Field playerField) throws BadFieldException
@@ -44,6 +42,11 @@ public class GameController
 	public float calculateScore()
 	{
 		return model.calculateScore();
+	}
+	
+	public float calculateScore(Field[][] territory)
+	{
+		return model.calculateScore(territory);
 	}
 	
 	public Field[][] getPossibleTerritory()

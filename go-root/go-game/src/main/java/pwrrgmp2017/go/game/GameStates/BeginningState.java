@@ -24,7 +24,7 @@ public class BeginningState implements GameState
 	public GameState initialiseGame(GameModel model)
 	{
 		//TODO
-		return new BlackTurn();
+		return new BlackTurn(false);
 	}
 
 	@Override

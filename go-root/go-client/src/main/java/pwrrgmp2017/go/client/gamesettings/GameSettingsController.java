@@ -7,6 +7,9 @@ import java.util.Optional;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -22,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import pwrrgmp2017.go.client.ClientMain;
 import pwrrgmp2017.go.client.ServerConnection;
+import pwrrgmp2017.go.client.gameboard.GameBoardController;
 import pwrrgmp2017.go.clientserverprotocol.ExitProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationResponseProtocolMessage;
@@ -75,6 +79,7 @@ public class GameSettingsController implements Observer
 
 	private String playerName;
 	private ServerConnection serverConnection;
+	private InvitationProtocolMessage invitation;
 
 	public void initData(ServerConnection serverConnection, String playerName)
 	{
@@ -83,6 +88,7 @@ public class GameSettingsController implements Observer
 		serverConnection.addObserver(this);
 		serverConnection.startReceiving();
 		nameLabel.setText(playerName);
+		invitation = null;
 	}
 
 	@FXML
@@ -149,8 +155,8 @@ public class GameSettingsController implements Observer
 
 		String invitedPlayerName = result.get();
 
-		InvitationProtocolMessage message = new InvitationProtocolMessage(playerName, invitedPlayerName, gameInfo);
-		serverConnection.send(message.getFullMessage());
+		invitation = new InvitationProtocolMessage(playerName, invitedPlayerName, gameInfo);
+		serverConnection.send(invitation.getFullMessage());
 
 		statusLabel.setText("Waiting for response...");
 		inviteButton.setDisable(true);
@@ -239,7 +245,10 @@ public class GameSettingsController implements Observer
 						InvitationResponseProtocolMessage response = new InvitationResponseProtocolMessage(true,
 								"Player accepted.");
 						serverConnection.send(response.getFullMessage());
+
 						// Transition to game
+						moveToGameBoardScene(message.getGameInfo(), message.getFromPlayerName(),
+								message.getToPlayerName(), false);
 					}
 					else
 					{
@@ -282,17 +291,19 @@ public class GameSettingsController implements Observer
 					alert.setHeaderText("Your invitation was accepted.");
 					alert.setContentText("The game is about to start.");
 					alert.showAndWait();
+					// Transition to game
+					moveToGameBoardScene(invitation.getGameInfo(), invitation.getFromPlayerName(),
+							invitation.getToPlayerName(), true);
 				});
-				// Transition to game
 
-				// Just return to the previous state for now
-				Platform.runLater(() ->
-				{
-					inviteButton.setDisable(false);
-					cancelButton.setDisable(true);
-					statusLabel.setText("Waiting for invitation.");
-					enableSettings();
-				});
+				// // Just return to the previous state for now
+				// Platform.runLater(() ->
+				// {
+				// inviteButton.setDisable(false);
+				// cancelButton.setDisable(true);
+				// statusLabel.setText("Waiting for invitation.");
+				// enableSettings();
+				// });
 			}
 			else if (arg instanceof UnknownProtocolMessage)
 			{
@@ -326,5 +337,43 @@ public class GameSettingsController implements Observer
 		komiField.setDisable(false);
 		botCheckBox.setDisable(false);
 		defaultButton.setDisable(false);
+	}
+
+	private Parent moveToGameBoardScene(GameInfo gameInfo, String blackPlayerName, String whitePlayerName,
+			boolean isBlackPlayer)
+	{
+		FXMLLoader loader = new FXMLLoader(ClientMain.class.getResource("gameboard/GameBoard.fxml"));
+
+		Parent newRoot = null;
+		try
+		{
+			newRoot = loader.load();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.exit(0);
+		}
+
+		GameBoardController controller = loader.<GameBoardController>getController();
+		controller.initData(serverConnection, gameInfo, blackPlayerName, whitePlayerName, isBlackPlayer);
+		serverConnection.deleteObserver(this);
+
+		Stage stage = (Stage) gameSettingsPane.getScene().getWindow();
+		Scene scene = stage.getScene();
+		if (scene == null)
+		{
+			scene = new Scene(newRoot);
+			stage.setScene(scene);
+		}
+		else
+		{
+			stage.getScene().setRoot(newRoot);
+		}
+
+		stage.sizeToScene();
+		stage.setResizable(false);
+
+		return newRoot;
 	}
 }

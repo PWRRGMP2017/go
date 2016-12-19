@@ -53,9 +53,17 @@ public abstract class ProtocolMessage
 
 			return new InvitationProtocolMessage(parts[1], parts[2], gameInfo);
 		}
+		else if (parts[0].equals(ResignProtocolMessage.getCommand()))
+		{
+			return new ResignProtocolMessage(parts[1]);
+		}
 		else if (parts[0].equals(InvitationResponseProtocolMessage.getCommand()))
 		{
 			return new InvitationResponseProtocolMessage(Boolean.valueOf(parts[1]), parts[2]);
+		}
+		else if (parts[0].equals(ConfirmationProtocolMessage.getCommand()))
+		{
+			return new ConfirmationProtocolMessage();
 		}
 		else
 		{

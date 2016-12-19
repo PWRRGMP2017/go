@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" stylesheets="@GameBoard.css" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.60">
+<GridPane fx:id="mainPane" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" stylesheets="@GameBoard.css" vgap="10.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pwrrgmp2017.go.client.gameboard.GameBoardController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" percentWidth="70.0" />
       <ColumnConstraints hgrow="SOMETIMES" />
@@ -25,20 +25,20 @@
       <Label id="titleLabel" text="Game" GridPane.columnSpan="2147483647" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.rowIndex="1">
          <children>
-            <Label id="blackPlayerName" text="Player 1" />
+            <Label id="blackPlayerName" fx:id="blackPlayerLabel" text="Player 1" />
             <Label id="blackPlayerName" text="(Black)" />
             <Label id="versusLabel" text="VS" />
-            <Label id="whitePlayerName" text="Player 2" />
+            <Label id="whitePlayerName" fx:id="whitePlayerLabel" text="Player 2" />
             <Label id="whitePlayerName" text="(White)" />
          </children>
       </HBox>
       <HBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
             <Label id="currentStateLabel" text="CURRENT STATE:" />
-            <Label id="stateLabel" text="State" />
+            <Label id="stateLabel" fx:id="stateLabel" text="State" />
          </children>
       </HBox>
-      <GridPane id="gameBoardGrid" minHeight="300.0" minWidth="300.0" prefHeight="300.0" prefWidth="300.0" GridPane.rowIndex="2">
+      <GridPane id="gameBoardGrid" fx:id="boardPane" minHeight="300.0" minWidth="300.0" prefHeight="300.0" prefWidth="300.0" GridPane.rowIndex="2">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -48,14 +48,14 @@
       </GridPane>
       <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="3">
          <children>
-            <Button mnemonicParsing="false" text="Resign" />
-            <Button mnemonicParsing="false" text="Pass" />
-            <Button disable="true" mnemonicParsing="false" text="Accept" />
+            <Button fx:id="resignButton" mnemonicParsing="false" onAction="#handleResign" text="Resign" />
+            <Button fx:id="passButton" mnemonicParsing="false" text="Pass" />
+            <Button fx:id="acceptButton" disable="true" mnemonicParsing="false" text="Accept" />
          </children>
       </HBox>
       <ScrollPane fitToHeight="true" fitToWidth="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <content>
-            <TextArea editable="false" text="Turn: 0&#10;&#10;Settings:&#10;- Bot: Yes&#10;- Komi: 6.5&#10;- Rules: Japanese&#10;- Board Size: 19x19&#10;&#10;White:&#10;- Territory: 0&#10;- Taken: 0&#10;- Points: 6.5&#10;&#10;Black:&#10;- Territory: 0&#10;- Taken: 0&#10;- Points: 0" />
+            <TextArea fx:id="statsTextArea" editable="false" text="Turn: 0&#10;&#10;Settings:&#10;- Bot: Yes&#10;- Komi: 6.5&#10;- Rules: Japanese&#10;- Board Size: 19x19&#10;&#10;White:&#10;- Territory: 0&#10;- Taken: 0&#10;- Points: 6.5&#10;&#10;Black:&#10;- Territory: 0&#10;- Taken: 0&#10;- Points: 0" />
          </content>
       </ScrollPane>
    </children>

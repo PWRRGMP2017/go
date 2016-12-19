@@ -11,14 +11,15 @@ import java.util.logging.Logger;
 
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.factory.GameFactory;
+import pwrrgmp2017.go.game.factory.GameInfo;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
-import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
 import pwrrgmp2017.go.server.Exceptions.tooLateToBackPlayerException;
 import pwrrgmp2017.go.server.connection.LogPlayerHandler;
 import pwrrgmp2017.go.server.connection.NotYetPlayingPlayerHandler;
 import pwrrgmp2017.go.server.connection.PlayerConnection;
+import pwrrgmp2017.go.server.connection.PlayingPlayerHandler;
 import pwrrgmp2017.go.server.connection.RealPlayerConnection;
 
 public class GamesManager
@@ -29,18 +30,13 @@ public class GamesManager
 	private ConcurrentHashMap<String, PlayerConnection> choosingPlayers;
 	private ConcurrentHashMap<String, PlayerConnection> playingPlayers;
 	private ConcurrentSkipListMap<String, PlayerConnection> waitingPlayers;
-	private int threadCount;
 
 	public GamesManager()
 	{
 		games = new ArrayList<Game>();
 		choosingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		playingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
-		// waitingPlayers = (LinkedHashMap<String, PlayerConnection>)
-		// Collections.synchronizedMap(new LinkedHashMap<String,
-		// PlayerConnection>());
 		waitingPlayers = new ConcurrentSkipListMap<String, PlayerConnection>();
-		threadCount = 1;
 	}
 
 	public void closeAllConnections()
@@ -72,8 +68,6 @@ public class GamesManager
 		thread.start();
 	}
 
-	// synchronizacja dla uniknięcia dodawania w tym samym czasie 2 tych samych
-	// imion
 	public synchronized void addChoosingPlayer(PlayerConnection player, String name) throws SameNameException
 	{
 		for (Entry<String, PlayerConnection> p : waitingPlayers.entrySet())
@@ -92,18 +86,6 @@ public class GamesManager
 		thread.start();
 	}
 
-	public boolean inviteSecondPlayer(String invitedName, PlayerConnection inviter, String gameInfo)
-			throws BadPlayerException
-	{
-		if (!choosingPlayers.contains(inviter))
-			throw new BadPlayerException();
-		PlayerConnection invited = choosingPlayers.get(invitedName);
-		if (invited == null)
-			throw new BadPlayerException();
-		// return invited.invite(inviter.getPlayerName(), gameInfo);
-		return false;
-	}
-
 	public PlayerConnection getChoosingPlayer(String playerName) throws BadPlayerException
 	{
 		PlayerConnection playerConnection = choosingPlayers.get(playerName);
@@ -115,17 +97,17 @@ public class GamesManager
 		return playerConnection;
 	}
 
-	public void waitForGame(PlayerConnection player, String gameInfo) throws BadPlayerException
+	public void waitForGame(PlayerConnection player, GameInfo gameInfo) throws BadPlayerException
 	{
 		PlayerConnection secondPlayer;
 		choosingPlayers.remove(player.getPlayerName());
 		while (true)
 		{
-			secondPlayer = waitingPlayers.putIfAbsent(gameInfo, player);
+			secondPlayer = waitingPlayers.putIfAbsent(gameInfo.getAsString(), player);
 			if (secondPlayer != null)
 			{
 				// if the secondPlayer disappeared, try again
-				if (waitingPlayers.remove(gameInfo, secondPlayer) == false)
+				if (waitingPlayers.remove(gameInfo.getAsString(), secondPlayer) == false)
 					continue;
 				else
 				{
@@ -146,48 +128,70 @@ public class GamesManager
 			throw new tooLateToBackPlayerException();
 	}
 
-	public void createGame(PlayerConnection player, PlayerConnection opponent, String gameInfo)
-			throws BadPlayerException // Playe'rzy nie mogą byc w zadnej mapie
+	public void createGame(PlayerConnection blackPlayer, PlayerConnection whitePlayer, GameInfo gameInfo)
+			throws BadPlayerException
 	{
-		if (playingPlayers.putIfAbsent(player.getPlayerName(), player) == null)
+		// Make sure the players are in the right state
+		if (!choosingPlayers.contains(blackPlayer) || !choosingPlayers.contains(whitePlayer)
+				|| playingPlayers.contains(blackPlayer) || playingPlayers.contains(whitePlayer))
+		{
 			throw new BadPlayerException();
-		if (opponent != null)
-			if (playingPlayers.putIfAbsent(opponent.getPlayerName(), opponent) == null)
-				throw new BadPlayerException();
+		}
 
+		choosingPlayers.remove(blackPlayer.getPlayerName());
+		choosingPlayers.remove(whitePlayer.getPlayerName());
+
+		playingPlayers.put(blackPlayer.getPlayerName(), blackPlayer);
+		playingPlayers.put(whitePlayer.getPlayerName(), whitePlayer);
+
+		// Create the game
 		GameFactory director = GameFactory.getInstance();
-		// gameinfo: bot/opponent?, Japan/Chinese/...?, boardSize=?,
-		// komi(std=6,5pkt)?, czasNaRuch??,
-		GameController gameController = director.createGame(gameInfo);
-		Game game = new Game(gameController);
-		threadCount++;
+		GameController gameController = director.createGame(gameInfo.getAsString());
+		Game game = new Game(blackPlayer, whitePlayer, gameController);
 		games.add(game);
-		try
-		{
-			game.setPlayers(player, opponent);
-		}
-		catch (OverridePlayersException e)
-		{
-			e.printStackTrace(); // Nigdy sie nie wykona
-		}
+
+		// Clean up
+		whitePlayer.cancelInvitation();
+		blackPlayer.cancelInvitation();
+
+		// Set state
+		whitePlayer.getPlayerInfo().setPlayingGame(game);
+		blackPlayer.getPlayerInfo().setPlayingGame(game);
+
+		// Finally, let's start the threads for players
+		// TODO will need to be changed for bots
+		Thread whitePlayerThread = new Thread(new PlayingPlayerHandler((RealPlayerConnection) whitePlayer, this));
+		Thread blackPlayerThread = new Thread(new PlayingPlayerHandler((RealPlayerConnection) blackPlayer, this));
+		whitePlayerThread.start();
+		blackPlayerThread.start();
 	}
 
 	public void deleteGame(Game game)
 	{
-		PlayerConnection player1 = game.getPlayerConnection(1);
-		PlayerConnection player2 = game.getPlayerConnection(2);
+		if (game == null)
+		{
+			return;
+		}
+
+		PlayerConnection whitePlayer = game.getWhitePlayer();
+		PlayerConnection blackPlayer = game.getBlackPlayer();
+		games.remove(game);
+		playingPlayers.remove(whitePlayer.getPlayerName());
+		playingPlayers.remove(blackPlayer.getPlayerName());
+		whitePlayer.getPlayerInfo().setPlayingGame(null);
+		blackPlayer.getPlayerInfo().setPlayingGame(null);
 		try
 		{
-			game.addExitMessage(player1);
-			game.addExitMessage(player2);
+			// Don't need to check if they disconnected, the NotYetPlaying
+			// thread will do it for us.
+			addChoosingPlayer(whitePlayer, whitePlayer.getPlayerName());
+			addChoosingPlayer(blackPlayer, blackPlayer.getPlayerName());
 		}
-		catch (BadPlayerException e)
+		catch (SameNameException e)
 		{
+			// Should not happen
 			e.printStackTrace();
 		}
-		games.remove(game);
-		playingPlayers.remove(player1.getPlayerName());
-		playingPlayers.remove(player2.getPlayerName());
 	}
 
 	public void deletePlayer(PlayerConnection player) throws LostPlayerConnection

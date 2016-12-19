@@ -74,11 +74,17 @@ public class NotYetPlayingPlayerHandler implements Runnable
 				InvitationResponseProtocolMessage receivedMessage = (InvitationResponseProtocolMessage) genericMessage;
 				if (connection.isInvited())
 				{
-					handleInvitedResponse(receivedMessage);
+					if (handleInvitedResponse(receivedMessage))
+					{
+						return;
+					}
 				}
 				else if (connection.isInviting())
 				{
-					handleInvitingResponse(receivedMessage);
+					if (handleInvitingResponse(receivedMessage))
+					{
+						return;
+					}
 				}
 				else
 				{
@@ -95,16 +101,34 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		cleanUp();
 	}
 
-	private void handleInvitingResponse(InvitationResponseProtocolMessage receivedMessage)
+	/*
+	 * @return if the thread should exit
+	 */
+	private boolean handleInvitingResponse(InvitationResponseProtocolMessage receivedMessage)
 	{
 		if (receivedMessage.getIsAccepted())
 		{
 			// The invited player accepted the invitation
 			// Tell game manager to create a game here
+
 			// For now, let's just reset state
-			invitation = null;
-			connection.getInvitedPlayer().cancelInvitation();
-			connection.cancelInvitation();
+			// invitation = null;
+			// connection.getInvitedPlayer().cancelInvitation();
+			// connection.cancelInvitation();
+
+			try
+			{
+				gamesManager.createGame(connection, gamesManager.getChoosingPlayer(invitation.getToPlayerName()),
+						invitation.getGameInfo());
+			}
+			catch (BadPlayerException e)
+			{
+				// Should not happen
+				e.printStackTrace();
+				return false;
+			}
+
+			return true;
 		}
 		else
 		{
@@ -113,16 +137,21 @@ public class NotYetPlayingPlayerHandler implements Runnable
 			connection.getInvitedPlayer().send(receivedMessage.getFullMessage());
 			connection.getInvitedPlayer().cancelInvitation();
 			connection.cancelInvitation();
+			return false;
 		}
 	}
 
-	private void handleInvitedResponse(InvitationResponseProtocolMessage receivedMessage)
+	/*
+	 * @return if the thread should exit
+	 */
+	private boolean handleInvitedResponse(InvitationResponseProtocolMessage receivedMessage)
 	{
 		// Just send the message to the inviting player and let him handle the
 		// rest
 		connection.getInvitingPlayer().send(receivedMessage.getFullMessage());
 
-		// Wait for game here
+		// End the thread and wait for the game to start
+		return true;
 	}
 
 	private void cleanUp()

@@ -1,105 +1,38 @@
 package pwrrgmp2017.go.server;
 
 import pwrrgmp2017.go.game.GameController;
-import pwrrgmp2017.go.game.GameStates.GameState;
-import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
-import pwrrgmp2017.go.server.Exceptions.OverridePlayersException;
 import pwrrgmp2017.go.server.connection.PlayerConnection;
 
 public class Game extends Thread
 {
-	private GameState state;
 	private GameController controller;
-	private PlayerConnection player1;
-	private PlayerConnection player2;
-	private boolean[][] possibleMovements;
+	private PlayerConnection blackPlayer;
+	private PlayerConnection whitePlayer;
 
-	Game(GameController controller)
+	Game(PlayerConnection blackPlayer, PlayerConnection whitePlayer, GameController controller)
 	{
 		this.controller = controller;
-		start();
+		this.blackPlayer = blackPlayer;
+		this.whitePlayer = whitePlayer;
 	}
 
-	// Gdzieś trzeba użyc synchronizacji w przypadku gdy oba playerzy w tym
-	// samym momencie będą chcieli dac wiadomośc/zakonczyc program
-	@Override
-	public void run()
+	public GameController getController()
 	{
-		while (true)
-		{
-			try
-			{
-				wait(); // czeka na notify() innego wątku i współpracuje z
-						// GameController
-				// TODO
-			}
-			catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		return controller;
 	}
 
-	public boolean isTurnInGoodPlace(int lenght, int high)
+	public PlayerConnection getBlackPlayer()
 	{
-		return possibleMovements[high][lenght];
+		return blackPlayer;
 	}
 
-	public void addTurnMessage(PlayerConnection player, String msg) throws BadPlayerException
+	public PlayerConnection getWhitePlayer()
 	{
-		boolean isWhite;
-		if (player == this.player1)
-		{
-			isWhite = true;
-		}
-		else if (player == this.player2)
-		{
-			isWhite = false;
-		}
-		else
-			throw new BadPlayerException();
-		// Zastosowanie wzorca State ze sprawdzeniem możliwości wykonania ruchu
+		return whitePlayer;
 	}
 
-	public void addExitMessage(PlayerConnection player) throws BadPlayerException
+	public PlayerConnection getOpponent(PlayerConnection player)
 	{
-		boolean isWhite;
-		if (player == this.player1)
-		{
-			isWhite = true;
-		}
-		else if (player == this.player2)
-		{
-			isWhite = false;
-		}
-		else
-			throw new BadPlayerException();
-		// Zastosowanie wzorca State
-		// Wiadomośc do GamesManager?
-	}
-	// Co z ponowieniem gry? Ilośc partii z konkretna osoba? Raczej w
-	// GameManager nie? Wtedy przyda się lista gier pewnie :D
-
-	public void setPlayers(PlayerConnection player, PlayerConnection opponent) throws OverridePlayersException
-	{
-		if (this.player1 == null || this.player2 == null)
-			throw new OverridePlayersException();
-
-		this.player1 = player;
-		this.player2 = opponent;
-	}
-
-	public PlayerConnection getPlayerConnection(int player)
-	{
-		switch (player)
-		{
-		case 1:
-			return player1;
-		case 2:
-			return player2;
-		default:
-			return null;
-		}
+		return player == blackPlayer ? whitePlayer : blackPlayer;
 	}
 }

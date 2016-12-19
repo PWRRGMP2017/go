@@ -15,9 +15,14 @@ public class ProtocolMessageTest
 	public void testProtocolCommandsNotSame()
 	{
 		HashSet<String> hashSet = new HashSet<>();
+		assertTrue(hashSet.add(UnknownProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(LoginProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(LoginResponseProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(ExitProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(InvitationProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(InvitationResponseProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(ResignProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(ConfirmationProtocolMessage.getCommand()));
 	}
 
 	@Test
@@ -91,6 +96,26 @@ public class ProtocolMessageTest
 		InvitationResponseProtocolMessage receivedMessage = (InvitationResponseProtocolMessage) message;
 		assertEquals(false, receivedMessage.getIsAccepted());
 		assertEquals(reason, receivedMessage.getReason());
+	}
+
+	@Test
+	public void testResignProtocolMessage()
+	{
+		String reason = "Player is already invited.";
+		ResignProtocolMessage sentMessage = new ResignProtocolMessage(reason);
+		assertEquals(reason, sentMessage.getReason());
+
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		ResignProtocolMessage receivedMessage = (ResignProtocolMessage) message;
+		assertEquals(reason, receivedMessage.getReason());
+	}
+
+	@Test
+	public void testConfirmationProtocolMessage()
+	{
+		ConfirmationProtocolMessage sentMessage = new ConfirmationProtocolMessage();
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		assertTrue(message instanceof ConfirmationProtocolMessage);
 	}
 
 }

@@ -132,4 +132,14 @@ public abstract class GameModel
 		return komi;
 	}
 	
+	public int getBlackCaptives()
+	{
+		return board.getBlackCaptives();
+	}
+	
+	public int getWhiteCaptives()
+	{
+		return board.getWhiteCaptives();
+	}
+	
 }

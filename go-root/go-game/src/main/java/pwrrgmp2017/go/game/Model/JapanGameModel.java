@@ -40,13 +40,16 @@ public class JapanGameModel extends GameModel
 					break;
 				}
 			}
+		points-=super.getKomi();
+		points+=super.getBlackCaptives();
+		points-=super.getWhiteCaptives();
 		return points;
 	}
 	
 	@Override
 	public float calculateScore(Field[][] territory)
 	{
-		float points=0;
+		float points=0; //ujemne dla białego, dodatnie dla czarnego
 		for(int i=1; i<territory.length-1; i++)
 			for(int j=1; j<territory.length-1; j++)
 			{
@@ -64,6 +67,9 @@ public class JapanGameModel extends GameModel
 					break;
 				}
 			}
+		points-=super.getKomi();
+		points+=super.getBlackCaptives();
+		points-=super.getWhiteCaptives();
 		return points;
 	}
 

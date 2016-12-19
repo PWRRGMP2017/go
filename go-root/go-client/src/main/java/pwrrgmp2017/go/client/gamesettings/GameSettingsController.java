@@ -81,6 +81,10 @@ public class GameSettingsController implements Observer
 	private ServerConnection serverConnection;
 	private InvitationProtocolMessage invitation;
 
+	private volatile boolean areWeInvited;
+	private volatile boolean didWeAcceptInvitation;
+	private volatile boolean waitingForResponse;
+
 	public void initData(ServerConnection serverConnection, String playerName)
 	{
 		this.playerName = playerName;
@@ -89,6 +93,9 @@ public class GameSettingsController implements Observer
 		serverConnection.startReceiving();
 		nameLabel.setText(playerName);
 		invitation = null;
+		areWeInvited = false;
+		didWeAcceptInvitation = false;
+		waitingForResponse = false;
 	}
 
 	@FXML
@@ -118,6 +125,10 @@ public class GameSettingsController implements Observer
 	@FXML
 	protected void handleCancel()
 	{
+		InvitationResponseProtocolMessage response = new InvitationResponseProtocolMessage(false,
+				"Inviting player cancelled the invitation.");
+		serverConnection.send(response.getFullMessage());
+
 		statusLabel.setText("Waiting for invitation.");
 		inviteButton.setDisable(false);
 		cancelButton.setDisable(true);
@@ -227,83 +238,131 @@ public class GameSettingsController implements Observer
 			else if (arg instanceof InvitationProtocolMessage)
 			{
 				// We were invited
-				InvitationProtocolMessage message = (InvitationProtocolMessage) arg;
+				invitation = (InvitationProtocolMessage) arg;
+				areWeInvited = true;
+				waitingForResponse = true;
 				Platform.runLater(() ->
 				{
 					Alert alert = new Alert(AlertType.CONFIRMATION);
 					alert.setTitle("Invitation");
 					alert.setHeaderText("You were invited.");
-					alert.setContentText("Player " + message.getFromPlayerName()
+					alert.setContentText("Player " + invitation.getFromPlayerName()
 							+ " wants to play with you with the following settings:\n" + "Board size: "
-							+ message.getGameInfo().getBoardSize() + "\nRules: " + message.getGameInfo().getRulesType()
-							+ "\nKomi: " + message.getGameInfo().getKomiValue() + "\n"
-							+ "Do you accept the invitation?");
+							+ invitation.getGameInfo().getBoardSize() + "\nRules: "
+							+ invitation.getGameInfo().getRulesType() + "\nKomi: "
+							+ invitation.getGameInfo().getKomiValue() + "\n" + "Do you accept the invitation?");
 
 					Optional<ButtonType> result = alert.showAndWait();
 					if (result.get() == ButtonType.OK)
 					{
+						didWeAcceptInvitation = true;
 						InvitationResponseProtocolMessage response = new InvitationResponseProtocolMessage(true,
 								"Player accepted.");
 						serverConnection.send(response.getFullMessage());
-
-						// Transition to game
-						moveToGameBoardScene(message.getGameInfo(), message.getFromPlayerName(),
-								message.getToPlayerName(), false);
 					}
 					else
 					{
 						InvitationResponseProtocolMessage response = new InvitationResponseProtocolMessage(false,
 								"Player refused.");
 						serverConnection.send(response.getFullMessage());
+						invitation = null;
+						didWeAcceptInvitation = false;
+						areWeInvited = false;
 					}
+
+					waitingForResponse = false;
+					// We set the flag that we are invited, we wait for the
+					// response from the server if the inviting player is still
+					// waiting for response
 				});
 			}
 			else if (arg instanceof InvitationResponseProtocolMessage)
 			{
-				// We received a response for our invitation
-				InvitationResponseProtocolMessage message = (InvitationResponseProtocolMessage) arg;
-
-				if (!message.getIsAccepted())
+				if (!areWeInvited)
 				{
-					// We were refused invitation :(
+					// We received a response for our invitation
+					InvitationResponseProtocolMessage message = (InvitationResponseProtocolMessage) arg;
+
+					if (!message.getIsAccepted())
+					{
+						// We were refused invitation :(
+						Platform.runLater(() ->
+						{
+							Alert alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Invitation");
+							alert.setHeaderText("Your invitation was refused.");
+							alert.setContentText(message.getReason());
+							alert.showAndWait();
+							inviteButton.setDisable(false);
+							cancelButton.setDisable(true);
+							statusLabel.setText("Waiting for invitation.");
+							enableSettings();
+						});
+						return;
+					}
+
+					// Send the message to server in order to confirm we are
+					// playing
+					serverConnection.send(message.getFullMessage());
+
 					Platform.runLater(() ->
 					{
 						Alert alert = new Alert(AlertType.INFORMATION);
 						alert.setTitle("Invitation");
-						alert.setHeaderText("Your invitation was refused.");
-						alert.setContentText(message.getReason());
+						alert.setHeaderText("Your invitation was accepted.");
+						alert.setContentText("The game is about to start.");
 						alert.showAndWait();
-						inviteButton.setDisable(false);
-						cancelButton.setDisable(true);
-						statusLabel.setText("Waiting for invitation.");
-						enableSettings();
+						// Transition to game
+						moveToGameBoardScene(invitation.getGameInfo(), invitation.getFromPlayerName(),
+								invitation.getToPlayerName(), true);
 					});
-					return;
 				}
-
-				// Send the message to server in order to confirm we are playing
-				serverConnection.send(message.getFullMessage());
-
-				Platform.runLater(() ->
+				else
 				{
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Invitation");
-					alert.setHeaderText("Your invitation was accepted.");
-					alert.setContentText("The game is about to start.");
-					alert.showAndWait();
-					// Transition to game
-					moveToGameBoardScene(invitation.getGameInfo(), invitation.getFromPlayerName(),
-							invitation.getToPlayerName(), true);
-				});
+					// Wait until the player decides
+					while (waitingForResponse)
+					{
+						try
+						{
+							Thread.sleep(1);
+						}
+						catch (InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 
-				// // Just return to the previous state for now
-				// Platform.runLater(() ->
-				// {
-				// inviteButton.setDisable(false);
-				// cancelButton.setDisable(true);
-				// statusLabel.setText("Waiting for invitation.");
-				// enableSettings();
-				// });
+					// We received a response for their invitation
+					if (didWeAcceptInvitation)
+					{
+						// We only care if we accepted the invitation
+						InvitationResponseProtocolMessage theirResponse = (InvitationResponseProtocolMessage) arg;
+						if (theirResponse.getIsAccepted())
+						{
+							// Transition to game
+							Platform.runLater(() ->
+							{
+								moveToGameBoardScene(invitation.getGameInfo(), invitation.getFromPlayerName(),
+										invitation.getToPlayerName(), false);
+							});
+						}
+						else
+						{
+							Platform.runLater(() ->
+							{
+								Alert alert = new Alert(AlertType.ERROR);
+								alert.setTitle("Invitation");
+								alert.setHeaderText("Invitation refused.");
+								alert.setContentText(theirResponse.getReason());
+								alert.showAndWait();
+							});
+							invitation = null;
+							areWeInvited = false;
+							didWeAcceptInvitation = false;
+						}
+					}
+				}
 			}
 			else if (arg instanceof UnknownProtocolMessage)
 			{

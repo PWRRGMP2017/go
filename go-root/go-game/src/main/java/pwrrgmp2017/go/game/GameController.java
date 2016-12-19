@@ -74,9 +74,9 @@ public class GameController
 		model.initialiseGame();
 	}
 	
-	public void pass() throws GameBegginsException, GameIsEndedException
+	public void pass(Field colour) throws GameBegginsException, GameIsEndedException, BadFieldException
 	{
-		model.pass();
+		model.pass(colour);
 	}
 	
 	public void resign() throws GameIsEndedException

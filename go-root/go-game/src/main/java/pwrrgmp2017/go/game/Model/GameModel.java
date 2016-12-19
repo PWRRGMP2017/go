@@ -29,9 +29,9 @@ public abstract class GameModel
 		this.state=state.initialiseGame(this);
 	}
 	
-	public void pass() throws GameBegginsException, GameIsEndedException
+	public void pass(Field colour) throws GameBegginsException, GameIsEndedException, BadFieldException
 	{
-		this.state=state.pass(this);
+		this.state=state.pass(this, colour);
 	}
 	
 	public void resign() throws GameIsEndedException

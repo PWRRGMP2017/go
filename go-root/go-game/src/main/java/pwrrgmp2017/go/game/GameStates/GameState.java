@@ -13,7 +13,7 @@ public interface GameState
 	
 	GameState makeMovement(GameModel model, int x, int y, Field playerField, GameBoard board) throws BadFieldException, GameBegginsException, GameIsEndedException;
 	
-	GameState pass(GameModel model) throws GameBegginsException, GameIsEndedException;
+	GameState pass(GameModel model, Field colour) throws GameBegginsException, GameIsEndedException, BadFieldException;
 	
 	GameState initialiseGame(GameModel model) throws GameStillInProgressException;
 	

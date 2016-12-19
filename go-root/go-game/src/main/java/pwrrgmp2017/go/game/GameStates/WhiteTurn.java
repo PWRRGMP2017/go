@@ -27,12 +27,16 @@ public class WhiteTurn extends PlayerTurn
 	}
 
 	@Override
-	public GameState pass(GameModel model)
+	public GameState pass(GameModel model, Field colour) throws BadFieldException
 	{
-		if(super.pass==true)
-			return new EndState();
-		
-		return new BlackTurn(true);
+		if(colour==Field.WHITESTONE)
+		{
+			if(super.pass==true)
+				return new EndState();
+			else
+				return new BlackTurn(true);
+		}
+		throw new BadFieldException();
 	}
 
 

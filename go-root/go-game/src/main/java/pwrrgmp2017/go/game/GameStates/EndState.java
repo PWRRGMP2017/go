@@ -15,7 +15,7 @@ public class EndState implements GameState
 	}
 
 	@Override
-	public GameState pass(GameModel model) throws GameIsEndedException
+	public GameState pass(GameModel model, Field colour) throws GameIsEndedException
 	{
 		throw new GameIsEndedException();
 	}

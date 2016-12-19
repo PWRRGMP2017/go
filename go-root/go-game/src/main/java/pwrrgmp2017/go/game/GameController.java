@@ -2,6 +2,9 @@ package pwrrgmp2017.go.game;
 
 import java.awt.Point;
 
+import pwrrgmp2017.go.game.Exception.GameBegginsException;
+import pwrrgmp2017.go.game.Exception.GameIsEndedException;
+import pwrrgmp2017.go.game.Exception.GameStillInProgressException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 import pwrrgmp2017.go.game.GameStates.GameStateEnum;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
@@ -63,17 +66,17 @@ public class GameController
 		return model.getKomi();
 	}
 	
-	public void initialiseGame()
+	public void initialiseGame() throws GameStillInProgressException
 	{
 		model.initialiseGame();
 	}
 	
-	public void pass()
+	public void pass() throws GameBegginsException, GameIsEndedException
 	{
 		model.pass();
 	}
 	
-	public void resign()
+	public void resign() throws GameIsEndedException
 	{
 		model.resign();
 	}

@@ -24,7 +24,6 @@ import javafx.stage.Stage;
 import pwrrgmp2017.go.client.ClientMain;
 import pwrrgmp2017.go.client.ServerConnection;
 import pwrrgmp2017.go.client.gamesettings.GameSettingsController;
-import pwrrgmp2017.go.clientserverprotocol.ConfirmationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.UnknownProtocolMessage;
 import pwrrgmp2017.go.game.factory.GameInfo;
@@ -248,7 +247,6 @@ public class GameBoardController implements Observer
 					alert.setContentText(((ResignProtocolMessage) arg).getReason());
 					alert.showAndWait();
 					// Show results
-					serverConnection.send(new ConfirmationProtocolMessage().getFullMessage());
 					moveToGameSettingsScene();
 				});
 			}

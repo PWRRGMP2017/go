@@ -19,7 +19,6 @@ import pwrrgmp2017.go.server.Exceptions.tooLateToBackPlayerException;
 import pwrrgmp2017.go.server.connection.LogPlayerHandler;
 import pwrrgmp2017.go.server.connection.NotYetPlayingPlayerHandler;
 import pwrrgmp2017.go.server.connection.PlayerConnection;
-import pwrrgmp2017.go.server.connection.PlayingPlayerHandler;
 import pwrrgmp2017.go.server.connection.RealPlayerConnection;
 
 public class GamesManager
@@ -156,7 +155,7 @@ public class GamesManager
 		// Create the game
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(gameInfo.getAsString());
-		Game game = new Game(blackPlayer, whitePlayer, gameController);
+		Game game = new Game(blackPlayer, whitePlayer, gameController, this);
 		games.add(game);
 
 		// Clean up
@@ -167,12 +166,8 @@ public class GamesManager
 		whitePlayer.getPlayerInfo().setPlayingGame(game);
 		blackPlayer.getPlayerInfo().setPlayingGame(game);
 
-		// Finally, let's start the threads for players
-		// TODO will need to be changed for bots
-		Thread whitePlayerThread = new Thread(new PlayingPlayerHandler((RealPlayerConnection) whitePlayer, this));
-		Thread blackPlayerThread = new Thread(new PlayingPlayerHandler((RealPlayerConnection) blackPlayer, this));
-		whitePlayerThread.start();
-		blackPlayerThread.start();
+		// Finally, let's start the game thread
+		game.start();
 	}
 
 	public void deleteGame(Game game)

@@ -159,7 +159,7 @@
 }
 
 #white-empty:hover {
-	-fx-background-image: url(../resources/blackstone.png);
+	-fx-background-image: url(../resources/whitestone.png);
 	-fx-opacity: 50%;
 }
 

@@ -1,3 +1,4 @@
+/* Panel */
 #titleLabel {
 	-fx-font-weight: bold;
 }
@@ -29,4 +30,237 @@
 
 #gameBoardGrid {
 	-fx-background-color: rgb(163,68,5);	
+}
+
+/* Crosses */
+#cross-center {
+	-fx-background-image: url(../resources/intersection-bg-center.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#cross-top-left {
+	-fx-background-image: url(../resources/intersection-bg-top-left.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#cross-top-center {
+	-fx-background-image: url(../resources/intersection-bg-top-center.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#cross-top-right {
+	-fx-background-image: url(../resources/intersection-bg-top-right.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#cross-right-center {
+	-fx-background-image: url(../resources/intersection-bg-right-center.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#cross-bottom-right {
+	-fx-background-image: url(../resources/intersection-bg-bottom-right.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#cross-bottom-center {
+	-fx-background-image: url(../resources/intersection-bg-bottom-center.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#cross-bottom-left {
+	-fx-background-image: url(../resources/intersection-bg-bottom-left.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#cross-left-center {
+	-fx-background-image: url(../resources/intersection-bg-left-center.png);
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+/* Empty field */
+#black-empty {
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#black-empty:hover {
+	-fx-background-image: url(../resources/blackstone.png);
+	-fx-opacity: 50%;
+}
+
+#white-empty {
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#white-empty:hover {
+	-fx-background-image: url(../resources/blackstone.png);
+	-fx-opacity: 50%;
+}
+
+/* Stone field */
+#black-stone {
+	-fx-background-image: url(../resources/blackstone.png);
+	-fx-opacity: 100%;
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#black-stone:hover {
+	-fx-background-image: url(../resources/blackstone-dead.png);
+	-fx-opacity: 100%;
+}
+
+#white-stone {
+	-fx-background-image: url(../resources/whitestone.png);
+	-fx-opacity: 100%;
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#white-stone:hover {
+	-fx-background-image: url(../resources/whitestone-dead.png);
+	-fx-opacity: 100%;
+}
+
+/* Territory */
+#black-territory {
+	-fx-background-image: url(../resources/black-territory.png);
+	-fx-opacity: 100%;
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#black-territory:hover {
+	-fx-background-image: url(../resources/black-territory-hover.png);
+}
+
+#black-stone-dead {
+	-fx-background-image: url(../resources/blackstone-dead.png);
+	-fx-opacity: 100%;
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#black-stone-dead:hover {
+	-fx-background-image: url(../resources/blackstone.png);
+	-fx-opacity: 100%;
+}
+
+#white-territory {
+	-fx-background-image: url(../resources/white-territory.png);
+	-fx-opacity: 100%;
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#white-territory:hover {
+	-fx-background-image: url(../resources/white-territory-hover.png);
+}
+
+#white-stone-dead {
+	-fx-background-image: url(../resources/whitestone-dead.png);
+	-fx-opacity: 100%;
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: 100% 100%;
+	-fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#white-stone-dead:hover {
+	-fx-background-image: url(../resources/whitestone.png);
+	-fx-opacity: 100%;
 }

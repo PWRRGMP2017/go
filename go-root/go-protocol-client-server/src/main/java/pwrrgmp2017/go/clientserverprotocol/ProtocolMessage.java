@@ -69,6 +69,22 @@ public abstract class ProtocolMessage
 		{
 			return new MoveProtocolMessage(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
 		}
+		else if (parts[0].equals(ChangeTerritoryProtocolMessage.getCommand()))
+		{
+			return new ChangeTerritoryProtocolMessage(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+		}
+		else if (parts[0].equals(AcceptTerritoryProtocolMessage.getCommand()))
+		{
+			return new AcceptTerritoryProtocolMessage();
+		}
+		else if (parts[0].equals(PassProtocolMessage.getCommand()))
+		{
+			return new PassProtocolMessage();
+		}
+		else if (parts[0].equals(ResumeGameProtocolMessage.getCommand()))
+		{
+			return new ResumeGameProtocolMessage();
+		}
 		else
 		{
 			return new UnknownProtocolMessage(message);

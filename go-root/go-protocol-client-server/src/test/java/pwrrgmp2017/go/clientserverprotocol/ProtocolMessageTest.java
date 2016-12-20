@@ -24,6 +24,10 @@ public class ProtocolMessageTest
 		assertTrue(hashSet.add(ResignProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(ConfirmationProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(MoveProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(AcceptTerritoryProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(ResumeGameProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(PassProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(ChangeTerritoryProtocolMessage.getCommand()));
 	}
 
 	@Test
@@ -132,6 +136,45 @@ public class ProtocolMessageTest
 		MoveProtocolMessage receivedMessage = (MoveProtocolMessage) message;
 		assertEquals(x, receivedMessage.getX());
 		assertEquals(y, receivedMessage.getY());
+	}
+	
+	@Test
+	public void testChangeTerritoryProtocolMessage()
+	{
+		int x = 20;
+		int y = 15;
+		ChangeTerritoryProtocolMessage sentMessage = new ChangeTerritoryProtocolMessage(x, y);
+		assertEquals(x, sentMessage.getX());
+		assertEquals(y, sentMessage.getY());
+
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		ChangeTerritoryProtocolMessage receivedMessage = (ChangeTerritoryProtocolMessage) message;
+		assertEquals(x, receivedMessage.getX());
+		assertEquals(y, receivedMessage.getY());
+	}
+	
+	@Test
+	public void testAcceptTerritoryProtocolMessage()
+	{
+		AcceptTerritoryProtocolMessage sentMessage = new AcceptTerritoryProtocolMessage();
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		assertTrue(message instanceof AcceptTerritoryProtocolMessage);
+	}
+	
+	@Test
+	public void testResumeGameProtocolMessage()
+	{
+		ResumeGameProtocolMessage sentMessage = new ResumeGameProtocolMessage();
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		assertTrue(message instanceof ResumeGameProtocolMessage);
+	}
+	
+	@Test
+	public void testPassProtocolMessage()
+	{
+		PassProtocolMessage sentMessage = new PassProtocolMessage();
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		assertTrue(message instanceof PassProtocolMessage);
 	}
 
 }

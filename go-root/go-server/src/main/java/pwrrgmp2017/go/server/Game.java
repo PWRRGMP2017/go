@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import pwrrgmp2017.go.clientserverprotocol.ExitProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
+import pwrrgmp2017.go.game.Exception.GameStillInProgressException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
@@ -35,6 +37,16 @@ public class Game extends Thread
 		this.gamesManager = gamesManager;
 
 		this.currentPlayer = blackPlayer;
+
+		try
+		{
+			controller.initialiseGame();
+		}
+		catch (GameStillInProgressException e)
+		{
+			// Should not happen
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -80,7 +92,33 @@ public class Game extends Thread
 				gamesManager.deleteGame(this);
 				return;
 			}
-			// move, pass, resign etc.
+			else if (genericMessage instanceof MoveProtocolMessage)
+			{
+				LOGGER.info("Player " + currentPlayer.getPlayerName() + " made a move.");
+
+				// Let's make a move
+				MoveProtocolMessage movement = (MoveProtocolMessage) genericMessage;
+				try
+				{
+					addTurnMessage(currentPlayer, movement.getX(), movement.getY());
+				}
+				catch (BadPlayerException | GameIsEndedException | GameBegginsException e)
+				{
+					e.printStackTrace();
+					continue;
+				}
+				catch (BadFieldException e)
+				{
+					LOGGER.info("Player " + currentPlayer.getPlayerName() + " made move for the opponent.");
+					continue;
+				}
+
+				// Send the movement to the opponent
+				getOpponent(currentPlayer).send(movement.getFullMessage());
+
+				// Now it's their turn
+				currentPlayer = getOpponent(currentPlayer);
+			}
 			else
 			{
 				LOGGER.warning("Got wrong message from client: " + genericMessage.getFullMessage());

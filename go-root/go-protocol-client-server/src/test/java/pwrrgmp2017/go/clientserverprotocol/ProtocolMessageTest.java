@@ -23,6 +23,7 @@ public class ProtocolMessageTest
 		assertTrue(hashSet.add(InvitationResponseProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(ResignProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(ConfirmationProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(MoveProtocolMessage.getCommand()));
 	}
 
 	@Test
@@ -116,6 +117,21 @@ public class ProtocolMessageTest
 		ConfirmationProtocolMessage sentMessage = new ConfirmationProtocolMessage();
 		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
 		assertTrue(message instanceof ConfirmationProtocolMessage);
+	}
+
+	@Test
+	public void testMoveProtocolMessage()
+	{
+		int x = 20;
+		int y = 15;
+		MoveProtocolMessage sentMessage = new MoveProtocolMessage(x, y);
+		assertEquals(x, sentMessage.getX());
+		assertEquals(y, sentMessage.getY());
+
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		MoveProtocolMessage receivedMessage = (MoveProtocolMessage) message;
+		assertEquals(x, receivedMessage.getX());
+		assertEquals(y, receivedMessage.getY());
 	}
 
 }

@@ -3,6 +3,7 @@ package pwrrgmp2017.go.client.gameboard;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -24,12 +25,23 @@ import javafx.stage.Stage;
 import pwrrgmp2017.go.client.ClientMain;
 import pwrrgmp2017.go.client.ServerConnection;
 import pwrrgmp2017.go.client.gamesettings.GameSettingsController;
+import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.UnknownProtocolMessage;
+import pwrrgmp2017.go.game.GameController;
+import pwrrgmp2017.go.game.Exception.GameBegginsException;
+import pwrrgmp2017.go.game.Exception.GameIsEndedException;
+import pwrrgmp2017.go.game.Exception.GameStillInProgressException;
+import pwrrgmp2017.go.game.Exceptions.BadFieldException;
+import pwrrgmp2017.go.game.GameStates.GameStateEnum;
+import pwrrgmp2017.go.game.Model.GameBoard;
+import pwrrgmp2017.go.game.Model.GameBoard.Field;
+import pwrrgmp2017.go.game.factory.GameFactory;
 import pwrrgmp2017.go.game.factory.GameInfo;
 
 public class GameBoardController implements Observer
 {
+	protected static final Logger LOGGER = Logger.getLogger(GameBoardController.class.getName());
 
 	@FXML
 	private Pane mainPane;
@@ -61,9 +73,10 @@ public class GameBoardController implements Observer
 	private GameInfo gameInfo;
 	private ServerConnection serverConnection;
 	private String thisPlayerName;
-	private boolean isThisPlayerBlack;
+	private GameBoard.Field playerColor;
 	private String thisIdPrefix;
 	private String opponentIdPrefix;
+	private GameController gameController;
 
 	private Button[][] boardPaneButtons;
 
@@ -73,12 +86,7 @@ public class GameBoardController implements Observer
 		this.serverConnection = serverConnection;
 		serverConnection.addObserver(this);
 		this.gameInfo = gameInfo;
-
-		// TODO create GameController here
-
-		// TODO generate board pane here
-
-		this.isThisPlayerBlack = isThisPlayerBlack;
+		playerColor = isThisPlayerBlack ? Field.BLACKSTONE : Field.WHITESTONE;
 		thisIdPrefix = isThisPlayerBlack ? "black-" : "white-";
 		opponentIdPrefix = !isThisPlayerBlack ? "black-" : "white-";
 		thisPlayerName = isThisPlayerBlack ? blackPlayerName : whitePlayerName;
@@ -88,6 +96,21 @@ public class GameBoardController implements Observer
 		acceptButton.setDisable(true);
 
 		generateBoardPane();
+
+		gameController = GameFactory.getInstance().createGame(gameInfo.getAsString());
+		try
+		{
+			gameController.initialiseGame();
+		}
+		catch (GameStillInProgressException e)
+		{
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		updateBoardPane();
+		passButton.setDisable(false);
+		stateLabel.setText(gameController.getState().toString());
 	}
 
 	private void generateBoardPane()
@@ -179,10 +202,6 @@ public class GameBoardController implements Observer
 				boardPane.add(button, column, row);
 			}
 		}
-
-		// Just for test
-		boardPaneButtons[0][0].setId(getThisStyleId("territory"));
-		boardPaneButtons[1][0].setId(getThisStyleId("stone-dead"));
 	}
 
 	private String getThisStyleId(String postfix)
@@ -194,13 +213,134 @@ public class GameBoardController implements Observer
 	{
 		return opponentIdPrefix + postfix;
 	}
+	
+	private String getStyleId(Field colour, String postfix)
+	{
+		if (colour == this.playerColor)
+		{
+			return getThisStyleId(postfix);
+		}
+		else
+		{
+			return getOpponentStyleId(postfix);
+		}
+	}
+	
+	private Field getOpponentColor()
+	{
+		return playerColor == Field.BLACKSTONE ? Field.WHITESTONE : Field.BLACKSTONE;
+	}
 
 	protected void handleBoardClick(ActionEvent event)
 	{
+		// Assuming that wrong buttons cannot be pressed
 		Button pressedButton = (Button) event.getSource();
-		pressedButton.setId(getThisStyleId("stone"));
-		pressedButton.setDisable(true);
-		// TODO make proper changes according to the gamecontroller
+		
+		int[] position = getPositionFromButton(pressedButton);
+		
+		position[0] += 1;
+		position[1] += 1;
+		
+		// Make movement on our end
+		try
+		{
+			gameController.addMovement(position[0], position[1], playerColor);
+		}
+		catch (BadFieldException | GameBegginsException | GameIsEndedException e)
+		{
+			// Should not happen
+			e.printStackTrace();
+		}
+		
+		// Send our movement to the server
+		MoveProtocolMessage message = new MoveProtocolMessage(position[0], position[1]);
+		serverConnection.send(message.getFullMessage());
+		
+		updateBoardPane();
+		
+		passButton.setDisable(true);
+		stateLabel.setText(gameController.getState().toString());
+	}
+	
+	private boolean isOurTurn()
+	{
+		if (playerColor == Field.BLACKSTONE)
+		{
+			return gameController.getState() == GameStateEnum.BLACKMOVE;
+		}
+		else
+		{
+			return gameController.getState() == GameStateEnum.WHITEMOVE;
+		}
+	}
+	
+	private void updateBoardPane()
+	{
+		Field[][] board = gameController.getBoardCopy();
+		boolean isOurTurn = isOurTurn();
+		boolean[][] possibleMovements;
+		try
+		{
+			possibleMovements = gameController.getPossibleMovements(playerColor);
+		}
+		catch (BadFieldException e)
+		{
+			// Should not happen
+			e.printStackTrace();
+			System.exit(1);
+			return; // Because Eclipse shows an error
+		}
+		
+		for (int i = 0; i < boardPaneButtons.length; ++i)
+		{
+			for (int j = 0; j < boardPaneButtons[i].length; ++j)
+			{
+				Button button = boardPaneButtons[i][j];
+				Field field = board[i+1][j+1];
+				boolean isMovementPossible = possibleMovements[i][j];
+				
+				switch (field)
+				{
+				case EMPTY:
+					button.setId(getThisStyleId("empty"));
+					break;
+					
+				case BLACKSTONE:
+					button.setId(getStyleId(Field.BLACKSTONE, "stone"));
+					break;
+				
+				case WHITESTONE:
+					button.setId(getStyleId(Field.WHITESTONE, "stone"));
+					break;
+					
+				default:
+					LOGGER.warning("Unexpected field: " + field);
+				}
+				
+				if (isOurTurn)
+					button.setDisable(!isMovementPossible);
+				else
+					button.setDisable(true);
+			}
+		}
+	}
+
+	private int[] getPositionFromButton(Button button)
+	{
+		int position[] = { -1, -1 };
+		for (int i = 0; i < boardPaneButtons.length; ++i)
+		{
+			for (int j = 0; j < boardPaneButtons[i].length; ++j)
+			{
+				if (boardPaneButtons[i][j] == button)
+				{
+					position[0] = i;
+					position[1] = j;
+					return position;
+				}
+			}
+		}
+		return position;
 	}
 
 	@FXML
@@ -213,7 +353,7 @@ public class GameBoardController implements Observer
 	protected void handleResign()
 	{
 		// Send the resign message
-		ResignProtocolMessage message = new ResignProtocolMessage("Player resigned.");
+		ResignProtocolMessage message = new ResignProtocolMessage("Your opponent has resigned.");
 		serverConnection.send(message.getFullMessage());
 
 		// Move to GameSettings
@@ -248,6 +388,31 @@ public class GameBoardController implements Observer
 					alert.showAndWait();
 					// Show results
 					moveToGameSettingsScene();
+				});
+			}
+			else if (arg instanceof MoveProtocolMessage)
+			{
+				// The second player made a move
+				MoveProtocolMessage movement = (MoveProtocolMessage) arg;
+				
+				// Make movement on our end
+				try
+				{
+					gameController.addMovement(movement.getX(), movement.getY(), getOpponentColor());
+				}
+				catch (BadFieldException | GameBegginsException | GameIsEndedException e)
+				{
+					// Should not happen
+					e.printStackTrace();
+				}
+				
+				updateBoardPane();
+				
+				passButton.setDisable(false);
+				
+				Platform.runLater(()->
+				{
+					stateLabel.setText(gameController.getState().toString());
 				});
 			}
 			else if (arg instanceof UnknownProtocolMessage)

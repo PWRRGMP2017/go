@@ -61,11 +61,11 @@ public abstract class GameModel
 		}
 		else if (colour.equals(Field.WHITESTONE))
 		{
-			if(possibleMovementsBlack==null)
+			if(possibleMovementsWhite==null)
 			{
 				try
 				{
-					possibleMovementsBlack=board.getPossibleMovements(Field.WHITESTONE);
+					possibleMovementsWhite=board.getPossibleMovements(Field.WHITESTONE);
 				}
 				catch (BadFieldException e) {} //nigdy się nie wykona
 			}

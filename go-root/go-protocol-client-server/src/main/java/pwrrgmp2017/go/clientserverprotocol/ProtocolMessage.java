@@ -65,6 +65,10 @@ public abstract class ProtocolMessage
 		{
 			return new ConfirmationProtocolMessage();
 		}
+		else if (parts[0].equals(MoveProtocolMessage.getCommand()))
+		{
+			return new MoveProtocolMessage(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+		}
 		else
 		{
 			return new UnknownProtocolMessage(message);

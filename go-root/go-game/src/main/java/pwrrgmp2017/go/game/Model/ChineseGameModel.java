@@ -25,4 +25,11 @@ public class ChineseGameModel extends GameModel
 		// TODO
 		return null;
 	}
+
+	@Override
+	public float calculateScore(Field[][] territory)
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

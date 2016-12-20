@@ -88,4 +88,14 @@ public class GameController
 	{
 		return new Point( lastMoveX, lastMoveY);
 	}
+	
+	public int getBlackCaptives()
+	{
+		return model.getBlackCaptives();
+	}
+	
+	public int getWhiteCaptives()
+	{
+		return model.getWhiteCaptives();
+	}
 }

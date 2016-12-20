@@ -1,6 +1,6 @@
 package pwrrgmp2017.go.game;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -12,11 +12,10 @@ import pwrrgmp2017.go.game.Exception.GameBegginsException;
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
 import pwrrgmp2017.go.game.Exception.GameStillInProgressException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
-import pwrrgmp2017.go.game.Model.GameBoard;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
-import pwrrgmp2017.go.game.Model.GameModel;
-import pwrrgmp2017.go.game.Model.JapanGameModel;
 import pwrrgmp2017.go.game.factory.GameFactory;
+import pwrrgmp2017.go.game.factory.GameInfo;
+import pwrrgmp2017.go.game.factory.GameInfo.RulesType;
 
 public class JapanGameControllerTest
 {
@@ -37,10 +36,11 @@ public class JapanGameControllerTest
 	public void setUp() throws Exception
 	{
 		//String gameInfo="JAPAN_019_M_06.5";
-		GameBoard board= new GameBoard(19);
-		GameModel model= new JapanGameModel(board, (float) 6.5);
-		controller= new GameController(model);
-		//controller=factory.createGame(gameInfo);
+		GameInfo gameInfo = new GameInfo(19, 6.5f, RulesType.JAPANESE, false);
+//		GameBoard board= new GameBoard(19);
+//		GameModel model= new JapanGameModel(board, (float) 6.5);
+//		controller= new GameController(model);
+		controller=factory.createGame(gameInfo.getAsString());
 	}
 
 	@After

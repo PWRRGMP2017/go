@@ -46,7 +46,7 @@ public class BotGameController extends GameController
 					movesCounter++;
 			}
 		if(movesCounter==0)
-			super.pass();
+			super.pass(Field.WHITESTONE);
 		else
 		{
 			movesCounter=rand.nextInt(movesCounter-1);
@@ -69,11 +69,11 @@ public class BotGameController extends GameController
 	}
 	
 	@Override
-	public void pass() throws GameBegginsException, GameIsEndedException
+	public void pass(Field colour) throws GameBegginsException, GameIsEndedException, BadFieldException
 	{
-		super.pass();
+		super.pass(colour);
 		if(model.getState()!=GameStateEnum.END)
-			super.pass();
+			super.pass(Field.WHITESTONE);
 	}
 	
 }

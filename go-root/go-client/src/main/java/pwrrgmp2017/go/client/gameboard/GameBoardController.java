@@ -1,5 +1,6 @@
 package pwrrgmp2017.go.client.gameboard;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -69,6 +70,9 @@ public class GameBoardController implements Observer
 
 	@FXML
 	private Button acceptButton;
+	
+	@FXML
+	private Button resumeButton;
 
 	private GameInfo gameInfo;
 	private ServerConnection serverConnection;
@@ -77,7 +81,6 @@ public class GameBoardController implements Observer
 	private String thisIdPrefix;
 	private String opponentIdPrefix;
 	private GameController gameController;
-
 	private Button[][] boardPaneButtons;
 
 	public void initData(ServerConnection serverConnection, GameInfo gameInfo, String blackPlayerName,
@@ -109,8 +112,53 @@ public class GameBoardController implements Observer
 		}
 		
 		updateBoardPane();
+		setStats();
 		passButton.setDisable(false);
+	}
+	
+	private void setStats()
+	{
 		stateLabel.setText(gameController.getState().toString());
+		
+		StringBuilder stats = new StringBuilder();
+		
+		stats.append("Turn: 0\n"); // Not yet implemented
+		Point lastMove = gameController.getLastMovement();
+		stats.append("Last move: (" + lastMove.x + ", " + lastMove.y + ")\n");
+		
+		if (gameController.getState() == GameStateEnum.END)
+		{
+			float score = gameController.calculateScore();
+			String winner;
+			if (score < 0)
+			{
+				winner = "white";
+				score *= -1;
+			}
+			else if (score > 0)
+			{
+				winner = "black";
+			}
+			else
+			{
+				winner = "nobody";
+			}
+			stats.append("Score: " + winner + "wins by " + score + "\n");
+		}
+		
+		stats.append("\n");
+		
+		stats.append("Game settings\n");
+		stats.append("Game rules: " + gameInfo.getRulesType().toString() + "\n");
+		stats.append("Board size: " + boardPaneButtons.length + "x" + boardPaneButtons.length + "\n");
+		stats.append("Komi: " + gameController.getKomi() + "\n");
+		stats.append("Bot: " + (gameInfo.getIsBot() ? "Yes" : "No") + "\n");
+		stats.append("\n");
+		
+		stats.append("Black player captives: " + gameController.getBlackCaptives() + "\n");
+		stats.append("White player captives: " + gameController.getWhiteCaptives() + "\n");
+		
+		statsTextArea.setText(stats.toString());
 	}
 
 	private void generateBoardPane()
@@ -257,9 +305,8 @@ public class GameBoardController implements Observer
 		serverConnection.send(message.getFullMessage());
 		
 		updateBoardPane();
-		
+		setStats();
 		passButton.setDisable(true);
-		stateLabel.setText(gameController.getState().toString());
 	}
 	
 	private boolean isOurTurn()
@@ -352,6 +399,16 @@ public class GameBoardController implements Observer
 	@FXML
 	protected void handleResign()
 	{
+		try
+		{
+			gameController.resign();
+		}
+		catch (GameIsEndedException e)
+		{
+			// Should not happen
+			e.printStackTrace();
+		}
+		
 		// Send the resign message
 		ResignProtocolMessage message = new ResignProtocolMessage("Your opponent has resigned.");
 		serverConnection.send(message.getFullMessage());
@@ -380,13 +437,22 @@ public class GameBoardController implements Observer
 			else if (arg instanceof ResignProtocolMessage)
 			{
 				// The second player has resigned
+				try
+				{
+					gameController.resign();
+				}
+				catch (GameIsEndedException e)
+				{
+					// Should not happen
+					e.printStackTrace();
+				}
+				
 				Platform.runLater(() ->
 				{
 					Alert alert = new Alert(AlertType.INFORMATION);
 					alert.setHeaderText("Resignation");
 					alert.setContentText(((ResignProtocolMessage) arg).getReason());
 					alert.showAndWait();
-					// Show results
 					moveToGameSettingsScene();
 				});
 			}
@@ -407,13 +473,11 @@ public class GameBoardController implements Observer
 				}
 				
 				updateBoardPane();
-				
-				passButton.setDisable(false);
-				
 				Platform.runLater(()->
 				{
-					stateLabel.setText(gameController.getState().toString());
+					setStats();
 				});
+				passButton.setDisable(false);
 			}
 			else if (arg instanceof UnknownProtocolMessage)
 			{

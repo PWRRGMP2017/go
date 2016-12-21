@@ -1,8 +1,7 @@
 package pwrrgmp2017.go.server;
 
-import static org.junit.Assert.*;
-
-import java.net.Socket;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -11,18 +10,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
-import pwrrgmp2017.go.server.connection.PlayerConnection;
 import pwrrgmp2017.go.server.connection.RealPlayerConnection;
 
 public class GamesManagerTest
 {
 	GamesManager manager;
-	PlayerConnection player1;
-	PlayerConnection player2;
-	PlayerConnection player3;
-	PlayerConnection player4;
-	PlayerConnection player5;
-	PlayerConnection player6;
+	RealPlayerConnection player1;
+	RealPlayerConnection player2;
+	RealPlayerConnection player3;
+	RealPlayerConnection player4;
+	RealPlayerConnection player5;
+	RealPlayerConnection player6;
 	Server server;
 
 	@BeforeClass
@@ -39,14 +37,18 @@ public class GamesManagerTest
 	public void setUp() throws Exception
 	{
 		manager = new GamesManager();
-		server = new Server(0);
-		assertTrue(server.getPort() != 0);
-		player1 = new RealPlayerConnection(new Socket("localhost", server.getPort()));
-		player2 = new RealPlayerConnection(new Socket("localhost", server.getPort()));
-		player3 = new RealPlayerConnection(new Socket("localhost", server.getPort()));
-		player4 = new RealPlayerConnection(new Socket("localhost", server.getPort()));
-		player5 = new RealPlayerConnection(new Socket("localhost", server.getPort()));
-		player6 = new RealPlayerConnection(new Socket("localhost", server.getPort()));
+		player1 = mock(RealPlayerConnection.class);
+		player2 = mock(RealPlayerConnection.class);
+		player3 = mock(RealPlayerConnection.class);
+		player4 = mock(RealPlayerConnection.class);
+		player5 = mock(RealPlayerConnection.class);
+		player6 = mock(RealPlayerConnection.class);
+	//	when(player1.getPlayerName()).thenReturn("Player1");
+	//	when(player2.getPlayerName()).thenReturn("Player2");
+	//	when(player3.getPlayerName()).thenReturn("Player3");
+	//	when(player4.getPlayerName()).thenReturn("Player4");
+	//	when(player5.getPlayerName()).thenReturn("Player5");
+	//	when(player6.getPlayerName()).thenReturn("Player6");
 	}
 
 	@After
@@ -56,7 +58,7 @@ public class GamesManagerTest
 	}
 
 	@Test
-	public void testIsPuttingUniqueNames()
+	public void testIsPuttingUniqueNames() throws InterruptedException
 	{
 		int i = 0;
 		try

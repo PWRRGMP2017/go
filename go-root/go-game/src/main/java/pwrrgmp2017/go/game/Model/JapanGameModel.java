@@ -31,12 +31,16 @@ public class JapanGameModel extends GameModel
 				{
 				case BLACKTERRITORY:
 					points++;
+					break;
 				case WHITETERRITORY:
 					points--;
+					break;
 				case DEADBLACK:
 					points-=2;
+					break;
 				case DEADWHITE:
 					points+=2;
+					break;
 				default:
 				}
 			}

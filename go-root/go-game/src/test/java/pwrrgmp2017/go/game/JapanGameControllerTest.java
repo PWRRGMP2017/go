@@ -1,6 +1,6 @@
 package pwrrgmp2017.go.game;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -158,8 +158,8 @@ public class JapanGameControllerTest
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-		if(controller.calculateScore()>0)
-			fail();
+		if(controller.calculateScore()!=12.5)
+			fail(((Float)controller.calculateScore()).toString());
 	}
 
 }

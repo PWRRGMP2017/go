@@ -31,13 +31,9 @@ public class BotGameController extends GameController
 			botColour=Field.BLACKSTONE;
 		
 		boolean[][] moves =null;
-		try
-		{
-			moves=model.getPossibleMovements(botColour);
-		}
-		catch (BadFieldException e)
-		{
-		}
+
+		moves=model.getPossibleMovements(botColour);
+
 		int movesCounter=0;
 		for(int i=0; i<moves.length; i++)
 			for(int j=0; j<moves.length; j++)
@@ -57,7 +53,7 @@ public class BotGameController extends GameController
 					{
 						if(movesCounter==0)
 						{
-							super.addMovement(i+1, j+1, botColour);
+							model.addMovement(i+1, j+1, botColour);
 							super.lastMoveX=i+1;
 							super.lastMoveY=j+1;
 						}

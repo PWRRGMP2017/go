@@ -35,7 +35,7 @@ public class RealPlayerConnection extends PlayerConnection
 		return input.readLine();
 	}
 
-	public void send(String message)
+	public synchronized void send(String message)
 	{
 		output.println(message);
 	}

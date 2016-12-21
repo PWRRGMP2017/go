@@ -44,12 +44,7 @@ public abstract class ProtocolMessage
 		}
 		else if (parts[0].equals(InvitationProtocolMessage.getCommand()))
 		{
-			StringBuilder gameInfoString = new StringBuilder();
-			for (int i = 3; i < parts.length; ++i)
-			{
-				gameInfoString.append(parts[i] + GameInfo.DELIMITER);
-			}
-			GameInfo gameInfo = new GameInfo(gameInfoString.toString());
+			GameInfo gameInfo = new GameInfo(getRestOfStringFrom(3, parts, GameInfo.DELIMITER));
 
 			return new InvitationProtocolMessage(parts[1], parts[2], gameInfo);
 		}
@@ -87,19 +82,42 @@ public abstract class ProtocolMessage
 		}
 		else if (parts[0].equals(PlayBotGameProtocolMessage.getCommand()))
 		{
-			StringBuilder gameInfoString = new StringBuilder();
-			for (int i = 2; i < parts.length; ++i)
-			{
-				gameInfoString.append(parts[i] + GameInfo.DELIMITER);
-			}
-			GameInfo gameInfo = new GameInfo(gameInfoString.toString());
+			GameInfo gameInfo = new GameInfo(getRestOfStringFrom(2, parts, GameInfo.DELIMITER));
 			
 			return new PlayBotGameProtocolMessage(parts[1], gameInfo);
+		}
+		else if (parts[0].equals(WaitForGameProtocolMessage.getCommand()))
+		{
+			GameInfo gameInfo = new GameInfo(getRestOfStringFrom(1, parts, GameInfo.DELIMITER));
+			
+			return new WaitForGameProtocolMessage(gameInfo);
+		}
+		else if (parts[0].equals(PlayerFoundProtocolMessage.getCommand()))
+		{
+			return new PlayerFoundProtocolMessage(parts[1], Boolean.valueOf(parts[2]));
+		}
+		else if (parts[0].equals(CancelWaitingProtocolMessage.getCommand()))
+		{
+			return new CancelWaitingProtocolMessage();
+		}
+		else if (parts[0].equals(CancelWaitingResponseProtocolMessage.getCommand()))
+		{
+			return new CancelWaitingResponseProtocolMessage(Boolean.valueOf(parts[1]));
 		}
 		else
 		{	
 			return new UnknownProtocolMessage(message);
 		}
+	}
+	
+	private static String getRestOfStringFrom(int i, String[] parts, String delimiter)
+	{
+		StringBuilder result = new StringBuilder();
+		for ( /* i = i */; i < parts.length; ++i)
+		{
+			result.append(parts[i] + delimiter);
+		}
+		return result.toString();
 	}
 
 	/**

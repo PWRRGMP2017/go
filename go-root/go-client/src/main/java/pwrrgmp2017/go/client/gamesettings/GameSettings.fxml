@@ -45,7 +45,7 @@
          <children>
             <Button fx:id="defaultButton" mnemonicParsing="false" onAction="#handleDefault" text="Default" />
             <Button fx:id="inviteButton" defaultButton="true" mnemonicParsing="false" onAction="#handleInvite" text="Invite Player" />
-            <Button fx:id="searchButton" mnemonicParsing="false" text="Search For Player" />
+            <Button fx:id="searchButton" mnemonicParsing="false" onAction="#handleSearch" text="Search For Player" />
          </children>
       </HBox>
       <Label text="Komi:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />

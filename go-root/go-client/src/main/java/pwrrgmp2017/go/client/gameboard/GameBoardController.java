@@ -160,8 +160,8 @@ public class GameBoardController implements Observer
 		stats.append("Bot: " + (gameInfo.getIsBot() ? "Yes" : "No") + "\n");
 		stats.append("\n");
 		
-		stats.append("Black player captives: " + gameController.getBlackCaptives() + "\n");
-		stats.append("White player captives: " + gameController.getWhiteCaptives() + "\n");
+		stats.append("Black player captives: " + gameController.getWhiteCaptives() + "\n");
+		stats.append("White player captives: " + gameController.getBlackCaptives() + "\n");
 		
 		statsTextArea.setText(stats.toString());
 	}

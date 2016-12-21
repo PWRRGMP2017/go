@@ -58,6 +58,7 @@ public class BotGameController extends GameController
 							model.addMovement(i+1, j+1, botColour);
 							super.lastMoveX=i+1;
 							super.lastMoveY=j+1;
+							return;
 						}
 						else
 							movesCounter--;

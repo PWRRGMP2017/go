@@ -21,9 +21,10 @@ public class JapanGameModel extends GameModel
 	@Override
 	public float calculateScore()
 	{
-		float points=0;
 		Field[][] territory=this.getPossibleTerritory();
+		float points=0; //ujemne dla białego, dodatnie dla czarnego
 		for(int i=1; i<territory.length-1; i++)
+		{
 			for(int j=1; j<territory.length-1; j++)
 			{
 				switch(territory[i][j])
@@ -37,42 +38,12 @@ public class JapanGameModel extends GameModel
 				case DEADWHITE:
 					points+=2;
 				default:
-					break;
-				}
-			}
-		for(int r=0; r<board.length; r++)
-		{
-			System.out.println();
-			for(int t=0; t<board.length; t++)
-			{
-				switch(boardReturn[r][t])
-				{
-				case BLACKSTONE: System.out.print('B');
-					break;
-				case BLACKTERRITORY:System.out.print('P');
-					break;
-				case DEADBLACK:System.out.print('b');
-					break;
-				case DEADWHITE:System.out.print('w');
-					break;
-				case EMPTY:System.out.print('-');
-					break;
-				case NONETERRITORY:System.out.print('_');
-					break;
-				case WALL:System.out.print('X');
-					break;
-				case WHITESTONE:System.out.print('W');
-					break;
-				case WHITETERRITORY:System.out.print('m');
-					break;
-				default:
-					break;
 				}
 			}
 		}
 		points-=super.getKomi();
-		points+=super.getBlackCaptives();
-		points-=super.getWhiteCaptives();
+		points-=super.getBlackCaptives();
+		points+=super.getWhiteCaptives();
 		return points;
 	}
 	
@@ -81,6 +52,7 @@ public class JapanGameModel extends GameModel
 	{
 		float points=0; //ujemne dla białego, dodatnie dla czarnego
 		for(int i=1; i<territory.length-1; i++)
+		{
 			for(int j=1; j<territory.length-1; j++)
 			{
 				switch(territory[i][j])
@@ -94,12 +66,12 @@ public class JapanGameModel extends GameModel
 				case DEADWHITE:
 					points+=2;
 				default:
-					break;
 				}
 			}
+		}
 		points-=super.getKomi();
-		points+=super.getBlackCaptives();
-		points-=super.getWhiteCaptives();
+		points-=super.getBlackCaptives();
+		points+=super.getWhiteCaptives();
 		return points;
 	}
 

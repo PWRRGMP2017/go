@@ -28,6 +28,7 @@ public class ProtocolMessageTest
 		assertTrue(hashSet.add(ResumeGameProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(PassProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(ChangeTerritoryProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(PlayBotGameProtocolMessage.getCommand()));
 	}
 
 	@Test
@@ -175,6 +176,23 @@ public class ProtocolMessageTest
 		PassProtocolMessage sentMessage = new PassProtocolMessage();
 		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
 		assertTrue(message instanceof PassProtocolMessage);
+	}
+	
+	@Test
+	public void testPlayBotGameProtocolMessage()
+	{
+		GameInfo gameInfo = new GameInfo(19, 6.5f, GameInfo.RulesType.JAPANESE, true);
+		String playerName = "player";
+
+		PlayBotGameProtocolMessage sentMessage = new PlayBotGameProtocolMessage(playerName, gameInfo);
+		assertEquals(playerName, sentMessage.getPlayerName());
+		assertSame(gameInfo, sentMessage.getGameInfo());
+
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		PlayBotGameProtocolMessage receivedMessage = (PlayBotGameProtocolMessage) message;
+		assertEquals(playerName, receivedMessage.getPlayerName());
+		System.out.println(receivedMessage.getGameInfo().getAsString());
+		assertEquals(gameInfo, receivedMessage.getGameInfo());
 	}
 
 }

@@ -18,12 +18,13 @@ public class BotGameController extends GameController
 	{
 		super(model);
 		this.model=model;
+		rand = new Random();
 	}
 	
 	@Override
 	public void addMovement(int x, int y, Field playerField) throws BadFieldException, GameBegginsException, GameIsEndedException
 	{
-		super.addMovement(x, y, playerField);
+		model.addMovement(x, y, playerField);
 
 		if(playerField==Field.BLACKSTONE)
 			botColour=Field.WHITESTONE;
@@ -42,10 +43,11 @@ public class BotGameController extends GameController
 					movesCounter++;
 			}
 		if(movesCounter==0)
-			super.pass(Field.WHITESTONE);
+			super.pass(botColour);
 		else
 		{
-			movesCounter=rand.nextInt(movesCounter-1);
+			if(movesCounter!=1)
+				movesCounter=rand.nextInt(movesCounter-1);
 			for(int i=0; i<moves.length; i++)
 				for(int j=0; j<moves.length; j++)
 				{

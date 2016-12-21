@@ -11,11 +11,13 @@ import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.PassProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
+import pwrrgmp2017.go.game.BotGameController;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
 import pwrrgmp2017.go.game.Exception.GameStillInProgressException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
+import pwrrgmp2017.go.game.GameStates.GameStateEnum;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.connection.PlayerConnection;
@@ -123,6 +125,7 @@ public class Game extends Thread
 				catch (BadFieldException e)
 				{
 					LOGGER.info("Player " + currentPlayer.getPlayerName() + " made move for the opponent.");
+					e.printStackTrace();
 					continue;
 				}
 
@@ -179,6 +182,19 @@ public class Game extends Thread
 //			{
 //				// something
 //			}
+			else if (message.isEmpty() && controller instanceof BotGameController)
+			{
+				// The bot turn
+				if (controller.getState() == GameStateEnum.END)
+				{
+					// The game ended
+					LOGGER.info("Players " + blackPlayer.getPlayerName() + " and bot have ended the game.");
+					gamesManager.deleteGame(this);
+					return;
+				}
+				
+				currentPlayer = getOpponent(currentPlayer);
+			}
 			else
 			{
 				LOGGER.warning("Got wrong message from client: " + genericMessage.getFullMessage());

@@ -53,7 +53,7 @@ public class GameInfo
 
 		this.rulesType = RulesType.valueOf(parts[2]);
 
-		this.isBot = Boolean.getBoolean(parts[3]);
+		this.isBot = Boolean.valueOf(parts[3]);
 	}
 
 	public int getBoardSize()

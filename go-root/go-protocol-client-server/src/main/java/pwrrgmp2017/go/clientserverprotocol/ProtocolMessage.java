@@ -85,8 +85,19 @@ public abstract class ProtocolMessage
 		{
 			return new ResumeGameProtocolMessage();
 		}
-		else
+		else if (parts[0].equals(PlayBotGameProtocolMessage.getCommand()))
 		{
+			StringBuilder gameInfoString = new StringBuilder();
+			for (int i = 2; i < parts.length; ++i)
+			{
+				gameInfoString.append(parts[i] + GameInfo.DELIMITER);
+			}
+			GameInfo gameInfo = new GameInfo(gameInfoString.toString());
+			
+			return new PlayBotGameProtocolMessage(parts[1], gameInfo);
+		}
+		else
+		{	
 			return new UnknownProtocolMessage(message);
 		}
 	}

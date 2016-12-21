@@ -14,7 +14,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -29,6 +28,7 @@ import pwrrgmp2017.go.client.gameboard.GameBoardController;
 import pwrrgmp2017.go.clientserverprotocol.ExitProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationResponseProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.PlayBotGameProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.UnknownProtocolMessage;
 import pwrrgmp2017.go.game.factory.GameInfo;
 import pwrrgmp2017.go.game.factory.GameInfo.RulesType;
@@ -60,7 +60,7 @@ public class GameSettingsController implements Observer
 	private TextField komiField;
 
 	@FXML
-	private CheckBox botCheckBox;
+	private Button playWithBot;
 
 	@FXML
 	private Label statusLabel;
@@ -103,6 +103,7 @@ public class GameSettingsController implements Observer
 	{
 		defaultButton.setDisable(false);
 		inviteButton.setDisable(false);
+		playWithBot.setDisable(false);
 		searchButton.setDisable(true);
 		cancelButton.setDisable(true);
 		boardSizeChoiceBox.getItems().add("19x19");
@@ -112,11 +113,20 @@ public class GameSettingsController implements Observer
 		handleDefault();
 		statusLabel.setText("Waiting for invitation.");
 	}
+	
+	@FXML
+	protected void onPlayWithBot()
+	{
+		GameInfo gameInfo = createGameInfo(true);
+		
+		serverConnection.send(new PlayBotGameProtocolMessage(playerName, gameInfo).getFullMessage());
+		
+		moveToGameBoardScene(gameInfo, playerName, "Bot", true);
+	}
 
 	@FXML
 	protected void handleDefault()
 	{
-		botCheckBox.setSelected(false);
 		boardSizeChoiceBox.getSelectionModel().selectFirst();
 		komiField.setText("6.5");
 		japaneseRadioButton.setSelected(true);
@@ -147,7 +157,7 @@ public class GameSettingsController implements Observer
 	@FXML
 	protected void handleInvite()
 	{
-		GameInfo gameInfo = createGameInfo();
+		GameInfo gameInfo = createGameInfo(false);
 		if (gameInfo == null)
 		{
 			return;
@@ -175,7 +185,7 @@ public class GameSettingsController implements Observer
 		disableSettings();
 	}
 
-	private GameInfo createGameInfo()
+	private GameInfo createGameInfo(boolean isBot)
 	{
 		String boardSizeString = boardSizeChoiceBox.getSelectionModel().getSelectedItem();
 		int boardSize = Integer.parseInt((boardSizeString.split("x"))[0]);
@@ -197,8 +207,6 @@ public class GameSettingsController implements Observer
 			alert.showAndWait();
 			return null;
 		}
-
-		boolean isBot = botCheckBox.isSelected();
 
 		GameInfo.RulesType rulesType;
 		switch (((RadioButton) gameRules.getSelectedToggle()).getText())
@@ -328,7 +336,6 @@ public class GameSettingsController implements Observer
 						}
 						catch (InterruptedException e)
 						{
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -385,7 +392,7 @@ public class GameSettingsController implements Observer
 		japaneseRadioButton.setDisable(true);
 		boardSizeChoiceBox.setDisable(true);
 		komiField.setDisable(true);
-		botCheckBox.setDisable(true);
+		playWithBot.setDisable(true);
 		defaultButton.setDisable(true);
 	}
 
@@ -394,7 +401,7 @@ public class GameSettingsController implements Observer
 		japaneseRadioButton.setDisable(false);
 		boardSizeChoiceBox.setDisable(false);
 		komiField.setDisable(false);
-		botCheckBox.setDisable(false);
+		playWithBot.setDisable(false);
 		defaultButton.setDisable(false);
 	}
 

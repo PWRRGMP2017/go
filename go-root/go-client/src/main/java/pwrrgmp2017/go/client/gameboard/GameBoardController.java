@@ -32,6 +32,7 @@ import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.PassProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.UnknownProtocolMessage;
+import pwrrgmp2017.go.game.BotGameController;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
@@ -519,7 +520,14 @@ public class GameBoardController implements Observer
 			MoveProtocolMessage message = new MoveProtocolMessage(position[0], position[1]);
 			serverConnection.send(message.getFullMessage());
 			
-			afterTurn(true);
+			if (gameController instanceof BotGameController)
+			{
+				afterTurn(false);
+			}
+			else
+			{
+				afterTurn(true);
+			}
 		}
 	}
 
@@ -560,16 +568,29 @@ public class GameBoardController implements Observer
 		serverConnection.send(new PassProtocolMessage().getFullMessage());
 		
 		if (gameController.getState() == GameStateEnum.END)
-		{
+		{		
 			// We are marking territories!
 			territoryBoard = gameController.getPossibleTerritory();
+			
+			if (gameController instanceof BotGameController)
+			{
+				showTheWinner();
+				return;
+			}
 			
 			acceptedPreviousTurn = false;
 			afterTerritoryTurn(true);
 		}
 		else
 		{
-			afterTurn(true);
+			if (gameController instanceof BotGameController)
+			{
+				afterTurn(false);
+			}
+			else
+			{
+				afterTurn(true);
+			}
 		}
 	}
 	

@@ -16,6 +16,7 @@ import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
 import pwrrgmp2017.go.server.Exceptions.tooLateToBackPlayerException;
+import pwrrgmp2017.go.server.connection.BotPlayerConnection;
 import pwrrgmp2017.go.server.connection.LogPlayerHandler;
 import pwrrgmp2017.go.server.connection.NotYetPlayingPlayerHandler;
 import pwrrgmp2017.go.server.connection.PlayerConnection;
@@ -69,6 +70,11 @@ public class GamesManager
 
 	public synchronized void addChoosingPlayer(PlayerConnection player, String name) throws SameNameException
 	{
+		if (player instanceof BotPlayerConnection)
+		{
+			return;
+		}
+		
 		for (Entry<String, PlayerConnection> p : waitingPlayers.entrySet())
 		{
 			if (p.getValue().getPlayerName().equals(name))
@@ -91,7 +97,24 @@ public class GamesManager
 			throw new BadPlayerException();
 		if (!choosingPlayers.remove(player.getPlayerName(), player))
 			throw new BadPlayerException();
-		createGame(player, null, gameInfo);
+		
+		BotPlayerConnection bot = new BotPlayerConnection();
+		
+		// Create the game
+		GameFactory director = GameFactory.getInstance();
+		GameController gameController = director.createGame(gameInfo.getAsString());
+		Game game = new Game(player, bot, gameController, this);
+		games.add(game);
+
+		// Clean up
+		player.cancelInvitation();
+
+		// Set state
+		player.getPlayerInfo().setPlayingGame(game);
+		bot.getPlayerInfo().setPlayingGame(game);
+		
+		// Finally, let's start the game thread
+		game.start();
 	}
 
 	public PlayerConnection getChoosingPlayer(String playerName) throws BadPlayerException

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import pwrrgmp2017.go.clientserverprotocol.ExitProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationResponseProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.PlayBotGameProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.server.GamesManager;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
@@ -91,6 +92,21 @@ public class NotYetPlayingPlayerHandler implements Runnable
 					LOGGER.warning("Player " + connection.getPlayerName()
 							+ " received an invitation response, but is not inviting or invited.");
 				}
+			}
+			else if (genericMessage instanceof PlayBotGameProtocolMessage)
+			{
+				LOGGER.info("Player "+ connection.getPlayerName() + " wants to play a game with bot.");
+				try
+				{
+					gamesManager.playBotGame(connection, ((PlayBotGameProtocolMessage) genericMessage).getGameInfo());
+				}
+				catch (BadPlayerException e)
+				{
+					// Should not happen
+					e.printStackTrace();
+				}
+				
+				return;
 			}
 			else
 			{

@@ -4,8 +4,11 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import pwrrgmp2017.go.clientserverprotocol.AcceptTerritoryProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.ChangeTerritoryProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ExitProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.PassProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
 import pwrrgmp2017.go.game.GameController;
@@ -27,6 +30,7 @@ public class Game extends Thread
 	private GamesManager gamesManager;
 
 	private PlayerConnection currentPlayer;
+	private boolean acceptedPreviousTurn;
 
 	Game(PlayerConnection blackPlayer, PlayerConnection whitePlayer, GameController controller,
 			GamesManager gamesManager)
@@ -87,6 +91,15 @@ public class Game extends Thread
 			else if (genericMessage instanceof ResignProtocolMessage)
 			{
 				LOGGER.info("Player " + currentPlayer.getPlayerName() + " resigned.");
+				try
+				{
+					resign();
+				}
+				catch (GameIsEndedException e)
+				{
+					// So what?
+//					e.printStackTrace();
+				}
 				ResignProtocolMessage resignation = (ResignProtocolMessage) genericMessage;
 				getOpponent(currentPlayer).send(resignation.getFullMessage());
 				gamesManager.deleteGame(this);
@@ -119,6 +132,53 @@ public class Game extends Thread
 				// Now it's their turn
 				currentPlayer = getOpponent(currentPlayer);
 			}
+			else if (genericMessage instanceof PassProtocolMessage)
+			{
+				LOGGER.info("Player " + currentPlayer.getPlayerName() + " passed.");
+				
+				// Pass in here
+				try
+				{
+					pass(currentPlayer);
+				}
+				catch (GameBegginsException | GameIsEndedException | BadFieldException e)
+				{
+					// Should not happen
+					e.printStackTrace();
+				}
+				
+				// Send the movement to the opponent
+				currentPlayer = getOpponent(currentPlayer);
+				currentPlayer.send(genericMessage.getFullMessage());
+			}
+			else if (genericMessage instanceof ChangeTerritoryProtocolMessage)
+			{
+				LOGGER.info("Player " + currentPlayer.getPlayerName() + " changes territory.");
+				acceptedPreviousTurn = false;
+				
+				getOpponent(currentPlayer).send(genericMessage.getFullMessage());
+			}
+			else if (genericMessage instanceof AcceptTerritoryProtocolMessage)
+			{
+				LOGGER.info("Player " + currentPlayer.getPlayerName() + " accepts territory.");
+				
+				currentPlayer = getOpponent(currentPlayer);
+				currentPlayer.send(genericMessage.getFullMessage());
+				
+				if (acceptedPreviousTurn)
+				{
+					LOGGER.info("Players " + blackPlayer.getPlayerName() + " and "
+							+ whitePlayer.getPlayerName() + " have ended the game.");
+					gamesManager.deleteGame(this);
+					return;
+				}
+				
+				acceptedPreviousTurn = true;
+			}
+//			else if (genericMessage instanceof ResumeGameProtocolMessage)
+//			{
+//				// something
+//			}
 			else
 			{
 				LOGGER.warning("Got wrong message from client: " + genericMessage.getFullMessage());

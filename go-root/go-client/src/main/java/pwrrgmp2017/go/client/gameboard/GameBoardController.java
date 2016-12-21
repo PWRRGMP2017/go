@@ -26,7 +26,10 @@ import javafx.stage.Stage;
 import pwrrgmp2017.go.client.ClientMain;
 import pwrrgmp2017.go.client.ServerConnection;
 import pwrrgmp2017.go.client.gamesettings.GameSettingsController;
+import pwrrgmp2017.go.clientserverprotocol.AcceptTerritoryProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.ChangeTerritoryProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.PassProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.UnknownProtocolMessage;
 import pwrrgmp2017.go.game.GameController;
@@ -82,6 +85,8 @@ public class GameBoardController implements Observer
 	private String opponentIdPrefix;
 	private GameController gameController;
 	private Button[][] boardPaneButtons;
+	private Field[][] territoryBoard;
+	private boolean acceptedPreviousTurn;
 
 	public void initData(ServerConnection serverConnection, GameInfo gameInfo, String blackPlayerName,
 			String whitePlayerName, boolean isThisPlayerBlack)
@@ -128,7 +133,7 @@ public class GameBoardController implements Observer
 		
 		if (gameController.getState() == GameStateEnum.END)
 		{
-			float score = gameController.calculateScore();
+			float score = gameController.calculateScore(territoryBoard);
 			String winner;
 			if (score < 0)
 			{
@@ -143,7 +148,7 @@ public class GameBoardController implements Observer
 			{
 				winner = "nobody";
 			}
-			stats.append("Score: " + winner + "wins by " + score + "\n");
+			stats.append("Score: " + winner + " wins by " + score + " points\n");
 		}
 		
 		stats.append("\n");
@@ -155,8 +160,8 @@ public class GameBoardController implements Observer
 		stats.append("Bot: " + (gameInfo.getIsBot() ? "Yes" : "No") + "\n");
 		stats.append("\n");
 		
-		stats.append("Black player captives: " + gameController.getBlackCaptives() + "\n");
-		stats.append("White player captives: " + gameController.getWhiteCaptives() + "\n");
+		stats.append("Black player captives: " + gameController.getWhiteCaptives() + "\n");
+		stats.append("White player captives: " + gameController.getBlackCaptives() + "\n");
 		
 		statsTextArea.setText(stats.toString());
 	}
@@ -279,36 +284,6 @@ public class GameBoardController implements Observer
 		return playerColor == Field.BLACKSTONE ? Field.WHITESTONE : Field.BLACKSTONE;
 	}
 
-	protected void handleBoardClick(ActionEvent event)
-	{
-		// Assuming that wrong buttons cannot be pressed
-		Button pressedButton = (Button) event.getSource();
-		
-		int[] position = getPositionFromButton(pressedButton);
-		
-		position[0] += 1;
-		position[1] += 1;
-		
-		// Make movement on our end
-		try
-		{
-			gameController.addMovement(position[0], position[1], playerColor);
-		}
-		catch (BadFieldException | GameBegginsException | GameIsEndedException e)
-		{
-			// Should not happen
-			e.printStackTrace();
-		}
-		
-		// Send our movement to the server
-		MoveProtocolMessage message = new MoveProtocolMessage(position[0], position[1]);
-		serverConnection.send(message.getFullMessage());
-		
-		updateBoardPane();
-		setStats();
-		passButton.setDisable(true);
-	}
-	
 	private boolean isOurTurn()
 	{
 		if (playerColor == Field.BLACKSTONE)
@@ -371,6 +346,98 @@ public class GameBoardController implements Observer
 			}
 		}
 	}
+	
+	private void changeTerritory(int x, int y)
+	{
+		Field field = territoryBoard[x][y];
+		switch (field)
+		{
+		case NONETERRITORY:
+			territoryBoard[x][y] = Field.BLACKTERRITORY;
+			break;
+			
+		case BLACKTERRITORY:
+			territoryBoard[x][y] = Field.WHITETERRITORY;
+			break;
+			
+		case WHITETERRITORY:
+			territoryBoard[x][y] = Field.NONETERRITORY;
+			break;
+			
+		case WHITESTONE:
+			territoryBoard[x][y] = Field.DEADWHITE;
+			break;
+		
+		case DEADWHITE:
+			territoryBoard[x][y] = Field.WHITESTONE;
+			break;
+		
+		case BLACKSTONE:
+			territoryBoard[x][y] = Field.DEADBLACK;
+			break;
+		
+		case DEADBLACK:
+			territoryBoard[x][y] = Field.BLACKSTONE;
+			break;
+		
+		default:
+			LOGGER.warning("Unexpected field: " + field.toString());
+		}
+	}
+	
+	private void updateBoardPaneUsingTerritories(boolean isOurTurn)
+	{
+		if (territoryBoard == null)
+		{
+			LOGGER.warning("territoryBoard is null");
+			return;
+		}
+		
+		for (int i = 0; i < boardPaneButtons.length; ++i)
+		{
+			for (int j = 0; j < boardPaneButtons[i].length; ++j)
+			{
+				Button button = boardPaneButtons[i][j];
+				Field field = territoryBoard[i+1][j+1];
+				
+				switch (field)
+				{
+				case NONETERRITORY:
+					button.setId(getThisStyleId("nonterritory"));
+					break;
+					
+				case BLACKTERRITORY:
+					button.setId(getStyleId(Field.BLACKSTONE, "territory"));
+					break;
+					
+				case WHITETERRITORY:
+					button.setId(getStyleId(Field.WHITESTONE, "territory"));
+					break;
+					
+				case WHITESTONE:
+					button.setId(getStyleId(Field.WHITESTONE, "stone"));
+					break;
+				
+				case DEADWHITE:
+					button.setId(getStyleId(Field.WHITESTONE, "stone-dead"));
+					break;
+				
+				case BLACKSTONE:
+					button.setId(getStyleId(Field.BLACKSTONE, "stone"));
+					break;
+				
+				case DEADBLACK:
+					button.setId(getStyleId(Field.BLACKSTONE, "stone-dead"));
+					break;
+				
+				default:
+					LOGGER.warning("Unexpected field: " + field.toString());
+				}
+
+				button.setDisable(isOurTurn);
+			}
+		}
+	}
 
 	private int[] getPositionFromButton(Button button)
 	{
@@ -396,6 +463,66 @@ public class GameBoardController implements Observer
 
 	}
 
+	protected void afterTurn(boolean isOurTurn)
+	{
+		updateBoardPane();
+		setStats();
+		passButton.setDisable(isOurTurn);
+		acceptButton.setDisable(true);
+		resumeButton.setDisable(true);
+	}
+
+	protected void afterTerritoryTurn(boolean isOurTurn)
+	{
+		passButton.setDisable(true);
+		acceptButton.setDisable(isOurTurn);
+		resumeButton.setDisable(isOurTurn);
+		setStats();
+		updateBoardPaneUsingTerritories(isOurTurn);
+	}
+
+	protected void handleBoardClick(ActionEvent event)
+	{
+		// Assuming that wrong buttons cannot be pressed
+		Button pressedButton = (Button) event.getSource();
+		int[] position = getPositionFromButton(pressedButton);
+		
+		position[0] += 1;
+		position[1] += 1;
+		
+		if (gameController.getState() == GameStateEnum.END)
+		{
+			acceptedPreviousTurn = false;
+			
+			changeTerritory(position[0], position[1]);
+			
+			// Send our movement to the server
+			ChangeTerritoryProtocolMessage message = new ChangeTerritoryProtocolMessage(position[0], position[1]);
+			serverConnection.send(message.getFullMessage());
+			
+			afterTerritoryTurn(false);
+		}
+		else
+		{
+			// Make movement on our end
+			try
+			{
+				gameController.addMovement(position[0], position[1], playerColor);
+			}
+			catch (BadFieldException | GameBegginsException | GameIsEndedException e)
+			{
+				// Should not happen
+				e.printStackTrace();
+			}
+			
+			// Send our movement to the server
+			MoveProtocolMessage message = new MoveProtocolMessage(position[0], position[1]);
+			serverConnection.send(message.getFullMessage());
+			
+			afterTurn(true);
+		}
+	}
+
 	@FXML
 	protected void handleResign()
 	{
@@ -405,8 +532,8 @@ public class GameBoardController implements Observer
 		}
 		catch (GameIsEndedException e)
 		{
-			// Should not happen
-			e.printStackTrace();
+			// So what?
+//			e.printStackTrace();
 		}
 		
 		// Send the resign message
@@ -414,6 +541,80 @@ public class GameBoardController implements Observer
 		serverConnection.send(message.getFullMessage());
 
 		// Move to GameSettings
+		moveToGameSettingsScene();
+	}
+	
+	@FXML
+	protected void handlePass()
+	{
+		try
+		{
+			gameController.pass(playerColor);
+		}
+		catch (GameBegginsException | GameIsEndedException | BadFieldException e)
+		{
+			// Should not happen
+			e.printStackTrace();
+		}
+		
+		serverConnection.send(new PassProtocolMessage().getFullMessage());
+		
+		if (gameController.getState() == GameStateEnum.END)
+		{
+			// We are marking territories!
+			territoryBoard = gameController.getPossibleTerritory();
+			
+			acceptedPreviousTurn = false;
+			afterTerritoryTurn(true);
+		}
+		else
+		{
+			afterTurn(true);
+		}
+	}
+	
+	@FXML
+	protected void handleAccept()
+	{
+		serverConnection.send(new AcceptTerritoryProtocolMessage().getFullMessage());
+		if (acceptedPreviousTurn)
+		{
+			showTheWinner();
+		}
+		acceptedPreviousTurn = true;
+		afterTerritoryTurn(true);
+	}
+	
+	@FXML
+	protected void handleResume()
+	{
+		LOGGER.warning("Not implemented yet");
+	}
+
+	private void showTheWinner()
+	{
+		String result;
+		float score = gameController.calculateScore(territoryBoard);
+		String winner;
+		if (score < 0)
+		{
+			winner = "White";
+			score *= -1;
+		}
+		else if (score > 0)
+		{
+			winner = "Black";
+		}
+		else
+		{
+			winner = "Nobody";
+		}
+		result = winner + " wins by " + score + " points.\n";
+		
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setHeaderText("Result of the game");
+		alert.setContentText(result);
+		alert.showAndWait();
 		moveToGameSettingsScene();
 	}
 
@@ -443,8 +644,8 @@ public class GameBoardController implements Observer
 				}
 				catch (GameIsEndedException e)
 				{
-					// Should not happen
-					e.printStackTrace();
+					// So what?
+//					e.printStackTrace();
 				}
 				
 				Platform.runLater(() ->
@@ -472,12 +673,66 @@ public class GameBoardController implements Observer
 					e.printStackTrace();
 				}
 				
-				updateBoardPane();
 				Platform.runLater(()->
 				{
-					setStats();
+					afterTurn(false);
 				});
-				passButton.setDisable(false);
+			}
+			else if (arg instanceof PassProtocolMessage)
+			{
+				try
+				{
+					gameController.pass(getOpponentColor());
+				}
+				catch (GameBegginsException | GameIsEndedException | BadFieldException e)
+				{
+					// Should not happen
+					e.printStackTrace();
+				}
+				
+				if (gameController.getState() == GameStateEnum.END)
+				{
+					// We are marking territories!
+					territoryBoard = gameController.getPossibleTerritory();
+					
+					acceptedPreviousTurn = false;
+					
+					Platform.runLater(()->
+					{
+						afterTerritoryTurn(false);
+					});
+				}
+				else
+				{
+					Platform.runLater(()->
+					{
+						afterTurn(false);
+					});
+				}
+			}
+			else if (arg instanceof ChangeTerritoryProtocolMessage)
+			{
+				acceptedPreviousTurn = false;
+				ChangeTerritoryProtocolMessage message = (ChangeTerritoryProtocolMessage) arg;
+				changeTerritory(message.getX(), message.getY());
+				
+				Platform.runLater(()->
+				{
+					afterTerritoryTurn(true);
+				});
+			}
+			else if (arg instanceof AcceptTerritoryProtocolMessage)
+			{
+				Platform.runLater(()->
+				{
+					if (acceptedPreviousTurn)
+					{
+						showTheWinner();
+					}
+					afterTerritoryTurn(false);
+					acceptedPreviousTurn = true;
+				});
+				
 			}
 			else if (arg instanceof UnknownProtocolMessage)
 			{

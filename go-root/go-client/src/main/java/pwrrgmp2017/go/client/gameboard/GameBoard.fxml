@@ -41,8 +41,9 @@
       <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="3">
          <children>
             <Button fx:id="resignButton" mnemonicParsing="false" onAction="#handleResign" text="Resign" />
-            <Button fx:id="passButton" mnemonicParsing="false" text="Pass" />
-            <Button fx:id="acceptButton" disable="true" mnemonicParsing="false" text="Accept" />
+            <Button fx:id="passButton" mnemonicParsing="false" onAction="#handlePass" text="Pass" />
+            <Button fx:id="acceptButton" disable="true" mnemonicParsing="false" onAction="#handleAccept" text="Accept" />
+            <Button fx:id="resumeButton" disable="true" mnemonicParsing="false" onAction="#handleResume" text="Resume" />
          </children>
       </HBox>
       <ScrollPane fitToHeight="true" fitToWidth="true" GridPane.columnIndex="1" GridPane.rowIndex="2">

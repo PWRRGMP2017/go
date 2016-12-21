@@ -69,9 +69,9 @@ public class GameController
 		return model.getKomi();
 	}
 	
-	public void initialiseGame() throws GameStillInProgressException
+	public void initialiseGame(Field firstPlayer) throws GameStillInProgressException, BadFieldException 
 	{
-		model.initialiseGame();
+		model.initialiseGame(firstPlayer);
 	}
 	
 	public void pass(Field colour) throws GameBegginsException, GameIsEndedException, BadFieldException

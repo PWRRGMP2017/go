@@ -24,9 +24,9 @@ public abstract class GameModel
 		state=new BeginningState();
 	}
 	
-	public void initialiseGame() throws GameStillInProgressException
+	public void initialiseGame(Field firstPlayer) throws GameStillInProgressException, BadFieldException
 	{
-		this.state=state.initialiseGame(this);
+		this.state=state.initialiseGame(this, firstPlayer);
 	}
 	
 	public void pass(Field colour) throws GameBegginsException, GameIsEndedException, BadFieldException

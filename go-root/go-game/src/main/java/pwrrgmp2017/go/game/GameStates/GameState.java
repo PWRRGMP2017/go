@@ -15,7 +15,7 @@ public interface GameState
 	
 	GameState pass(GameModel model, Field colour) throws GameBegginsException, GameIsEndedException, BadFieldException;
 	
-	GameState initialiseGame(GameModel model) throws GameStillInProgressException;
+	GameState initialiseGame(GameModel model, Field firstPlayer) throws GameStillInProgressException, BadFieldException;
 	
 	GameState resign(GameModel model) throws GameIsEndedException;
 	

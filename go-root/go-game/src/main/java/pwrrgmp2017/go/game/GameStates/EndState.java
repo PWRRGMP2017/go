@@ -1,6 +1,7 @@
 package pwrrgmp2017.go.game.GameStates;
 
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
+import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 import pwrrgmp2017.go.game.Model.GameBoard;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
 import pwrrgmp2017.go.game.Model.GameModel;
@@ -21,9 +22,13 @@ public class EndState implements GameState
 	}
 
 	@Override
-	public GameState initialiseGame(GameModel model)
+	public GameState initialiseGame(GameModel model, Field firstPlayer) throws BadFieldException
 	{
-		return new BeginningState();
+		if(firstPlayer==Field.BLACKSTONE)
+			return new BlackTurn(false);
+		else if(firstPlayer==Field.WHITESTONE)
+			return new WhiteTurn(false);
+		else throw new BadFieldException();
 	}
 
 	@Override

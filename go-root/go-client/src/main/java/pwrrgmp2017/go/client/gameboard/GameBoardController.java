@@ -594,7 +594,7 @@ public class GameBoardController implements Observer
 	private void showTheWinner()
 	{
 		String result;
-		float score = gameController.calculateScore();
+		float score = gameController.calculateScore(territoryBoard);
 		String winner;
 		if (score < 0)
 		{

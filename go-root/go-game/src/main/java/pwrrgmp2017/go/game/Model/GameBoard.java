@@ -117,33 +117,46 @@ public class GameBoard
 	
 	private boolean tryKO(int i, int j, Field playerField, Field concurField)
 	{
-		if(board[i+1][j]==concurField && board[i-1][j]==concurField && board[i][j+1]==concurField && board[i][j-1]==concurField)
+		if((board[i+1][j]==concurField || Field.WALL==board[i+1][j])  && (board[i-1][j]==concurField || Field.WALL==board[i-1][j])
+				&& (board[i][j+1]==concurField || Field.WALL==board[i][j+1]) && (board[i][j-1]==concurField || Field.WALL==board[i][j-1]))
 		{
 			int KO_Stones=0, KOi=0, KOj=0;
-			if(board[i+1][j+1]==playerField && board[i+1][j-1]==playerField && board[i+2][j]==playerField)
-			{
-				KO_Stones++;
-				KOi=i+1;
-				KOj=j;
-			}
-			if(board[i-1][j+1]==playerField && board[i-1][j-1]==playerField && board[i-2][j]==playerField)
-			{
-				KO_Stones++;
-				KOi=i-1;
-				KOj=j;
-			}
-			if(board[i-1][j+1]==playerField && board[i+1][j+1]==playerField && board[i][j+2]==playerField)
-			{
-				KO_Stones++;
-				KOi=i;
-				KOj=j+1;
-			}
-			if(board[i-1][j-1]==playerField && board[i+1][j-1]==playerField && board[i][j-2]==playerField)
-			{
-				KO_Stones++;
-				KOi=i;
-				KOj=j-1;
-			}
+			if(i+2<=board.length)
+				if((board[i+1][j+1]==playerField || Field.WALL==board[i+1][j+1]) 
+						&& (board[i+1][j-1]==playerField || Field.WALL==board[i+1][j-1]) 
+						&& (board[i+2][j]==playerField || Field.WALL==board[i+2][j]))
+				{
+					KO_Stones++;
+					KOi=i+1;
+					KOj=j;
+				}
+			if(i-2>=0)
+				if((board[i-1][j+1]==playerField || Field.WALL==board[i-1][j+1]) 
+						&& (board[i-1][j-1]==playerField || Field.WALL==board[i-1][j-1]) 
+						&& (board[i-2][j]==playerField || Field.WALL==board[i-2][j]))
+				{
+					KO_Stones++;
+					KOi=i-1;
+					KOj=j;
+				}
+			if(j+2<=board.length)
+				if((board[i-1][j+1]==playerField || Field.WALL==board[i-1][j+1]) 
+						&& (board[i+1][j+1]==playerField || Field.WALL==board[i+1][j+1]) 
+						&& (board[i][j+2]==playerField || Field.WALL==board[i][j+2]))
+				{
+					KO_Stones++;
+					KOi=i;
+					KOj=j+1;
+				}
+			if(j-2>=0)
+				if((board[i-1][j-1]==playerField || Field.WALL==board[i-1][j-1]) 
+						&& (board[i+1][j-1]==playerField || Field.WALL==board[i+1][j-1]) 
+						&& (board[i][j-2]==playerField || Field.WALL==board[i][j-2]))
+				{
+					KO_Stones++;
+					KOi=i;
+					KOj=j-1;
+				}
 			if(KO_Stones==1)
 			{
 				xKO=KOi;

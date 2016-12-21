@@ -54,8 +54,8 @@ public class GameBoard
 		
 		board[i][j]=playerField;
 		
-		if(tryKO(i, j, playerField, concurField))
-			return true;
+		boolean isKO;
+		isKO=tryKO(i, j, playerField, concurField);
 		
 		if(board[i+1][j]==concurField)
 		{
@@ -77,8 +77,11 @@ public class GameBoard
 			if(isChainKilled(concurField, playerField, i, j-1))
 				killChain(concurField, i, j-1);
 		}
-		xKO=0;
-		yKO=0;
+		if(!isKO)
+		{
+			xKO=0;
+			yKO=0;
+		}
 		return true;
 	}
 	

@@ -266,6 +266,7 @@ public class GameSettingsController implements Observer
 			if (arg instanceof IOException)
 			{
 				// Something bad happened!
+				serverConnection.deleteObserver(this);
 				Platform.runLater(() ->
 				{
 					Alert alert = new Alert(AlertType.ERROR);

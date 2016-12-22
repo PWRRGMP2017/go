@@ -125,6 +125,9 @@ public class Game extends Thread
 					if (controller instanceof BotGameController)
 					{
 						Point botMovement = controller.getLastMovement();
+//						LOGGER.info(Integer.toString(movement.getX()) + ", " + Integer.toString(movement.getY()));
+//						LOGGER.info(Integer.toString((int)botMovement.getX()) + ", " + Integer.toString((int)botMovement.getY()));
+//						LOGGER.info(Boolean.toString((int)botMovement.getX() == movement.getX() && (int)botMovement.getY() == movement.getY()));
 						if ((int)botMovement.getX() == movement.getX() && (int)botMovement.getY() == movement.getY())
 						{
 							// Bot passed

@@ -656,8 +656,9 @@ public class GameBoardController implements Observer
 		if (o instanceof ServerConnection)
 		{
 			if (arg instanceof IOException)
-			{
+			{	
 				// Something bad happened!
+				serverConnection.deleteObserver(this);
 				Platform.runLater(() ->
 				{
 					Alert alert = new Alert(AlertType.ERROR);

@@ -140,13 +140,19 @@ public class ServerConnection extends Observable implements Runnable
 			}
 			catch (IOException e)
 			{
-				this.notifyObservers(e);
+				if (!socket.isClosed())
+				{
+					// Error on server side
+					setChanged();
+					this.notifyObservers(e);
+				} // else the client itself closed the connection, no need to notify
 				return;
 			}
 
 			if (message == null)
 			{
 				close();
+				setChanged();
 				this.notifyObservers(new IOException("Server unexpectedly closed the connection."));
 				return;
 			}

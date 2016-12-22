@@ -43,11 +43,18 @@ public class BotGameController extends GameController
 					movesCounter++;
 			}
 		if(movesCounter==0)
+		{
+			super.lastMoveX=x;
+			super.lastMoveY=y;
 			super.pass(botColour);
+		}
 		else
 		{
 			if(movesCounter!=1)
 				movesCounter=rand.nextInt(movesCounter-1);
+			else
+				movesCounter=0;
+			
 			for(int i=0; i<moves.length; i++)
 				for(int j=0; j<moves.length; j++)
 				{

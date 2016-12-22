@@ -11,6 +11,7 @@ import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.PassProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.ResumeGameProtocolMessage;
 import pwrrgmp2017.go.game.BotGameController;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
@@ -183,10 +184,30 @@ public class Game extends Thread
 				
 				acceptedPreviousTurn = true;
 			}
-//			else if (genericMessage instanceof ResumeGameProtocolMessage)
-//			{
-//				// something
-//			}
+			else if (genericMessage instanceof ResumeGameProtocolMessage)
+			{
+				LOGGER.info("Player " + currentPlayer.getPlayerName() + " wants to resume the game.");
+				acceptedPreviousTurn = false;
+				
+				currentPlayer = getOpponent(currentPlayer);
+				
+				try
+				{
+					initializeGame(currentPlayer);
+				}
+				catch (GameStillInProgressException e)
+				{
+					LOGGER.warning("Player " + currentPlayer.getPlayerName() + " wanted to resume a game still in progress.");
+					continue;
+				}
+				catch (BadFieldException e)
+				{
+					// Should not happen
+					e.printStackTrace();
+				}
+				
+				currentPlayer.send(new ResumeGameProtocolMessage().getFullMessage());
+			}
 			else if (message.isEmpty() && controller instanceof BotGameController)
 			{
 				// The bot turn
@@ -234,6 +255,14 @@ public class Game extends Thread
 	public PlayerConnection getWhitePlayer()
 	{
 		return whitePlayer;
+	}
+	
+	public void initializeGame(PlayerConnection player) throws GameStillInProgressException, BadFieldException
+	{
+		if (player == blackPlayer)
+			controller.initialiseGame(Field.BLACKSTONE);
+		else
+			controller.initialiseGame(Field.WHITESTONE);
 	}
 
 	public PlayerConnection getOpponent(PlayerConnection player)

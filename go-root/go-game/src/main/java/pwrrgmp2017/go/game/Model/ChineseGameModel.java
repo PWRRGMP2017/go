@@ -13,7 +13,7 @@ public class ChineseGameModel extends GameModel
 	@Override
 	public float calculateScore()
 	{
-		Field[][] board = super.getBoardCopy();
+//		Field[][] board = super.getBoardCopy();
 		// TODO
 		return 0;
 	}
@@ -21,7 +21,7 @@ public class ChineseGameModel extends GameModel
 	@Override
 	public Field[][] getPossibleTerritory()
 	{
-		Field[][] board = super.getBoardCopy();
+//		Field[][] board = super.getBoardCopy();
 		// TODO
 		return null;
 	}

@@ -77,7 +77,7 @@ public abstract class GameModel
 
 	public void addMovement(int x, int y, Field playerField) throws BadFieldException, GameBegginsException, GameIsEndedException 
 	{
-		this.state=this.state.makeMovement(this, x, y, playerField, board);
+		this.state=this.state.makeMovement(this, x, y, playerField, this.board);
 		
 		possibleMovementsBlack=null;
 		possibleMovementsWhite=null;
@@ -99,11 +99,11 @@ public abstract class GameModel
 		}
 		else if (colour==Field.WHITESTONE)
 		{
-			if(possibleMovementsBlack==null)
+			if(possibleMovementsWhite==null)
 			{
 				try
 				{
-					possibleMovementsBlack=board.getPossibleMovements(Field.WHITESTONE);
+					possibleMovementsWhite=board.getPossibleMovements(Field.WHITESTONE);
 				}
 				catch (BadFieldException e) {} //nigdy się nie wykona
 			}

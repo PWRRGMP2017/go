@@ -19,7 +19,12 @@ public class WhiteTurn extends PlayerTurn
 	public GameState makeMovement(GameModel model, int x, int y, Field playerField, GameBoard board) throws BadFieldException, GameBegginsException, GameIsEndedException
 	{
 		if(playerField==Field.WHITESTONE)
-			board.makeMovement(x, y, playerField, Field.BLACKSTONE);
+		{
+			if(!board.makeMovement(x, y, playerField, Field.BLACKSTONE))
+			{
+				throw new BadFieldException();
+			}
+		}
 		else
 			throw new BadFieldException();
 		

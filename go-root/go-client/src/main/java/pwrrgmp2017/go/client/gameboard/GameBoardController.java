@@ -31,6 +31,7 @@ import pwrrgmp2017.go.clientserverprotocol.ChangeTerritoryProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.PassProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.ResumeGameProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.UnknownProtocolMessage;
 import pwrrgmp2017.go.game.BotGameController;
 import pwrrgmp2017.go.game.GameController;
@@ -614,7 +615,22 @@ public class GameBoardController implements Observer
 	@FXML
 	protected void handleResume()
 	{
-		LOGGER.warning("Not implemented yet");
+		acceptedPreviousTurn = false;
+		
+		try
+		{
+			gameController.initialiseGame(getOpponentColor());
+		}
+		catch (GameStillInProgressException | BadFieldException e)
+		{
+			// Should not happen
+			e.printStackTrace();
+			return;
+		}
+		
+		serverConnection.send(new ResumeGameProtocolMessage().getFullMessage());
+		territoryBoard = null;
+		afterTurn(true);
 	}
 
 	private void showTheWinner()
@@ -759,6 +775,28 @@ public class GameBoardController implements Observer
 					acceptedPreviousTurn = true;
 				});
 				
+			}
+			else if (arg instanceof ResumeGameProtocolMessage)
+			{
+				acceptedPreviousTurn = false;
+				
+				try
+				{
+					gameController.initialiseGame(playerColor);
+				}
+				catch (GameStillInProgressException | BadFieldException e)
+				{
+					// Should not happen
+					e.printStackTrace();
+					return;
+				}
+				
+				territoryBoard = null;
+				
+				Platform.runLater(()->
+				{
+					afterTurn(false);
+				});
 			}
 			else if (arg instanceof UnknownProtocolMessage)
 			{

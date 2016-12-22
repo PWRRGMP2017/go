@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.logging.Logger;
 
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.factory.GameFactory;
@@ -24,8 +23,6 @@ import pwrrgmp2017.go.server.connection.RealPlayerConnection;
 
 public class GamesManager
 {
-	private static final Logger LOGGER = Logger.getLogger(GamesManager.class.getName());
-
 	private List<Game> games;
 	private ConcurrentHashMap<String, PlayerConnection> choosingPlayers;
 	private ConcurrentHashMap<String, PlayerConnection> playingPlayers;

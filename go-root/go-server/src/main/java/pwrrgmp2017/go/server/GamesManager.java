@@ -128,7 +128,7 @@ public class GamesManager
 		return playerConnection;
 	}
 
-	public void waitForGame(PlayerConnection player, GameInfo gameInfo) throws BadPlayerException
+	public PlayerConnection waitForGame(PlayerConnection player, GameInfo gameInfo) throws BadPlayerException
 	{
 		PlayerConnection secondPlayer;
 		choosingPlayers.remove(player.getPlayerName());
@@ -142,11 +142,14 @@ public class GamesManager
 					continue;
 				else
 				{
-					createGame(player, secondPlayer, gameInfo);
+					// The handler thread should take care of creating the game
+					return secondPlayer;
+//					createGame(player, secondPlayer, gameInfo);
 				}
 			}
 			break;
 		}
+		return null;
 	}
 
 	public void stopWaiting(PlayerConnection player, String gameInfo) throws tooLateToBackPlayerException
@@ -163,8 +166,8 @@ public class GamesManager
 			throws BadPlayerException
 	{
 		// Make sure the players are in the right state
-		if (!choosingPlayers.contains(blackPlayer) || !choosingPlayers.contains(whitePlayer)
-				|| playingPlayers.contains(blackPlayer) || playingPlayers.contains(whitePlayer))
+		if (/*!choosingPlayers.contains(blackPlayer) || !choosingPlayers.contains(whitePlayer) || */
+				playingPlayers.contains(blackPlayer) || playingPlayers.contains(whitePlayer))
 		{
 			throw new BadPlayerException();
 		}

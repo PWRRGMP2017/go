@@ -25,11 +25,16 @@ import javafx.stage.Stage;
 import pwrrgmp2017.go.client.ClientMain;
 import pwrrgmp2017.go.client.ServerConnection;
 import pwrrgmp2017.go.client.gameboard.GameBoardController;
+import pwrrgmp2017.go.clientserverprotocol.CancelWaitingProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.CancelWaitingResponseProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.ConfirmationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ExitProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationResponseProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.PlayBotGameProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.PlayerFoundProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.UnknownProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.WaitForGameProtocolMessage;
 import pwrrgmp2017.go.game.factory.GameInfo;
 import pwrrgmp2017.go.game.factory.GameInfo.RulesType;
 
@@ -84,6 +89,8 @@ public class GameSettingsController implements Observer
 	private volatile boolean areWeInvited;
 	private volatile boolean didWeAcceptInvitation;
 	private volatile boolean waitingForResponse;
+	
+	private volatile GameInfo waitingGame;
 
 	public void initData(ServerConnection serverConnection, String playerName)
 	{
@@ -96,6 +103,7 @@ public class GameSettingsController implements Observer
 		areWeInvited = false;
 		didWeAcceptInvitation = false;
 		waitingForResponse = false;
+		waitingGame = null;
 	}
 
 	@FXML
@@ -104,7 +112,7 @@ public class GameSettingsController implements Observer
 		defaultButton.setDisable(false);
 		inviteButton.setDisable(false);
 		playWithBot.setDisable(false);
-		searchButton.setDisable(true);
+		searchButton.setDisable(false);
 		cancelButton.setDisable(true);
 		boardSizeChoiceBox.getItems().add("19x19");
 		boardSizeChoiceBox.getItems().add("13x13");
@@ -112,6 +120,19 @@ public class GameSettingsController implements Observer
 
 		handleDefault();
 		statusLabel.setText("Waiting for invitation.");
+	}
+	
+	@FXML
+	protected void handleSearch()
+	{
+		waitingGame = createGameInfo(false);
+		
+		serverConnection.send(new WaitForGameProtocolMessage(waitingGame).getFullMessage());
+		statusLabel.setText("Searching for player.");
+		disableSettings();
+		cancelButton.setDisable(false);
+		inviteButton.setDisable(true);
+		searchButton.setDisable(true);
 	}
 	
 	@FXML
@@ -135,14 +156,24 @@ public class GameSettingsController implements Observer
 	@FXML
 	protected void handleCancel()
 	{
-		InvitationResponseProtocolMessage response = new InvitationResponseProtocolMessage(false,
-				"Inviting player cancelled the invitation.");
-		serverConnection.send(response.getFullMessage());
-
-		statusLabel.setText("Waiting for invitation.");
-		inviteButton.setDisable(false);
-		cancelButton.setDisable(true);
-		enableSettings();
+		if (waitingGame != null)
+		{
+			serverConnection.send(new CancelWaitingProtocolMessage().getFullMessage());
+			cancelButton.setDisable(true);
+			statusLabel.setText("Waiting for response from server...");
+		}
+		else
+		{
+			InvitationResponseProtocolMessage response = new InvitationResponseProtocolMessage(false,
+					"Inviting player cancelled the invitation.");
+			serverConnection.send(response.getFullMessage());
+	
+			statusLabel.setText("Waiting for invitation.");
+			inviteButton.setDisable(false);
+			searchButton.setDisable(false);
+			cancelButton.setDisable(true);
+			enableSettings();
+		}
 	}
 
 	@FXML
@@ -181,6 +212,7 @@ public class GameSettingsController implements Observer
 
 		statusLabel.setText("Waiting for response...");
 		inviteButton.setDisable(true);
+		searchButton.setDisable(true);
 		cancelButton.setDisable(false);
 		disableSettings();
 	}
@@ -302,6 +334,7 @@ public class GameSettingsController implements Observer
 							alert.setContentText(message.getReason());
 							alert.showAndWait();
 							inviteButton.setDisable(false);
+							searchButton.setDisable(false);
 							cancelButton.setDisable(true);
 							statusLabel.setText("Waiting for invitation.");
 							enableSettings();
@@ -369,6 +402,55 @@ public class GameSettingsController implements Observer
 							didWeAcceptInvitation = false;
 						}
 					}
+				}
+			}
+			else if (arg instanceof PlayerFoundProtocolMessage)
+			{
+				PlayerFoundProtocolMessage message = (PlayerFoundProtocolMessage) arg;
+				
+				boolean areWeBlack = message.getIsYourColorBlack();
+				String blackPlayerName = areWeBlack ? playerName : message.getOpponentName();
+				String whitePlayerName = areWeBlack ? message.getOpponentName() : playerName;
+				
+				if (!areWeBlack)
+				{
+					serverConnection.send(new ConfirmationProtocolMessage().getFullMessage());
+				}
+				
+				Platform.runLater(() ->
+				{
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setHeaderText("Player found");
+					alert.setContentText("The game is about to begin with player " + message.getOpponentName());
+					alert.showAndWait();
+					moveToGameBoardScene(waitingGame, blackPlayerName, whitePlayerName, areWeBlack);
+				});
+			}
+			else if (arg instanceof CancelWaitingResponseProtocolMessage)
+			{
+				boolean isSuccess = ((CancelWaitingResponseProtocolMessage) arg).getIsSuccess();
+				if (isSuccess)
+				{
+					Platform.runLater(() ->
+					{
+						statusLabel.setText("Waiting for invitation.");
+						cancelButton.setDisable(true);
+						searchButton.setDisable(false);
+						inviteButton.setDisable(false);
+						enableSettings();
+					});
+				}
+				else
+				{
+					Platform.runLater(() ->
+					{						
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setHeaderText("Could not cancel waiting");
+						alert.setContentText("The game was already found.");
+						alert.showAndWait();
+						
+						cancelButton.setDisable(false);
+					});
 				}
 			}
 			else if (arg instanceof UnknownProtocolMessage)

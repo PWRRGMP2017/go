@@ -29,6 +29,9 @@ public class ProtocolMessageTest
 		assertTrue(hashSet.add(PassProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(ChangeTerritoryProtocolMessage.getCommand()));
 		assertTrue(hashSet.add(PlayBotGameProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(WaitForGameProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(CancelWaitingProtocolMessage.getCommand()));
+		assertTrue(hashSet.add(PlayerFoundProtocolMessage.getCommand()));
 	}
 
 	@Test
@@ -191,8 +194,43 @@ public class ProtocolMessageTest
 		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
 		PlayBotGameProtocolMessage receivedMessage = (PlayBotGameProtocolMessage) message;
 		assertEquals(playerName, receivedMessage.getPlayerName());
-		System.out.println(receivedMessage.getGameInfo().getAsString());
 		assertEquals(gameInfo, receivedMessage.getGameInfo());
+	}
+	
+	@Test
+	public void testCancelWaitingProtocolMessage()
+	{
+		CancelWaitingProtocolMessage sentMessage = new CancelWaitingProtocolMessage();
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		assertTrue(message instanceof CancelWaitingProtocolMessage);
+	}
+	
+	@Test
+	public void testWaitForGameProtocolMessage()
+	{
+		GameInfo gameInfo = new GameInfo(19, 6.5f, GameInfo.RulesType.JAPANESE, false);
+
+		WaitForGameProtocolMessage sentMessage = new WaitForGameProtocolMessage(gameInfo);
+		assertSame(gameInfo, sentMessage.getGameInfo());
+
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		WaitForGameProtocolMessage receivedMessage = (WaitForGameProtocolMessage) message;
+		assertEquals(gameInfo, receivedMessage.getGameInfo());
+	}
+	
+	@Test
+	public void testPlayerFoundProtocolMessage()
+	{
+		String playerName = "player";
+
+		PlayerFoundProtocolMessage sentMessage = new PlayerFoundProtocolMessage(playerName, true);
+		assertEquals(playerName, sentMessage.getOpponentName());
+		assertTrue(sentMessage.getIsYourColorBlack());
+
+		ProtocolMessage message = ProtocolMessage.getProtocolMessage(sentMessage.getFullMessage());
+		PlayerFoundProtocolMessage receivedMessage = (PlayerFoundProtocolMessage) message;
+		assertEquals(playerName, receivedMessage.getOpponentName());
+		assertTrue(receivedMessage.getIsYourColorBlack());
 	}
 
 }

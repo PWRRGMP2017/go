@@ -3,14 +3,21 @@ package pwrrgmp2017.go.server.connection;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import pwrrgmp2017.go.clientserverprotocol.CancelWaitingProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.CancelWaitingResponseProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.ConfirmationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ExitProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationResponseProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.PlayBotGameProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.PlayerFoundProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.WaitForGameProtocolMessage;
+import pwrrgmp2017.go.game.factory.GameInfo;
 import pwrrgmp2017.go.server.GamesManager;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
+import pwrrgmp2017.go.server.Exceptions.tooLateToBackPlayerException;
 
 public class NotYetPlayingPlayerHandler implements Runnable
 {
@@ -20,12 +27,14 @@ public class NotYetPlayingPlayerHandler implements Runnable
 	private final GamesManager gamesManager;
 
 	private InvitationProtocolMessage invitation;
+	private GameInfo waitingGame;
 
 	public NotYetPlayingPlayerHandler(RealPlayerConnection player, GamesManager gamesManager)
 	{
 		this.connection = player;
 		this.gamesManager = gamesManager;
 		this.invitation = null;
+		this.waitingGame = null;
 	}
 
 	@Override
@@ -95,7 +104,7 @@ public class NotYetPlayingPlayerHandler implements Runnable
 			}
 			else if (genericMessage instanceof PlayBotGameProtocolMessage)
 			{
-				LOGGER.info("Player "+ connection.getPlayerName() + " wants to play a game with bot.");
+				LOGGER.info("Player " + connection.getPlayerName() + " wants to play a game with bot.");
 				try
 				{
 					gamesManager.playBotGame(connection, ((PlayBotGameProtocolMessage) genericMessage).getGameInfo());
@@ -106,6 +115,63 @@ public class NotYetPlayingPlayerHandler implements Runnable
 					e.printStackTrace();
 				}
 				
+				return;
+			}
+			else if (genericMessage instanceof WaitForGameProtocolMessage)
+			{
+				LOGGER.info("Player " + connection.getPlayerName() + " is searching for player.");
+				waitingGame = ((WaitForGameProtocolMessage) genericMessage).getGameInfo();
+				PlayerConnection secondPlayer;
+				try
+				{
+					secondPlayer = gamesManager.waitForGame(connection, waitingGame);
+				}
+				catch (BadPlayerException e)
+				{
+					// Should not happen
+					e.printStackTrace();
+					continue;
+				};
+				
+				if (secondPlayer != null)
+				{
+					connection.send(
+							new PlayerFoundProtocolMessage(secondPlayer.getPlayerName(), true).getFullMessage());
+					secondPlayer.send(
+							new PlayerFoundProtocolMessage(connection.getPlayerName(), false).getFullMessage());
+					try
+					{
+						gamesManager.createGame(connection, secondPlayer, waitingGame);
+					}
+					catch (BadPlayerException e)
+					{
+						// Should. Not. Happen.
+						e.printStackTrace();
+					}
+					return;
+				}
+			}
+			else if (genericMessage instanceof CancelWaitingProtocolMessage)
+			{
+				LOGGER.info("Player " + connection.getPlayerName() + " wants to cancel waiting.");
+				CancelWaitingResponseProtocolMessage response;
+				try
+				{
+					gamesManager.stopWaiting(connection, waitingGame.getAsString());
+					waitingGame = null;
+					response = new CancelWaitingResponseProtocolMessage(true);
+					connection.send(response.getFullMessage());
+				}
+				catch (tooLateToBackPlayerException e)
+				{
+					LOGGER.warning("Player " + connection.getPlayerName() + " cannot cancel waiting now.");
+					response = new CancelWaitingResponseProtocolMessage(false);
+					connection.send(response.getFullMessage());
+				}
+			}
+			else if (genericMessage instanceof ConfirmationProtocolMessage)
+			{
+				LOGGER.info("Player " + connection.getPlayerName() + " confirms he's playing.");
 				return;
 			}
 			else

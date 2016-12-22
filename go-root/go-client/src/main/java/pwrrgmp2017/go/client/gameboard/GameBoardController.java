@@ -33,7 +33,6 @@ import pwrrgmp2017.go.clientserverprotocol.PassProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResignProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ResumeGameProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.UnknownProtocolMessage;
-import pwrrgmp2017.go.game.BotGameController;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
@@ -89,12 +88,15 @@ public class GameBoardController implements Observer
 	private Button[][] boardPaneButtons;
 	private Field[][] territoryBoard;
 	private boolean acceptedPreviousTurn;
+	private boolean isGameWithBot;
 
 	public void initData(ServerConnection serverConnection, GameInfo gameInfo, String blackPlayerName,
 			String whitePlayerName, boolean isThisPlayerBlack)
 	{
 		this.serverConnection = serverConnection;
 		serverConnection.addObserver(this);
+		isGameWithBot = gameInfo.getIsBot();
+		gameInfo = new GameInfo(gameInfo.getBoardSize(), gameInfo.getKomiValue(), gameInfo.getRulesType(), false);
 		this.gameInfo = gameInfo;
 		playerColor = isThisPlayerBlack ? Field.BLACKSTONE : Field.WHITESTONE;
 		thisIdPrefix = isThisPlayerBlack ? "black-" : "white-";
@@ -106,6 +108,8 @@ public class GameBoardController implements Observer
 		acceptButton.setDisable(true);
 
 		generateBoardPane();
+		
+		
 
 		gameController = GameFactory.getInstance().createGame(gameInfo.getAsString());
 		try
@@ -526,14 +530,7 @@ public class GameBoardController implements Observer
 			MoveProtocolMessage message = new MoveProtocolMessage(position[0], position[1]);
 			serverConnection.send(message.getFullMessage());
 			
-			if (gameController instanceof BotGameController)
-			{
-				afterTurn(false);
-			}
-			else
-			{
-				afterTurn(true);
-			}
+			afterTurn(true);
 		}
 	}
 
@@ -578,7 +575,7 @@ public class GameBoardController implements Observer
 			// We are marking territories!
 			territoryBoard = gameController.getPossibleTerritory();
 			
-			if (gameController instanceof BotGameController)
+			if (isGameWithBot)
 			{
 				showTheWinner();
 				return;
@@ -589,14 +586,7 @@ public class GameBoardController implements Observer
 		}
 		else
 		{
-			if (gameController instanceof BotGameController)
-			{
-				afterTurn(false);
-			}
-			else
-			{
-				afterTurn(true);
-			}
+			afterTurn(true);
 		}
 	}
 	
@@ -736,6 +726,15 @@ public class GameBoardController implements Observer
 				{
 					// We are marking territories!
 					territoryBoard = gameController.getPossibleTerritory();
+					
+					if (isGameWithBot)
+					{
+						Platform.runLater(()->
+						{
+							showTheWinner();
+						});
+						return;
+					}
 					
 					acceptedPreviousTurn = false;
 					

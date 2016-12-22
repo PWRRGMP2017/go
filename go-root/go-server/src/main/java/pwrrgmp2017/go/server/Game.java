@@ -122,6 +122,19 @@ public class Game extends Thread
 				try
 				{
 					addTurnMessage(currentPlayer, movement.getX(), movement.getY());
+					if (controller instanceof BotGameController)
+					{
+						Point botMovement = controller.getLastMovement();
+						if ((int)botMovement.getX() == movement.getX() && (int)botMovement.getY() == movement.getY())
+						{
+							// Bot passed
+							currentPlayer.send(new PassProtocolMessage().getFullMessage());
+						}
+						else
+						{
+							currentPlayer.send(new MoveProtocolMessage((int)botMovement.getX(), (int)botMovement.getY()).getFullMessage());
+						}
+					}
 				}
 				catch (BadPlayerException | GameIsEndedException | GameBegginsException e)
 				{
@@ -149,6 +162,10 @@ public class Game extends Thread
 				try
 				{
 					pass(currentPlayer);
+					if (controller instanceof BotGameController)
+					{
+						currentPlayer.send(new PassProtocolMessage().getFullMessage());
+					}
 				}
 				catch (GameBegginsException | GameIsEndedException | BadFieldException e)
 				{

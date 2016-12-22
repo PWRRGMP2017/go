@@ -35,11 +35,7 @@ public class JapanGameControllerTest
 	@Before
 	public void setUp() throws Exception
 	{
-		//String gameInfo="JAPAN_019_M_06.5";
 		GameInfo gameInfo = new GameInfo(19, 6.5f, RulesType.JAPANESE, false);
-//		GameBoard board= new GameBoard(19);
-//		GameModel model= new JapanGameModel(board, (float) 6.5);
-//		controller= new GameController(model);
 		controller=factory.createGame(gameInfo.getAsString());
 	}
 
@@ -47,13 +43,13 @@ public class JapanGameControllerTest
 	public void tearDown() throws Exception
 	{
 	}
-
+	
 	@Test
-	public void testSimplePointsCalculate()
+	public void testIsSimpleSituationCalculatingWell()
 	{
 		try
 		{
-			controller.initialiseGame();
+			controller.initialiseGame(Field.BLACKSTONE);
 			controller.addMovement(1, 1, Field.BLACKSTONE);
 			controller.addMovement(1, 2, Field.WHITESTONE);
 			controller.addMovement(2, 1, Field.BLACKSTONE);
@@ -73,11 +69,11 @@ public class JapanGameControllerTest
 	}
 	
 	@Test
-	public void testComplexPointsCalculate()
+	public void testIsComplexSituationCalculatingWell()
 	{
 		try
 		{
-			controller.initialiseGame();
+			controller.initialiseGame(Field.BLACKSTONE);
 			controller.addMovement(1, 1, Field.BLACKSTONE);
 			controller.addMovement(1, 2, Field.WHITESTONE);
 			controller.addMovement(2, 1, Field.BLACKSTONE);
@@ -98,6 +94,9 @@ public class JapanGameControllerTest
 			controller.addMovement(13, 13, Field.WHITESTONE);
 			controller.addMovement(3, 7, Field.BLACKSTONE);
 			controller.addMovement(4, 7, Field.WHITESTONE);
+			controller.addMovement(11, 11, Field.BLACKSTONE);
+			controller.addMovement(11, 9, Field.WHITESTONE);
+			controller.addMovement(11, 10, Field.BLACKSTONE);
 		}
 		catch (BadFieldException | GameBegginsException | GameIsEndedException | GameStillInProgressException e)
 		{
@@ -109,11 +108,11 @@ public class JapanGameControllerTest
 	}
 	
 	@Test
-	public void testDivisionIntoTwoAreasSituationPointsCalculate()
+	public void testIsDivisionIntoTwoAreasSituationCalculatingWell()
 	{
 		try
 		{
-			controller.initialiseGame();
+			controller.initialiseGame(Field.BLACKSTONE);
 			controller.addMovement(10, 1, Field.BLACKSTONE);
 			controller.addMovement(11, 1, Field.WHITESTONE);
 			controller.addMovement(10, 2, Field.BLACKSTONE);
@@ -152,6 +151,7 @@ public class JapanGameControllerTest
 			controller.addMovement(11, 18, Field.WHITESTONE);
 			controller.addMovement(10, 19, Field.BLACKSTONE);
 			controller.addMovement(11, 19, Field.WHITESTONE);
+			
 		}
 		catch (BadFieldException | GameBegginsException | GameIsEndedException | GameStillInProgressException e)
 		{
@@ -160,6 +160,104 @@ public class JapanGameControllerTest
 		}
 		if(controller.calculateScore()!=12.5)
 			fail(((Float)controller.calculateScore()).toString());
+		Field[][] boardCopy= controller.getBoardCopy();
+		for(int i=0; i<boardCopy.length; i++)
+		{
+			System.out.println();
+			for(int j=0; j<boardCopy.length; j++)
+			{
+				switch(boardCopy[i][j])
+				{
+				case WALL:
+					System.out.print('X');
+					break;
+				case BLACKSTONE:
+					System.out.print('B');
+					break;
+				case WHITESTONE:
+					System.out.print('W');
+					break;
+				case BLACKTERRITORY:
+					System.out.print('b');
+					break;
+				case WHITETERRITORY:
+					System.out.print('w');
+					break;
+				case EMPTY:
+				case NONETERRITORY:
+					System.out.print('-');
+					break;
+				default:
+				}
+			}
+		}
+		try
+		{
+			controller.addMovement(7, 8, Field.BLACKSTONE);
+			controller.addMovement(7, 6, Field.WHITESTONE);
+		}
+		catch (BadFieldException | GameBegginsException | GameIsEndedException e)
+		{
+			e.printStackTrace();
+		}
+		Field[][] terytoria= controller.getPossibleTerritory();
+		if(controller.calculateScore(terytoria)>0)
+			fail("Zły wynik przy 'inwazji':"+controller.calculateScore(terytoria)); 
 	}
 
+	@Test
+	public void testIsCalculatingWellWithEyes()
+	{
+		try
+		{
+			controller.initialiseGame(Field.BLACKSTONE);
+			controller.addMovement(10, 10, Field.BLACKSTONE);
+			controller.addMovement(9, 10, Field.WHITESTONE);
+			controller.addMovement(10, 11, Field.BLACKSTONE);
+			controller.addMovement(9, 11, Field.WHITESTONE);
+			controller.addMovement(10, 12, Field.BLACKSTONE);
+			controller.addMovement(9, 12, Field.WHITESTONE);
+			controller.addMovement(10, 13, Field.BLACKSTONE);
+			controller.addMovement(9, 13, Field.WHITESTONE);
+			controller.addMovement(10, 14, Field.BLACKSTONE);
+			controller.addMovement(9, 14, Field.WHITESTONE);
+			controller.addMovement(10, 15, Field.BLACKSTONE);
+			controller.addMovement(9, 15, Field.WHITESTONE);
+			controller.addMovement(12, 10, Field.BLACKSTONE);
+			controller.addMovement(13, 10, Field.WHITESTONE);
+			controller.addMovement(12, 11, Field.BLACKSTONE);
+			controller.addMovement(13, 11, Field.WHITESTONE);
+			controller.addMovement(12, 12, Field.BLACKSTONE);
+			controller.addMovement(13, 12, Field.WHITESTONE);
+			controller.addMovement(12, 13, Field.BLACKSTONE);
+			controller.addMovement(13, 13, Field.WHITESTONE);
+			controller.addMovement(12, 14, Field.BLACKSTONE);
+			controller.addMovement(13, 14, Field.WHITESTONE);
+			controller.addMovement(12, 15, Field.BLACKSTONE);
+			controller.addMovement(13, 15, Field.WHITESTONE);
+			
+			controller.addMovement(11, 15, Field.BLACKSTONE);
+			controller.addMovement(9, 9, Field.WHITESTONE);
+			controller.pass(Field.BLACKSTONE);
+			controller.addMovement(10, 9, Field.WHITESTONE);
+			controller.addMovement(11, 12, Field.BLACKSTONE);
+			controller.addMovement(11, 9, Field.WHITESTONE);
+			controller.addMovement(11, 10, Field.BLACKSTONE);
+			controller.addMovement(12, 9, Field.WHITESTONE);
+			controller.pass(Field.BLACKSTONE);
+			controller.addMovement(12, 16, Field.WHITESTONE);
+			controller.pass(Field.BLACKSTONE);
+			controller.addMovement(11, 16, Field.WHITESTONE);
+			controller.addMovement(5, 5, Field.BLACKSTONE);
+			controller.addMovement(10, 16, Field.WHITESTONE);
+			
+		}
+		catch (BadFieldException | GameBegginsException | GameIsEndedException | GameStillInProgressException e)
+		{
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		if(controller.calculateScore()>20)
+			fail(((Float)controller.calculateScore()).toString());
+	}
 }

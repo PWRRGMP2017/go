@@ -237,19 +237,27 @@ public class JapanGameControllerTest
 			controller.addMovement(13, 15, Field.WHITESTONE);
 			
 			controller.addMovement(11, 15, Field.BLACKSTONE);
-			controller.addMovement(9, 9, Field.WHITESTONE);
-			controller.pass(Field.BLACKSTONE);
 			controller.addMovement(10, 9, Field.WHITESTONE);
 			controller.addMovement(11, 12, Field.BLACKSTONE);
 			controller.addMovement(11, 9, Field.WHITESTONE);
 			controller.addMovement(11, 10, Field.BLACKSTONE);
 			controller.addMovement(12, 9, Field.WHITESTONE);
+			controller.addMovement(11, 17, Field.BLACKSTONE);
+			controller.addMovement(9, 16, Field.WHITESTONE);
+			controller.addMovement(12, 17, Field.BLACKSTONE);
+			controller.addMovement(9, 17, Field.WHITESTONE);
+			controller.addMovement(10, 17, Field.BLACKSTONE);
+			controller.addMovement(14, 16, Field.WHITESTONE);
+			controller.addMovement(10, 16, Field.BLACKSTONE);
+			controller.addMovement(14, 17, Field.WHITESTONE);
+			controller.addMovement(13, 17, Field.BLACKSTONE);
+			controller.addMovement(10, 18, Field.WHITESTONE);
+			controller.addMovement(13, 16, Field.BLACKSTONE);
+			controller.addMovement(11, 18, Field.WHITESTONE);
 			controller.pass(Field.BLACKSTONE);
-			controller.addMovement(12, 16, Field.WHITESTONE);
+			controller.addMovement(12, 18, Field.WHITESTONE);
 			controller.pass(Field.BLACKSTONE);
-			controller.addMovement(11, 16, Field.WHITESTONE);
-			controller.addMovement(5, 5, Field.BLACKSTONE);
-			controller.addMovement(10, 16, Field.WHITESTONE);
+			controller.addMovement(13, 18, Field.WHITESTONE);
 			
 		}
 		catch (BadFieldException | GameBegginsException | GameIsEndedException | GameStillInProgressException e)

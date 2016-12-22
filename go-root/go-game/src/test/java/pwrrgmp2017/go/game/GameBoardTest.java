@@ -172,7 +172,7 @@ public class GameBoardTest
 					if(board[i][j]==Field.BLACKSTONE)
 						System.out.print('B');
 					else if(board[i][j]==Field.WHITESTONE)
-						System.out.print('W');
+						System.out.print('W'); 
 					else
 						System.out.print('-');
 				}
@@ -207,6 +207,75 @@ public class GameBoardTest
 				fail();
 			moves=boardReal.getPossibleMovements(Field.WHITESTONE);
 			assertSame(moves[1][1], false); // ruch niemożliwy przez zasadę KO, działający tym razem dla board[2][2]
+			
+		}
+		catch (BadFieldException e)
+		{
+			fail(e.getMessage());
+		}
+		if(!boardReal.makeMovement(12, 11, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(11, 12, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(13, 12, Field.BLACKSTONE, Field.WHITESTONE))
+			fail();
+		if(!boardReal.makeMovement(11, 13, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(13, 13, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(12, 14, Field.WHITESTONE, Field.BLACKSTONE))
+			fail();
+		if(!boardReal.makeMovement(12, 13, Field.BLACKSTONE, Field.WHITESTONE)) //kamień zabierany
+			fail();
+		if(!boardReal.makeMovement(12, 12, Field.WHITESTONE, Field.BLACKSTONE)) //ruch włączający zasadę KO
+			fail();
+		try
+		{
+			
+			Field[][] board=boardReal.getBoardCopy();
+			for(int i=11; i<15; i++)
+			{
+				System.out.println();
+				for(int j=11; j<15; j++)
+				{
+					if(board[i][j]==Field.BLACKSTONE)
+						System.out.print('B');
+					else if(board[i][j]==Field.WHITESTONE)
+						System.out.print('W'); 
+					else
+						System.out.print('-');
+				}
+			}
+			System.out.println();
+			if(board[12][13]!=Field.EMPTY) //sprawdzenie, czy kamień został odebrany
+				fail();
+			moves=boardReal.getPossibleMovements(Field.BLACKSTONE);
+			assertSame(moves[11][12], false); // ruch niemożliwy przez zasadę KO, działający dla board[3][2]
+			if(!boardReal.makeMovement(16, 16, Field.BLACKSTONE, Field.WHITESTONE))
+				fail();
+			if(!boardReal.makeMovement(17, 15, Field.WHITESTONE, Field.BLACKSTONE))
+				fail();
+			if(!boardReal.makeMovement(12, 13, Field.BLACKSTONE, Field.WHITESTONE)) //ruch znowu możliwy
+				fail();
+			board=boardReal.getBoardCopy();
+			for(int i=11; i<15; i++)
+			{
+				System.out.println();
+				for(int j=11; j<15; j++)
+				{
+					if(board[i][j]==Field.BLACKSTONE)
+						System.out.print('B');
+					else if(board[i][j]==Field.WHITESTONE)
+						System.out.print('W');
+					else
+						System.out.print('-');
+				}
+			}
+					
+			if(board[12][12]!=Field.EMPTY) //sprawdzenie, czy kamień został odebrany
+				fail();
+			moves=boardReal.getPossibleMovements(Field.WHITESTONE);
+			assertSame(moves[11][11], false); // ruch niemożliwy przez zasadę KO, działający tym razem dla board[2][2]
 			
 		}
 		catch (BadFieldException e)

@@ -46,11 +46,16 @@ public class Game extends Thread
 
 		try
 		{
-			controller.initialiseGame();
+			controller.initialiseGame(Field.BLACKSTONE);
 		}
 		catch (GameStillInProgressException e)
 		{
 			// Should not happen
+			e.printStackTrace();
+		}
+		catch (BadFieldException e)
+		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -64,16 +64,40 @@ public class GamesManagerTest
 		try
 		{
 			manager.addChoosingPlayer(player1, "player1");
+		}
+		catch (SameNameException e)
+		{ i++; }
+		try
+		{
 			manager.addChoosingPlayer(player2, "player2");
+		}
+		catch (SameNameException e)
+		{ i++; }
+		try
+		{
 			manager.addChoosingPlayer(player3, "player3");
+		}
+		catch (SameNameException e)
+		{ i++; }
+		try
+		{
 			manager.addChoosingPlayer(player4, "player1");
+		}
+		catch (SameNameException e)
+		{ i++; }
+		try
+		{
 			manager.addChoosingPlayer(player5, "player2");
+		}
+		catch (SameNameException e)
+		{ i++; }
+		try
+		{
 			manager.addChoosingPlayer(player6, "player2");
 		}
 		catch (SameNameException e)
-		{
-			i++;
-		}
+		{ i++; }
+		
 		assertEquals(3, i);
 	}
 

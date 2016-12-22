@@ -109,12 +109,17 @@ public class GameBoardController implements Observer
 		gameController = GameFactory.getInstance().createGame(gameInfo.getAsString());
 		try
 		{
-			gameController.initialiseGame();
+			gameController.initialiseGame(Field.BLACKSTONE);
 		}
 		catch (GameStillInProgressException e)
 		{
 			e.printStackTrace();
 			System.exit(0);
+		}
+		catch (BadFieldException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		updateBoardPane();

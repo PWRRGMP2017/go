@@ -7,7 +7,7 @@ import pwrrgmp2017.go.game.Model.GameBoard.Field;
 
 public class JapanGameModel extends GameModel
 {
-	Field[][] board, boardReturn;
+	Field[][] boardCopy, boardReturn; 
 	boolean[][] chain, friendChain;
 	int emptyFieldsFriendChain;
 
@@ -86,18 +86,18 @@ public class JapanGameModel extends GameModel
 	@Override
 	public Field[][] getPossibleTerritory()
 	{
-		board=super.getBoardCopy();
-		boardReturn=board.clone();
-		for(int i=1; i<board.length-1; i++) //zaznaczenie wszystkich martwych łańcuchów
-			for(int j=1; j<board.length-1; j++)
+		boardCopy=super.getBoardCopy();
+		boardReturn=boardCopy.clone();
+		for(int i=1; i<boardCopy.length-1; i++) //zaznaczenie wszystkich martwych łańcuchów
+			for(int j=1; j<boardCopy.length-1; j++)
 			{
 				if(checkIfChainIsDead(i, j)<10)	
 					addDeadChainToTerritories();
 			}
 		
 		Field field;
-		for(int i=1; i<board.length-1; i++) //zaznaczanie oczywistych terytoriów 
-			for(int j=1; j<board.length-1; j++)
+		for(int i=1; i<boardCopy.length-1; i++) //zaznaczanie oczywistych terytoriów 
+			for(int j=1; j<boardCopy.length-1; j++)
 			{
 				if(boardReturn[i][j]!=Field.EMPTY) // gwarancja, że terytorium nie będzie sprawdzane 2 razy
 					continue;
@@ -112,8 +112,8 @@ public class JapanGameModel extends GameModel
 				else
 					addWholeArea(Field.NONETERRITORY);
 			}
-		for(int i=1; i<board.length-1; i++) // zaznaczenie terytoriów jako wpływów w na polach
-			for(int j=1; j<board.length-1; j++)
+		for(int i=1; i<boardCopy.length-1; i++) // zaznaczenie terytoriów jako wpływów w na polach
+			for(int j=1; j<boardCopy.length-1; j++)
 			{
 				if(boardReturn[i][j]!=Field.NONETERRITORY)
 					continue;
@@ -155,10 +155,10 @@ public class JapanGameModel extends GameModel
 
 	private int takeTerritoryPoints(int i, int j)
 	{
-		if(i<1 || i>board.length-1 || j<1 || j>board.length-1)
+		if(i<1 || i>boardCopy.length-1 || j<1 || j>boardCopy.length-1)
 			return 0;
 		
-		switch(board[i][j])
+		switch(boardCopy[i][j])
 		{
 		case BLACKSTONE:
 			return 3;
@@ -231,8 +231,6 @@ public class JapanGameModel extends GameModel
 				return Field.EMPTY;
 			else
 				return checkIfAreaIsTerritory(i, j);
-		case WALL:
-			return Field.EMPTY;
 		default:
 			return Field.EMPTY;
 		}
@@ -242,9 +240,9 @@ public class JapanGameModel extends GameModel
 	private int checkIfChainIsDead(int i, int j) //zwraca ilośc całkowitych "punktów życia" łańcucha
 	{
 		Field field, concur;
-		if(board[i][j]!=Field.BLACKSTONE && board[i][j]!=Field.WHITESTONE)
+		if(boardCopy[i][j]!=Field.BLACKSTONE && boardCopy[i][j]!=Field.WHITESTONE)
 			return 100;
-		field=board[i][j];
+		field=boardCopy[i][j];
 		for(int a=0; a<chain.length; a++)
 			Arrays.fill(chain[a], false);
 		
@@ -299,7 +297,7 @@ public class JapanGameModel extends GameModel
 	
 	private int checkIfChainIsDeadRecursiveTwo(int i, int j, Field field, Field concur) //Dopełnia pośrednią rekurencję dla checkIfChainIsDeadRecursive
 	{
-		switch(board[i][j])
+		switch(boardCopy[i][j])
 		{
 		case BLACKSTONE:
 			if(field==Field.BLACKSTONE)
@@ -341,20 +339,20 @@ public class JapanGameModel extends GameModel
 	private int checkEmptyField(int i, int j, Field field, Field concur) //Sprawdza ilośc "punktów życiowych" dla oddechu w łańcuchu
 	{
 		int lifePoints=0;
-		if(board[i][j]==Field.EMPTY)
+		if(boardCopy[i][j]==Field.EMPTY)
 		{
-			if(board[i+1][j]==Field.EMPTY)
+			if(boardCopy[i+1][j]==Field.EMPTY)
 				lifePoints++;
-			if(board[i-1][j]==Field.EMPTY)
+			if(boardCopy[i-1][j]==Field.EMPTY)
 				lifePoints++;
-			if(board[i][j+1]==Field.EMPTY)
+			if(boardCopy[i][j+1]==Field.EMPTY)
 				lifePoints++;
-			if(board[i][j-1]==Field.EMPTY)
+			if(boardCopy[i][j-1]==Field.EMPTY)
 				lifePoints++;
 		}
-		else if(board[i][j]==field && chain[i-1][j-1])
+		else if(boardCopy[i][j]==field && !chain[i-1][j-1])
 		{
-			if(!checkFriendChain(i, j, field, concur))
+			if(checkFriendChain(i, j, field, concur))
 				lifePoints+=3;
 		}
 		return lifePoints;
@@ -384,7 +382,7 @@ public class JapanGameModel extends GameModel
 	private void checkFriendChainRecursive(int i, int j, Field field, Field concur) throws TheSameChainException //Rekurencyjna metoda wykorzystywana przez checkFriendChain
 	{
 		friendChain[i-1][j-1]=true;
-		//if(i-2>-1 && i<chain.length && chain())
+
 		if(i>1)
 			if(chain[i-2][j-1]==true)
 				throw new TheSameChainException();	
@@ -399,24 +397,24 @@ public class JapanGameModel extends GameModel
 				throw new TheSameChainException();
 			
 			
-		if(board[i+1][j]==field && !friendChain[i][j-1])
+		if(boardCopy[i+1][j]==field && !friendChain[i][j-1])
 			checkFriendChainRecursive(i+1, j, field, concur);
-		else if(board[i][j]==Field.EMPTY)
+		else if(boardCopy[i+1][j]==Field.EMPTY)
 			emptyFieldsFriendChain++;
 		
-		if(board[i-1][j]==field && !friendChain[i-2][j-1])
+		if(boardCopy[i-1][j]==field && !friendChain[i-2][j-1])
 			checkFriendChainRecursive(i-1, j, field, concur);
-		else if(board[i][j]==Field.EMPTY)
+		else if(boardCopy[i-1][j]==Field.EMPTY)
 			emptyFieldsFriendChain++;
 		
-		if(board[i][j+1]==field && !friendChain[i-1][j])
+		if(boardCopy[i][j+1]==field && !friendChain[i-1][j])
 			checkFriendChainRecursive(i, j+1, field, concur);
-		else if(board[i][j]==Field.EMPTY)
+		else if(boardCopy[i][j+1]==Field.EMPTY)
 			emptyFieldsFriendChain++;
 		
-		if(board[i][j-1]==field && !friendChain[i-1][j-2])
+		if(boardCopy[i][j-1]==field && !friendChain[i-1][j-2])
 			checkFriendChainRecursive(i, j-1, field, concur);
-		else if(board[i][j]==Field.EMPTY)
+		else if(boardCopy[i][j-1]==Field.EMPTY)
 			emptyFieldsFriendChain++;
 	}
 
@@ -427,10 +425,10 @@ public class JapanGameModel extends GameModel
 			for(int j=0; j<chain.length; j++)
 				if(chain[i][j]==true)
 				{
-					if(board[i+1][j+1]==Field.BLACKSTONE)
-						board[i+1][j+1]=Field.DEADBLACK;
-					if(board[i+1][j+1]==Field.WHITESTONE)
-						board[i+1][j+1]=Field.DEADWHITE;
+					if(boardCopy[i+1][j+1]==Field.BLACKSTONE)
+						boardCopy[i+1][j+1]=Field.DEADBLACK;
+					if(boardCopy[i+1][j+1]==Field.WHITESTONE)
+						boardCopy[i+1][j+1]=Field.DEADWHITE;
 				}
 	}
 	

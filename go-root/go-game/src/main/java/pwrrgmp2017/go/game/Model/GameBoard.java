@@ -121,7 +121,7 @@ public class GameBoard
 				&& (board[i][j+1]==concurField || Field.WALL==board[i][j+1]) && (board[i][j-1]==concurField || Field.WALL==board[i][j-1]))
 		{
 			int KO_Stones=0, KOi=0, KOj=0;
-			if(i+2<=board.length)
+			if(i+2<board.length)
 				if((board[i+1][j+1]==playerField || Field.WALL==board[i+1][j+1]) 
 						&& (board[i+1][j-1]==playerField || Field.WALL==board[i+1][j-1]) 
 						&& (board[i+2][j]==playerField || Field.WALL==board[i+2][j]))
@@ -139,7 +139,7 @@ public class GameBoard
 					KOi=i-1;
 					KOj=j;
 				}
-			if(j+2<=board.length)
+			if(j+2<board.length)
 				if((board[i-1][j+1]==playerField || Field.WALL==board[i-1][j+1]) 
 						&& (board[i+1][j+1]==playerField || Field.WALL==board[i+1][j+1]) 
 						&& (board[i][j+2]==playerField || Field.WALL==board[i][j+2]))
@@ -305,7 +305,10 @@ public class GameBoard
 
 	public Field[][] getBoardCopy()
 	{
-		return board.clone();
+		Field [][] cloneBoard= new Field[board.length][];
+		for(int i=0; i<board.length; i++)
+			cloneBoard[i]=board[i].clone();
+		return cloneBoard;
 	}
 
 	public int getBlackCaptives()

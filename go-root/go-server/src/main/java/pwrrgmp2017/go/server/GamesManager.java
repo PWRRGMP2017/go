@@ -22,10 +22,12 @@ import pwrrgmp2017.go.server.connection.PlayerConnection;
 import pwrrgmp2017.go.server.connection.RealPlayerConnection;
 
 /**
- * Manages list of players and games on the server.
+ * Manages list of players and games on the server. Singleton.
  */
 public class GamesManager
 {
+	private static volatile GamesManager INSTANCE;
+	
 	/**
 	 * List of games currently being played.
 	 */
@@ -51,12 +53,27 @@ public class GamesManager
 	/**
 	 * Constructor.
 	 */
-	public GamesManager()
+	private GamesManager()
 	{
 		games = new ArrayList<Game>();
 		choosingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		playingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		waitingPlayers = new ConcurrentSkipListMap<String, PlayerConnection>();
+	}
+	
+	public static GamesManager getInstance()
+	{
+		if (INSTANCE == null)
+		{
+            synchronized (GamesManager.class)
+            {
+                if (INSTANCE == null)
+                {
+                	INSTANCE = new GamesManager();
+                }
+            }
+        }
+        return INSTANCE;
 	}
 
 	/**

@@ -46,7 +46,7 @@ public class Server extends Thread
 		}
 
 		this.port = port;
-		this.gamesManager = new GamesManager();
+		this.gamesManager = GamesManager.getInstance();
 
 		LOGGER.log(Level.INFO, "Server is starting.");
 		serverSocket = new ServerSocket(port);

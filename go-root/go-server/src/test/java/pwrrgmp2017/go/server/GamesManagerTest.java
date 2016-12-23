@@ -1,7 +1,7 @@
 package pwrrgmp2017.go.server;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -36,7 +36,7 @@ public class GamesManagerTest
 	@Before
 	public void setUp() throws Exception
 	{
-		manager = new GamesManager();
+		manager = GamesManager.getInstance();
 		player1 = mock(RealPlayerConnection.class);
 		player2 = mock(RealPlayerConnection.class);
 		player3 = mock(RealPlayerConnection.class);

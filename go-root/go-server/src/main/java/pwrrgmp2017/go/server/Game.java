@@ -23,18 +23,58 @@ import pwrrgmp2017.go.game.Model.GameBoard.Field;
 import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.connection.PlayerConnection;
 
+/**
+ * Thread for the game currently played by two players.
+ */
 public class Game extends Thread
 {
+	/**
+	 * Reference to logger.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
 
+	/**
+	 * Controller of the game playing.
+	 */
 	private GameController controller;
+
+	/**
+	 * Reference to black player connection.
+	 */
 	private PlayerConnection blackPlayer;
+
+	/**
+	 * Reference to white player connection.
+	 */
 	private PlayerConnection whitePlayer;
+
+	/**
+	 * Reference to the games manager.
+	 */
 	private GamesManager gamesManager;
 
+	/**
+	 * Reference the player whom turn it is.
+	 */
 	private PlayerConnection currentPlayer;
+
+	/**
+	 * Flag saying if the previous turn was acceptance of the territory.
+	 */
 	private boolean acceptedPreviousTurn;
 
+	/**
+	 * Initialises the game, but does not start a thread.
+	 * 
+	 * @param blackPlayer
+	 *            black player connection
+	 * @param whitePlayer
+	 *            white player connection
+	 * @param controller
+	 *            game controller
+	 * @param gamesManager
+	 *            reference to the games manager
+	 */
 	Game(PlayerConnection blackPlayer, PlayerConnection whitePlayer, GameController controller,
 			GamesManager gamesManager)
 	{
@@ -61,6 +101,9 @@ public class Game extends Thread
 		}
 	}
 
+	/**
+	 * Listens for messages from the players and reacts to them.
+	 */
 	@Override
 	public void run()
 	{
@@ -106,7 +149,7 @@ public class Game extends Thread
 				catch (GameIsEndedException e)
 				{
 					// So what?
-//					e.printStackTrace();
+					// e.printStackTrace();
 				}
 				ResignProtocolMessage resignation = (ResignProtocolMessage) genericMessage;
 				getOpponent(currentPlayer).send(resignation.getFullMessage());
@@ -125,17 +168,23 @@ public class Game extends Thread
 					if (controller instanceof BotGameController)
 					{
 						Point botMovement = controller.getLastMovement();
-//						LOGGER.info(Integer.toString(movement.getX()) + ", " + Integer.toString(movement.getY()));
-//						LOGGER.info(Integer.toString((int)botMovement.getX()) + ", " + Integer.toString((int)botMovement.getY()));
-//						LOGGER.info(Boolean.toString((int)botMovement.getX() == movement.getX() && (int)botMovement.getY() == movement.getY()));
-						if ((int)botMovement.getX() == movement.getX() && (int)botMovement.getY() == movement.getY())
+						// LOGGER.info(Integer.toString(movement.getX()) + ", "
+						// + Integer.toString(movement.getY()));
+						// LOGGER.info(Integer.toString((int)botMovement.getX())
+						// + ", " + Integer.toString((int)botMovement.getY()));
+						// LOGGER.info(Boolean.toString((int)botMovement.getX()
+						// == movement.getX() && (int)botMovement.getY() ==
+						// movement.getY()));
+						if ((int) botMovement.getX() == movement.getX() && (int) botMovement.getY() == movement.getY())
 						{
 							// Bot passed
 							currentPlayer.send(new PassProtocolMessage().getFullMessage());
 						}
 						else
 						{
-							currentPlayer.send(new MoveProtocolMessage((int)botMovement.getX(), (int)botMovement.getY()).getFullMessage());
+							currentPlayer
+									.send(new MoveProtocolMessage((int) botMovement.getX(), (int) botMovement.getY())
+											.getFullMessage());
 						}
 					}
 				}
@@ -160,7 +209,7 @@ public class Game extends Thread
 			else if (genericMessage instanceof PassProtocolMessage)
 			{
 				LOGGER.info("Player " + currentPlayer.getPlayerName() + " passed.");
-				
+
 				// Pass in here
 				try
 				{
@@ -175,7 +224,7 @@ public class Game extends Thread
 					// Should not happen
 					e.printStackTrace();
 				}
-				
+
 				// Send the movement to the opponent
 				currentPlayer = getOpponent(currentPlayer);
 				currentPlayer.send(genericMessage.getFullMessage());
@@ -184,40 +233,41 @@ public class Game extends Thread
 			{
 				LOGGER.info("Player " + currentPlayer.getPlayerName() + " changes territory.");
 				acceptedPreviousTurn = false;
-				
+
 				getOpponent(currentPlayer).send(genericMessage.getFullMessage());
 			}
 			else if (genericMessage instanceof AcceptTerritoryProtocolMessage)
 			{
 				LOGGER.info("Player " + currentPlayer.getPlayerName() + " accepts territory.");
-				
+
 				currentPlayer = getOpponent(currentPlayer);
 				currentPlayer.send(genericMessage.getFullMessage());
-				
+
 				if (acceptedPreviousTurn)
 				{
-					LOGGER.info("Players " + blackPlayer.getPlayerName() + " and "
-							+ whitePlayer.getPlayerName() + " have ended the game.");
+					LOGGER.info("Players " + blackPlayer.getPlayerName() + " and " + whitePlayer.getPlayerName()
+							+ " have ended the game.");
 					gamesManager.deleteGame(this);
 					return;
 				}
-				
+
 				acceptedPreviousTurn = true;
 			}
 			else if (genericMessage instanceof ResumeGameProtocolMessage)
 			{
 				LOGGER.info("Player " + currentPlayer.getPlayerName() + " wants to resume the game.");
 				acceptedPreviousTurn = false;
-				
+
 				currentPlayer = getOpponent(currentPlayer);
-				
+
 				try
 				{
 					initializeGame(currentPlayer);
 				}
 				catch (GameStillInProgressException e)
 				{
-					LOGGER.warning("Player " + currentPlayer.getPlayerName() + " wanted to resume a game still in progress.");
+					LOGGER.warning(
+							"Player " + currentPlayer.getPlayerName() + " wanted to resume a game still in progress.");
 					continue;
 				}
 				catch (BadFieldException e)
@@ -225,7 +275,7 @@ public class Game extends Thread
 					// Should not happen
 					e.printStackTrace();
 				}
-				
+
 				currentPlayer.send(new ResumeGameProtocolMessage().getFullMessage());
 			}
 			else if (message.isEmpty() && controller instanceof BotGameController)
@@ -238,7 +288,7 @@ public class Game extends Thread
 					gamesManager.deleteGame(this);
 					return;
 				}
-				
+
 				currentPlayer = getOpponent(currentPlayer);
 			}
 			else
@@ -250,6 +300,11 @@ public class Game extends Thread
 		cleanUp();
 	}
 
+	/**
+	 * On error, closes the connection with {@link #currentPlayer}, sends a
+	 * message to the opponent and requests {@link #gamesManager} to delete this
+	 * game.
+	 */
 	private void cleanUp()
 	{
 		currentPlayer.close();
@@ -261,36 +316,58 @@ public class Game extends Thread
 		// Let the games manager clean up
 		gamesManager.deleteGame(this);
 	}
-
-	public GameController getController()
-	{
-		return controller;
-	}
-
+	
+	/**
+	 * @return black player connection
+	 */
 	public PlayerConnection getBlackPlayer()
 	{
 		return blackPlayer;
 	}
-
+	
+	/**
+	 * @return white player connection
+	 */
 	public PlayerConnection getWhitePlayer()
 	{
 		return whitePlayer;
 	}
 	
-	public void initializeGame(PlayerConnection player) throws GameStillInProgressException, BadFieldException
+	/**
+	 * Reinitialises the game during the territory phase.
+	 * @param player player which should start the next turn
+	 * @throws GameStillInProgressException if the game is still in progress
+	 * @throws BadFieldException should not be thrown
+	 */
+	private void initializeGame(PlayerConnection player) throws GameStillInProgressException, BadFieldException
 	{
 		if (player == blackPlayer)
 			controller.initialiseGame(Field.BLACKSTONE);
 		else
 			controller.initialiseGame(Field.WHITESTONE);
 	}
-
-	public PlayerConnection getOpponent(PlayerConnection player)
+	
+	/**
+	 * Helping method.
+	 * @param player player
+	 * @return opponent to the player
+	 */
+	private PlayerConnection getOpponent(PlayerConnection player)
 	{
 		return player == blackPlayer ? whitePlayer : blackPlayer;
 	}
-
-	public void addTurnMessage(PlayerConnection player, int x, int y)
+	
+	/**
+	 * Makes a move.
+	 * @param player player who made a move
+	 * @param x position on the board
+	 * @param y position on the board
+	 * @throws BadPlayerException if wrong player made a move
+	 * @throws BadFieldException if wrong player made a move
+	 * @throws GameBegginsException if game is was not initialised
+	 * @throws GameIsEndedException if game is in end state
+	 */
+	private void addTurnMessage(PlayerConnection player, int x, int y)
 			throws BadPlayerException, BadFieldException, GameBegginsException, GameIsEndedException
 	{
 		if (player == blackPlayer)
@@ -299,48 +376,29 @@ public class Game extends Thread
 			controller.addMovement(x, y, Field.WHITESTONE);
 
 	}
-
-	public void resign() throws GameIsEndedException
+	
+	/**
+	 * The current player resigns.
+	 * @throws GameIsEndedException if the game is in the end state
+	 */
+	private void resign() throws GameIsEndedException
 	{
 		controller.resign();
 	}
-
-	public void pass(PlayerConnection player) throws GameBegginsException, GameIsEndedException, BadFieldException
+	
+	/**
+	 * The player passes.
+	 * @param player player which passes
+	 * @throws GameBegginsException if the game was not initialised
+	 * @throws GameIsEndedException if the game is in end state
+	 * @throws BadFieldException should not be thrown
+	 */
+	private void pass(PlayerConnection player) throws GameBegginsException, GameIsEndedException, BadFieldException
 	{
 		if (player == blackPlayer)
 			controller.pass(Field.BLACKSTONE);
 		else if (player == whitePlayer)
 			controller.pass(Field.WHITESTONE);
-	}
-
-	public float calculateScore()
-	{
-		return controller.calculateScore();
-	}
-
-	public void calculateScore(Field[][] territory)
-	{
-		controller.calculateScore(territory);
-	}
-
-	public Field[][] getBoardCopy()
-	{
-		return controller.getBoardCopy();
-	}
-
-	public Point getLastMovement()
-	{
-		return controller.getLastMovement();
-	}
-
-	public boolean[][] getPossibleMovements(Field colour) throws BadFieldException
-	{
-		return controller.getPossibleMovements(colour);
-	}
-
-	public Field[][] getPossibleTerritory()
-	{
-		return controller.getPossibleTerritory();
 	}
 
 }

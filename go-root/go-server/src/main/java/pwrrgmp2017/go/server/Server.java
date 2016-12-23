@@ -6,15 +6,37 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The server main thread, which only accepts the connections and lets the {@link GamesManager} care about them.
+ */
 public class Server extends Thread
 {
+	/**
+	 * Reference to logger.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 
+	/**
+	 * Reference to the games manager.
+	 */
 	GamesManager gamesManager;
 
+	/**
+	 * The server port.
+	 */
 	private int port;
+	
+	/**
+	 * The server socket.
+	 */
 	private ServerSocket serverSocket;
 
+	/**
+	 * Starts the server and server thread.
+	 * @param port server port
+	 * @throws IllegalArgumentException ig the port is wrong
+	 * @throws IOException if the server could not be created
+	 */
 	Server(int port) throws IllegalArgumentException, IOException
 	{
 		if (port < 5001 && port != 0)
@@ -32,7 +54,10 @@ public class Server extends Thread
 
 		this.start();
 	}
-
+	
+	/**
+	 * The thread accepting connections. Should not be called directly.
+	 */
 	@Override
 	public void run()
 	{
@@ -57,14 +82,21 @@ public class Server extends Thread
 			}
 		}
 	}
-
+	
+	/**
+	 * Closes the server.
+	 * @throws IOException if there was a problem
+	 */
 	public void close() throws IOException
 	{
 		gamesManager.closeAllConnections();
 		this.interrupt();
 		serverSocket.close();
 	}
-
+	
+	/**
+	 * @return the server port
+	 */
 	public int getPort()
 	{
 		return port;

@@ -2,6 +2,10 @@ package pwrrgmp2017.go.server.connection;
 
 import java.io.IOException;
 
+/**
+ * Fake player connection in order for the code for real players to work with
+ * bot too.
+ */
 public class BotPlayerConnection extends PlayerConnection
 {
 	public BotPlayerConnection()
@@ -27,5 +31,5 @@ public class BotPlayerConnection extends PlayerConnection
 	{
 		// do nothing
 	}
-	
+
 }

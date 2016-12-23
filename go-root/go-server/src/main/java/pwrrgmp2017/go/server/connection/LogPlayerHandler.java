@@ -9,19 +9,40 @@ import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.server.GamesManager;
 import pwrrgmp2017.go.server.Exceptions.SameNameException;
 
+/**
+ * Thread which handles the login process of the player.
+ */
 public class LogPlayerHandler implements Runnable
 {
+	/**
+	 * Reference to logger.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(LogPlayerHandler.class.getName());
 
+	/**
+	 * Player connection (already established).
+	 */
 	private final RealPlayerConnection connection;
+	
+	/**
+	 * Reference to the games manager.
+	 */
 	private final GamesManager gamesManager;
 
+	/**
+	 * Constructor.
+	 * @param connection real player connection (already established)
+	 * @param gamesManager reference to the games manager
+	 */
 	public LogPlayerHandler(RealPlayerConnection connection, GamesManager gamesManager)
 	{
 		this.connection = connection;
 		this.gamesManager = gamesManager;
 	}
 
+	/**
+	 * The thread.
+	 */
 	@Override
 	public void run()
 	{

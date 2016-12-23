@@ -10,8 +10,15 @@ import java.util.logging.Logger;
  */
 public class ServerMain
 {
+	/**
+	 * Reference to logger
+	 */
 	private static final Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 
+	/**
+	 * Parses the parameters and starts the server.
+	 * @param args must have one parameter: port
+	 */
 	public static void main(String[] args)
 	{
 		if (args.length != 1)
@@ -72,10 +79,13 @@ public class ServerMain
 		}
 		scanner.close();
 	}
-
+	
+	/**
+	 * Prints usage instructions for the server.
+	 */
 	private static void printUsage()
 	{
-		System.out.println("usage: java go-server.jar port");
+		System.out.println("usage: java -jar go-server.jar port");
 	}
 
 }

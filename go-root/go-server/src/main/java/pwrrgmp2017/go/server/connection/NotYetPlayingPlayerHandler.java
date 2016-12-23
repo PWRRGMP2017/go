@@ -19,16 +19,45 @@ import pwrrgmp2017.go.server.Exceptions.BadPlayerException;
 import pwrrgmp2017.go.server.Exceptions.LostPlayerConnection;
 import pwrrgmp2017.go.server.Exceptions.tooLateToBackPlayerException;
 
+/**
+ * Thread for not yet playing player. Reacts to player messages regarding
+ * invitations, searching for player and starting a game.
+ */
 public class NotYetPlayingPlayerHandler implements Runnable
 {
+	/**
+	 * Reference to logger.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(NotYetPlayingPlayerHandler.class.getName());
 
+	/**
+	 * Connection to the player.
+	 */
 	private final RealPlayerConnection connection;
+
+	/**
+	 * Reference to games manager.
+	 */
 	private final GamesManager gamesManager;
 
+	/**
+	 * Invitation sent from/to us.
+	 */
 	private InvitationProtocolMessage invitation;
+
+	/**
+	 * The game our player is waiting for.
+	 */
 	private GameInfo waitingGame;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param player
+	 *            player connection
+	 * @param gamesManager
+	 *            reference to the games manager
+	 */
 	public NotYetPlayingPlayerHandler(RealPlayerConnection player, GamesManager gamesManager)
 	{
 		this.connection = player;
@@ -37,6 +66,9 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		this.waitingGame = null;
 	}
 
+	/**
+	 * The thread.
+	 */
 	@Override
 	public void run()
 	{
@@ -114,7 +146,7 @@ public class NotYetPlayingPlayerHandler implements Runnable
 					// Should not happen
 					e.printStackTrace();
 				}
-				
+
 				return;
 			}
 			else if (genericMessage instanceof WaitForGameProtocolMessage)
@@ -122,23 +154,14 @@ public class NotYetPlayingPlayerHandler implements Runnable
 				LOGGER.info("Player " + connection.getPlayerName() + " is searching for player.");
 				waitingGame = ((WaitForGameProtocolMessage) genericMessage).getGameInfo();
 				PlayerConnection secondPlayer;
-				try
-				{
-					secondPlayer = gamesManager.waitForGame(connection, waitingGame);
-				}
-				catch (BadPlayerException e)
-				{
-					// Should not happen
-					e.printStackTrace();
-					continue;
-				};
-				
+				secondPlayer = gamesManager.waitForGame(connection, waitingGame);
+
 				if (secondPlayer != null)
 				{
-					connection.send(
-							new PlayerFoundProtocolMessage(secondPlayer.getPlayerName(), true).getFullMessage());
-					secondPlayer.send(
-							new PlayerFoundProtocolMessage(connection.getPlayerName(), false).getFullMessage());
+					connection
+							.send(new PlayerFoundProtocolMessage(secondPlayer.getPlayerName(), true).getFullMessage());
+					secondPlayer
+							.send(new PlayerFoundProtocolMessage(connection.getPlayerName(), false).getFullMessage());
 					try
 					{
 						gamesManager.createGame(connection, secondPlayer, waitingGame);
@@ -183,8 +206,10 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		cleanUp();
 	}
 
-	/*
-	 * @return if the thread should exit
+	/**
+	 * Handles invitation response if the player is inviting.
+	 * 
+	 * @return true if the thread should exit
 	 */
 	private boolean handleInvitingResponse(InvitationResponseProtocolMessage receivedMessage)
 	{
@@ -221,7 +246,9 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		}
 	}
 
-	/*
+	/**
+	 * Handles the invitation response if the player is invited.
+	 * 
 	 * @return if the thread should exit
 	 */
 	private boolean handleInvitedResponse(InvitationResponseProtocolMessage receivedMessage)
@@ -241,7 +268,10 @@ public class NotYetPlayingPlayerHandler implements Runnable
 			return false;
 		}
 	}
-
+	
+	/**
+	 * Closes the connection and cleans up after an error.
+	 */
 	private void cleanUp()
 	{
 		connection.close();
@@ -274,7 +304,10 @@ public class NotYetPlayingPlayerHandler implements Runnable
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Handle invitation message.
+	 */
 	private void handleInvitation()
 	{
 		InvitationResponseProtocolMessage response;

@@ -47,8 +47,11 @@ public class PlayingPlayerTest
 		
 		// Pair them
 		GameInfo gameInfo = new GameInfo(19, 6.5f, RulesType.JAPANESE, false);
-		player1.sendMessageFromFakePlayer(new WaitForGameProtocolMessage(gameInfo).getFullMessage());
 		player2.sendMessageFromFakePlayer(new WaitForGameProtocolMessage(gameInfo).getFullMessage());
+		
+		Thread.sleep(500);
+		
+		player1.sendMessageFromFakePlayer(new WaitForGameProtocolMessage(gameInfo).getFullMessage());
 		
 		ProtocolMessage response1 = ProtocolMessage.getProtocolMessage(player1.receiveMessageAsFakePlayer());
 		ProtocolMessage response2 = ProtocolMessage.getProtocolMessage(player2.receiveMessageAsFakePlayer());
@@ -74,9 +77,6 @@ public class PlayingPlayerTest
 		
 		player1.sendMessageFromFakePlayer(new ChangeTerritoryProtocolMessage(1, 2).getFullMessage());
 		response2 = ProtocolMessage.getProtocolMessage(player2.receiveMessageAsFakePlayer());
-		
-		player2.sendMessageFromFakePlayer(new ChangeTerritoryProtocolMessage(2, 1).getFullMessage());
-		response1 = ProtocolMessage.getProtocolMessage(player1.receiveMessageAsFakePlayer());
 		
 		player1.sendMessageFromFakePlayer(new AcceptTerritoryProtocolMessage().getFullMessage());
 		response2 = ProtocolMessage.getProtocolMessage(player2.receiveMessageAsFakePlayer());

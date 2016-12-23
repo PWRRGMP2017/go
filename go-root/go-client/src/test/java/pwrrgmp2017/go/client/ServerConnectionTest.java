@@ -147,7 +147,7 @@ public class ServerConnectionTest
 		
 		// The thread should stop running
 		Thread.sleep(100);
-		assertFalse(serverConnection.getThread().isAlive());
+		assertNull(serverConnection.getThread());
 		
 		// When WE close the connection, we don't want any notifications
 		serverConnection.connect();
@@ -156,7 +156,7 @@ public class ServerConnectionTest
 		
 		Thread.sleep(100);
 		verify(observerSpy, times(2)).update(any(), any());
-		assertFalse(serverConnection.getThread().isAlive());
+		assertNull(serverConnection.getThread());
 		
 		// Simulate an error on server
 		serverConnection.connect();
@@ -165,7 +165,7 @@ public class ServerConnectionTest
 		
 		Thread.sleep(100);
 		verify(observerSpy, times(2)).update(any(), isA(IOException.class));
-		assertFalse(serverConnection.getThread().isAlive());
+		assertNull(serverConnection.getThread());
 	}
 
 }

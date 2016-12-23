@@ -203,6 +203,7 @@ public class ServerConnection extends Observable implements Runnable
 					LOGGER.info("IO happened");
 				} // else the client itself closed the connection, no need to
 					// notify
+				thread = null;
 				return;
 			}
 
@@ -211,6 +212,7 @@ public class ServerConnection extends Observable implements Runnable
 				close();
 				setChanged();
 				this.notifyObservers(new IOException("Server unexpectedly closed the connection."));
+				thread = null;
 				return;
 			}
 
@@ -220,6 +222,7 @@ public class ServerConnection extends Observable implements Runnable
 			setChanged();
 			notifyObservers((Object) genericMessage);
 		}
+		thread = null;
 	}
 
 	/**

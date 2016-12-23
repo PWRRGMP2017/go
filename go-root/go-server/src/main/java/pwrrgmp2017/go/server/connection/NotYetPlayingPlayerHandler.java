@@ -216,6 +216,7 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		if (receivedMessage.getIsAccepted())
 		{
 			// The invited player accepted the invitation
+			LOGGER.info("Inviting player " + connection.getPlayerName() + " sent a positive response.");
 
 			// Tell him we are playing
 			connection.getInvitedPlayer().send(receivedMessage.getFullMessage());
@@ -238,6 +239,7 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		else
 		{
 			// Our player has cancelled the invitation
+			LOGGER.info("Inviting player " + connection.getPlayerName() + " sent a neagative response.");
 			invitation = null;
 			connection.getInvitedPlayer().send(receivedMessage.getFullMessage());
 			connection.getInvitedPlayer().cancelInvitation();
@@ -257,18 +259,32 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		connection.getInvitingPlayer().send(receivedMessage.getFullMessage());
 		if (receivedMessage.getIsAccepted())
 		{
-			// End the thread and wait for the game to start
-			return true;
+			LOGGER.info("Invited player "+ connection.getPlayerName() + " sent a positive response.");
+			while (true)
+			{
+				if (!connection.isInvited())
+				{
+					if (connection.getPlayerInfo().isPlaying())
+					{
+						// The game started
+						return true;
+					}
+					
+					// The inviting player cancelled
+					return false;
+				}
+			}
 		}
 		else
 		{
+			LOGGER.info("Invited player "+ connection.getPlayerName() + " sent a negative response.");
 			// We are not playing
 			connection.getInvitingPlayer().cancelInvitation();
 			connection.cancelInvitation();
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Closes the connection and cleans up after an error.
 	 */
@@ -300,11 +316,11 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		}
 		catch (LostPlayerConnection e)
 		{
-			// ?
-			e.printStackTrace();
+			// Shame
+			// e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Handle invitation message.
 	 */
@@ -327,6 +343,7 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		}
 		catch (BadPlayerException e)
 		{
+			LOGGER.info("Player " + connection.getPlayerName() + " can't invite " + invitation.getToPlayerName());
 			response = new InvitationResponseProtocolMessage(false, e.getMessage());
 			connection.send(response.getFullMessage());
 			connection.cancelInvitation();
@@ -335,6 +352,7 @@ public class NotYetPlayingPlayerHandler implements Runnable
 
 		if (secondPlayer == connection)
 		{
+			LOGGER.info("Player " + connection.getPlayerName() + " wanted to invite himself.");
 			response = new InvitationResponseProtocolMessage(false, "You can't invite yourself!");
 			connection.send(response.getFullMessage());
 			connection.cancelInvitation();
@@ -348,6 +366,8 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		// Let's try to invite the second player.
 		if (!secondPlayer.inviteThisPlayerBy(connection))
 		{
+			LOGGER.info("Player " + connection.getPlayerName() + " invited a player already invited or inviting (" +
+					secondPlayer.getPlayerName() + ").");
 			response = new InvitationResponseProtocolMessage(false, "The player is already invited or inviting.");
 			connection.send(response.getFullMessage());
 			connection.cancelInvitation();
@@ -357,7 +377,7 @@ public class NotYetPlayingPlayerHandler implements Runnable
 		// Let's send the invitation
 		secondPlayer.send(invitation.getFullMessage());
 
-		LOGGER.fine("The invitation was send to " + secondPlayer.getPlayerName());
+		LOGGER.info("The invitation was sent to " + secondPlayer.getPlayerName());
 
 		// Everything set up, the client of the second player should receive an
 		// invitation

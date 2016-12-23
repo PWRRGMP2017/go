@@ -106,6 +106,10 @@ public class ServerConnection extends Observable implements Runnable
 	 */
 	public void startReceiving()
 	{
+		if (thread != null)
+		{
+			return;
+		}
 		LOGGER.info("Starting the server connection thread.");
 		thread = new Thread(this);
 		thread.setDaemon(true);
@@ -126,7 +130,7 @@ public class ServerConnection extends Observable implements Runnable
 	 * @throws IOException
 	 *             if there was a problem with communication
 	 */
-	public synchronized String receive() throws IOException
+	public String receive() throws IOException
 	{
 		return input.readLine();
 	}
@@ -191,7 +195,6 @@ public class ServerConnection extends Observable implements Runnable
 			}
 			catch (IOException e)
 			{
-				LOGGER.info(isClosed() + "");
 				if (!isClosed())
 				{
 					// Error on server side

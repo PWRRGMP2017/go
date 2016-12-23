@@ -15,12 +15,12 @@ public abstract class PlayerConnection
 	/**
 	 * Reference to invited player (if this player is inviting).
 	 */
-	protected PlayerConnection invitedPlayer = null;
+	protected volatile PlayerConnection invitedPlayer = null;
 
 	/**
 	 * Reference to inviting player (if this player is invited).
 	 */
-	protected PlayerConnection invitingPlayer = null;
+	protected volatile PlayerConnection invitingPlayer = null;
 
 	/**
 	 * @return information about the player

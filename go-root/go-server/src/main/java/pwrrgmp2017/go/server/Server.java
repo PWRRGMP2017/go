@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import pwrrgmp2017.go.server.connection.RealPlayerConnection;
+
 /**
  * The server main thread, which only accepts the connections and lets the {@link GamesManager} care about them.
  */
@@ -68,7 +70,7 @@ public class Server extends Thread
 			try
 			{
 				playerSocket = serverSocket.accept();
-				gamesManager.createPlayerConnection(playerSocket);
+				gamesManager.createPlayerConnection(new RealPlayerConnection(playerSocket));
 			}
 			catch (IOException e)
 			{

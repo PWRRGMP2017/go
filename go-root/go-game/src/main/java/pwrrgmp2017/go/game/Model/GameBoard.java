@@ -4,19 +4,33 @@ import java.util.Arrays;
 
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 
+/**
+ * Class which represents board of GO Game.
+ * It have methods for putting stones for a port.
+ */
+
 public class GameBoard
 {
+	/**Object, which represents board */
 	private Field[][] board;
+	/**size of the board */
 	private int size;
+	/** KO parametres*/
 	private int xKO, yKO;
+	/**Array which shows position current of chain */
 	private boolean[][] chain; //zachłanna inicjalizacja, w celu zmniejszenia liczby ciągłego deklarowania nowych tablic
+	/**Numbers of current captives */
 	int whiteCaptives, blackCaptives;
-
+	
+	/**Enum class, which represents field of the board*/
 	public enum Field
 	{
 		WHITESTONE, BLACKSTONE, EMPTY, WHITETERRITORY, BLACKTERRITORY, WALL, NONETERRITORY, DEADWHITE, DEADBLACK;
 	}
-
+	
+	/**Constructor
+	 * @param size Size of the board
+	 */
 	public GameBoard(int size)
 	{
 		this.size= size;
@@ -41,12 +55,22 @@ public class GameBoard
 		whiteCaptives=0;
 		blackCaptives=0;
 	}
-
+	
+	/**
+	 * Getter of 'size'
+	 */
 	public int getSize()
 	{
 		return size;
 	}
-	
+	/**
+	 *  Method which try to put stone on the board
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @param playerField Colour of putting player 
+	 * @param concurField Colour of concurrent player
+	 * @return Returns false if movement is impossible
+	 */
 	public boolean makeMovement(int i, int j, Field playerField, Field concurField)
 	{
 		if(!isMovePossible(playerField, concurField, i, j))
@@ -85,6 +109,12 @@ public class GameBoard
 		return true;
 	}
 	
+	/**
+	 *	Method which kills chain of position
+	 * @param concurField Colour of killing chain
+	 * @param i i first attribute position
+	 * @param j second attribute position
+	 */
 	private void killChain(Field concurField, int i, int j)
 	{
 		board[i][j]=Field.EMPTY;
@@ -106,7 +136,11 @@ public class GameBoard
 			killChain(concurField, i, j-1);
 		}
 	}
-
+	
+	/**
+	 * Adds one more captive
+	 * @param field Colour of the captive
+	 */
 	private void addCaptive(Field field) //metoda dodająca do liczby zabranych kamieni kolejny kamień
 	{
 		if(field==Field.BLACKSTONE)
@@ -115,6 +149,14 @@ public class GameBoard
 			whiteCaptives++;
 	}
 	
+	/**
+	 * Method which shows if the movement makes KO situation
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @param playerField Colour of putting player
+	 * @param concurField Colour of concurrent of player
+	 * @return true if movement makes KO situatin=on
+	 */
 	private boolean tryKO(int i, int j, Field playerField, Field concurField)
 	{
 		if((board[i+1][j]==concurField || Field.WALL==board[i+1][j])  && (board[i-1][j]==concurField || Field.WALL==board[i-1][j])
@@ -169,7 +211,13 @@ public class GameBoard
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Method which returns possible movements, which player can make
+	 * @param playerField Colour of player
+	 * @return Array of possible movements
+	 * @throws BadFieldException Is throwing, when field don't show stone
+	 */
 	public boolean[][] getPossibleMovements(Field playerField) throws BadFieldException
 	{
 		Field concurField;
@@ -195,6 +243,14 @@ public class GameBoard
 		return possibleMovements;
 	}
 	
+	/**
+	 * Method which shows if the movement is possible
+	 * @param playerField Colour of player
+	 * @param concurField Colour of concurrent
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @return True if movement is possible
+	 */
 	private boolean isMovePossible(Field playerField, Field concurField, int i, int j)
 	{
 		boolean move;
@@ -240,6 +296,14 @@ public class GameBoard
 		return move;
 	}
 
+	/**
+	 * Method which shows if chain of current field is killed
+	 * @param playerField Colour of player
+	 * @param concurField Colour of concurrent
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @return True if Chain have been killed
+	 */
 	private boolean isChainKilled(Field playerField, Field concurField, int i, int j)
 	{
 		if(board[i][j]==concurField)
@@ -249,7 +313,15 @@ public class GameBoard
 		chain[i-1][j-1]=true;
 		return isChainKilledRecursive(playerField, concurField, i, j);
 	}
-
+	
+	/**
+	 * Recursive method using by isChainKilled
+	 * @param playerField Colour of player
+	 * @param concurField Colour of concurrent
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @return False if this part of chain isn't killed
+	 */
 	private boolean isChainKilledRecursive(Field playerField, Field concurField, int i, int j) //rekurencyjna metoda
 	{
 		if(board[i-1][j]!=Field.WALL)
@@ -274,6 +346,15 @@ public class GameBoard
 		}
 		return true;
 	}
+	
+	/**
+	 * Recursive player using by isChainKilledRecursive
+	 * @param playerField Colour of player
+	 * @param concurField Colour of concurrent
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @return False if this part of chain isn't killed
+	 */
 	private boolean isChainKilledRecursiveTwo(Field playerField, Field concurField, int i, int j)
 	{
 		if(!chain[i-1][j-1])
@@ -303,6 +384,10 @@ public class GameBoard
 		return true;
 	}
 
+	/**
+	 * Method which returns copied board
+	 * @return copied board
+	 */
 	public Field[][] getBoardCopy()
 	{
 		Field [][] cloneBoard= new Field[board.length][];
@@ -310,12 +395,19 @@ public class GameBoard
 			cloneBoard[i]=board[i].clone();
 		return cloneBoard;
 	}
-
+	/**
+	 * Getter of black captives
+	 * @return black captives
+	 */
 	public int getBlackCaptives()
 	{
 		return blackCaptives;
 	}
 	
+	/**
+	 * Getter of white captives
+	 * @return white captives
+	 */
 	public int getWhiteCaptives()
 	{
 		return whiteCaptives;

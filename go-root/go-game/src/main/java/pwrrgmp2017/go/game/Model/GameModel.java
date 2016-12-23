@@ -39,10 +39,19 @@ public abstract class GameModel
 		this.state=state.resign(this);
 	}
 	
+	/**
+	 * Method which calculates the score of current situation
+	 */
 	public abstract float calculateScore();
 	
+	/**
+	 * Method which calculates score of situation in parametre
+	 */
 	public abstract float calculateScore(Field[][] territory);
 	
+	/**
+	 * Method which returns possible territory
+	 */
 	public abstract Field[][] getPossibleTerritory();
 	
 	public boolean[][] getPossibleMovements(Field colour) throws BadFieldException

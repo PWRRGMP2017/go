@@ -5,12 +5,25 @@ import java.util.Arrays;
 import pwrrgmp2017.go.game.Exception.TheSameChainException;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
 
+/**
+ * Class which have implemented methods for calculating Score
+ * @author Robert Gawlik
+ *
+ */
 public class JapanGameModel extends GameModel
 {
+	/**Boards uses by algorithms */
 	Field[][] boardCopy, boardReturn; 
+	/**Arrays which shows current chain */
 	boolean[][] chain, friendChain;
+	/**Number of briefes of friend chain. Is using in algorithms */
 	int emptyFieldsFriendChain;
-
+	
+	/**
+	 * Constructor of the class
+	 * @param board Board which model uses
+	 * @param komi Value of komi
+	 */
 	public JapanGameModel(GameBoard board, float komi)
 	{
 		super(board, komi);
@@ -18,6 +31,9 @@ public class JapanGameModel extends GameModel
 		friendChain= new boolean[board.getSize()][board.getSize()];
 	}
 
+	/**
+	 * Method which calculates the score of current situation
+	 */
 	@Override
 	public float calculateScore()
 	{
@@ -51,6 +67,9 @@ public class JapanGameModel extends GameModel
 		return points;
 	}
 	
+	/**
+	 * Method which calculates score of situation in parametre
+	 */
 	@Override
 	public float calculateScore(Field[][] territory)
 	{
@@ -83,6 +102,9 @@ public class JapanGameModel extends GameModel
 		return points;
 	}
 
+	/**
+	 * Method which returns possible territory
+	 */
 	@Override
 	public Field[][] getPossibleTerritory()
 	{
@@ -123,6 +145,12 @@ public class JapanGameModel extends GameModel
 		return boardReturn;
 	}
 
+	/**
+	 * Method which checks if the field should be a territory
+	 * of the player and sets it
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 */
 	private void checkNoneTerritory(int i, int j)
 	{
 		int territoryPoints=0;
@@ -152,7 +180,12 @@ public class JapanGameModel extends GameModel
 			boardReturn[i][j]=Field.WHITETERRITORY;
 	}
 	
-
+	/**
+	 * Method which returns territory points of current Field
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @return territory points
+	 */
 	private int takeTerritoryPoints(int i, int j)
 	{
 		if(i<1 || i>boardCopy.length-1 || j<1 || j>boardCopy.length-1)
@@ -172,9 +205,11 @@ public class JapanGameModel extends GameModel
 			return 0;
 		}
 	}
-		
-		
-
+	
+	/**
+	 * Makes chain (area) a territory of one player
+	 * @param field Colour of player
+	 */
 	private void addWholeArea(Field field) //Dodaje w pełni zajęte terytoria do zwracanej planszy
 	{
 		if(field==Field.BLACKSTONE)
@@ -190,7 +225,12 @@ public class JapanGameModel extends GameModel
 			}
 	}
 	
-
+	/**
+	 * Method which checks if area is territory of any player
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @return Territory colour
+	 */
 	private Field checkIfAreaIsTerritory(int i, int j)
 	{
 		chain[i-1][j-1]=true;
@@ -216,6 +256,12 @@ public class JapanGameModel extends GameModel
 		return Field.WALL; //zwrócenie WALL, jeśli nie można jednoznacznie określic terytorium
 	}
 	
+	/**
+	 * Recursive method using by checkIfAreaIsTerritory()
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @return Colour of current part of territory
+	 */
 	private Field checkIfAreaIsTerritoryRecursive(int i, int j)
 	{
 		switch(boardReturn[i][j])
@@ -236,7 +282,12 @@ public class JapanGameModel extends GameModel
 		}
 	}
 	
-
+	/**
+	 * Checks if Chain is dead (nearly captive chain)
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @return 'Live Points' of chain
+	 */
 	private int checkIfChainIsDead(int i, int j) //zwraca ilośc całkowitych "punktów życia" łańcucha
 	{
 		Field field, concur;
@@ -256,6 +307,10 @@ public class JapanGameModel extends GameModel
 		return lifePoints;
 	}
 	
+	/**
+	 * Method which checks if chain have eyes
+	 * @return number of eyes
+	 */
 	private int checkEyes() //sprawdza czy istnieją oka wewnątrz danego łańcucha
 	{
 		int eyes=0;
@@ -281,7 +336,14 @@ public class JapanGameModel extends GameModel
 		return eyes;
 	}
 	
-
+	/**
+	 * Recursive method uses by checkIfChainIsDead()
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @param field Colour of player
+	 * @param concur Colour of concurrent
+	 * @return 'life points' of current part of chain
+	 */
 	private int checkIfChainIsDeadRecursive(int i, int j, Field field, Field concur) //Sprawdza rekurencyjnie czy łańcuch można uznac za niemal martwy
 	{
 		chain[i-1][j-1]=true;
@@ -294,7 +356,14 @@ public class JapanGameModel extends GameModel
 		return lifePoints;
 	}
 	
-	
+	/**
+	 * Recursive method uses by checkIfChainIsDeadRecursive()
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @param field Colour of player
+	 * @param concur Colour of concurrent
+	 * @return 'life points' of current part of chain
+	 */
 	private int checkIfChainIsDeadRecursiveTwo(int i, int j, Field field, Field concur) //Dopełnia pośrednią rekurencję dla checkIfChainIsDeadRecursive
 	{
 		switch(boardCopy[i][j])
@@ -335,7 +404,14 @@ public class JapanGameModel extends GameModel
 		}
 	}
 	
-
+	/**
+	 * Checks briefs of current chain
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @param field Colour of player
+	 * @param concur Colour of concurrent
+	 * @return 'life points' of current brief
+	 */
 	private int checkEmptyField(int i, int j, Field field, Field concur) //Sprawdza ilośc "punktów życiowych" dla oddechu w łańcuchu
 	{
 		int lifePoints=0;
@@ -358,7 +434,14 @@ public class JapanGameModel extends GameModel
 		return lifePoints;
 	}
 
-	
+	/**
+	 * Method which checks if friend chain is nearly dead
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @param field Colour of player
+	 * @param concur Colour of concurrent
+	 * @return True if chain isn't nearly dead
+	 */
 	private boolean checkFriendChain(int i, int j, Field field, Field concur) //Sprawdza czy przyjazny łańcuch przy oddechu ma inne oddechy
 	{
 		for(int a=0; a<chain.length; a++)
@@ -378,7 +461,14 @@ public class JapanGameModel extends GameModel
 			return false;
 	}
 	
-
+	/**
+	 * Recursive methos uses by checkFriendChain()
+	 * @param i first attribute position
+	 * @param j second attribute position
+	 * @param field Colour of player
+	 * @param concur Colour of concurrent
+	 * @throws TheSameChainException Is throwing if thw friend chain is the same current chain
+	 */
 	private void checkFriendChainRecursive(int i, int j, Field field, Field concur) throws TheSameChainException //Rekurencyjna metoda wykorzystywana przez checkFriendChain
 	{
 		friendChain[i-1][j-1]=true;
@@ -418,7 +508,9 @@ public class JapanGameModel extends GameModel
 			emptyFieldsFriendChain++;
 	}
 
-	
+	/**
+	 * Adds dead chain as a territory of concurrent chain
+	 */
 	private void addDeadChainToTerritories() //Dodaje prawie martwe łańcuchy do zwracanej planszy (board)
 	{
 		for(int i=0; i<chain.length; i++)

@@ -5,13 +5,15 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import pwrrgmp2017.go.clientserverprotocol.InvitationProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.InvitationResponseProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.LoginProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.LoginResponseProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.MoveProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.PassProtocolMessage;
+import pwrrgmp2017.go.clientserverprotocol.PlayBotGameProtocolMessage;
 import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 import pwrrgmp2017.go.game.factory.GameInfo;
 import pwrrgmp2017.go.game.factory.GameInfo.RulesType;
@@ -24,7 +26,6 @@ public class NotYetPlayingPlayerHandlerTest
 	private FakeRealPlayerConnection player3;
 	private GamesManager manager;
 	
-	@Before
 	public void setUp() throws IOException
 	{
 		manager = GamesManager.getInstance();
@@ -57,6 +58,8 @@ public class NotYetPlayingPlayerHandlerTest
 	@Test
 	public void testInvitationProcess() throws IOException, InterruptedException
 	{
+		setUp();
+		
 		// player1 invites player2
 		GameInfo gameInfo = new GameInfo(19, 6.5f, RulesType.JAPANESE, false);
 		InvitationProtocolMessage invitation = new InvitationProtocolMessage(
@@ -115,6 +118,27 @@ public class NotYetPlayingPlayerHandlerTest
 		response = (InvitationResponseProtocolMessage)
 				ProtocolMessage.getProtocolMessage(player2.receiveMessageAsFakePlayer());
 		assertTrue(response.getIsAccepted());
+		
+		manager.closeAllConnections();
+	}
+	
+	@Test
+	public void testStartingTheBotGame() throws IOException, InterruptedException
+	{
+		setUp();
+		
+		GameInfo gameInfo = new GameInfo(19, 6.5f, RulesType.JAPANESE, true);
+		player1.sendMessageFromFakePlayer(new PlayBotGameProtocolMessage(player1.getPlayerName(), gameInfo).getFullMessage());
+		
+		Thread.sleep(500);
+		
+		assertTrue(player1.getPlayerInfo().getPlayingGame() != null);
+		player1.sendMessageFromFakePlayer(new MoveProtocolMessage(2, 2).getFullMessage());
+		MoveProtocolMessage botMovement = (MoveProtocolMessage) ProtocolMessage.getProtocolMessage(player1.receiveMessageAsFakePlayer());
+		player1.sendMessageFromFakePlayer(new PassProtocolMessage().getFullMessage());
+		PassProtocolMessage pass = (PassProtocolMessage) ProtocolMessage.getProtocolMessage(player1.receiveMessageAsFakePlayer());
+		Thread.sleep(500);
+		assertTrue(player1.getPlayerInfo().getPlayingGame() == null);
 		
 		manager.closeAllConnections();
 	}

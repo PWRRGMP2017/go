@@ -47,6 +47,17 @@ public class RealPlayerConnection extends PlayerConnection
 	}
 	
 	/**
+	 * Needed for {@link FakeRealPlayerConnection}.
+	 */
+	public RealPlayerConnection()
+	{
+		this.socket = null;
+		this.input = null;
+		this.output = null;
+		this.playerInfo = new PlayerInfo("");
+	}
+	
+	/**
 	 * For constructor, sets {@link #input} and {@link #output} fields.
 	 * @throws IOException if there was a problem with I/O socket streams
 	 */
@@ -63,7 +74,7 @@ public class RealPlayerConnection extends PlayerConnection
 	}
 
 	@Override
-	public synchronized void send(String message)
+	public void send(String message)
 	{
 		output.println(message);
 	}

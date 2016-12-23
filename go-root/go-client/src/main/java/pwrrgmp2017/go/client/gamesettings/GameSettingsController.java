@@ -302,6 +302,7 @@ public class GameSettingsController implements Observer
 	protected void handleDisconnect()
 	{
 		ExitProtocolMessage message = new ExitProtocolMessage();
+		serverConnection.deleteObserver(this);
 		serverConnection.send(message.getFullMessage());
 		serverConnection.close();
 		ClientMain.moveToScene((Stage) gameSettingsPane.getScene().getWindow(), "login/Login.fxml");

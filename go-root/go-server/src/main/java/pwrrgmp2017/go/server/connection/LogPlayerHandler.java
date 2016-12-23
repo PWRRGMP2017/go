@@ -73,9 +73,11 @@ public class LogPlayerHandler implements Runnable
 			try
 			{
 				gamesManager.addChoosingPlayer(connection, loginProtocolMessage.getUsername());
+				LOGGER.info("Login successful for " + loginProtocolMessage.getUsername());
 				response = new LoginResponseProtocolMessage(true, "Successfully logged in.");
 				connection.send(response.getFullMessage());
-				LOGGER.info("Login successful for " + loginProtocolMessage.getUsername());
+				LOGGER.info("Sent to " + loginProtocolMessage.getUsername());
+				return;
 			}
 			catch (SameNameException e)
 			{

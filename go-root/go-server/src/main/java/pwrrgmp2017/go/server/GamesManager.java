@@ -1,9 +1,6 @@
 package pwrrgmp2017.go.server;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -27,11 +24,6 @@ import pwrrgmp2017.go.server.connection.RealPlayerConnection;
 public class GamesManager
 {
 	private static volatile GamesManager INSTANCE;
-	
-	/**
-	 * List of games currently being played.
-	 */
-	private List<Game> games;
 
 	/**
 	 * Map of players currently not playing (presumably, they are changing the
@@ -55,7 +47,6 @@ public class GamesManager
 	 */
 	private GamesManager()
 	{
-		games = new ArrayList<Game>();
 		choosingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		playingPlayers = new ConcurrentHashMap<String, PlayerConnection>();
 		waitingPlayers = new ConcurrentSkipListMap<String, PlayerConnection>();
@@ -81,9 +72,6 @@ public class GamesManager
 	 */
 	public void closeAllConnections()
 	{
-		for (Game game : games)
-			deleteGame(game);
-
 		for (PlayerConnection connection : playingPlayers.values())
 			connection.close();
 
@@ -98,7 +86,6 @@ public class GamesManager
 		playingPlayers.clear();
 		choosingPlayers.clear();
 		waitingPlayers.clear();
-		games.clear();
 	}
 
 	/**
@@ -106,14 +93,14 @@ public class GamesManager
 	 * handle the login process. The Games Manager does not care about the
 	 * player until he is successfully logged in.
 	 * 
-	 * @param socket
-	 *            player connection socket
+	 * @param playerConnection
+	 *            real player connection
 	 * @throws IOException
 	 *             if there was a problem with the connection (already!)
 	 */
-	public void createPlayerConnection(Socket socket) throws IOException
+	public void createPlayerConnection(RealPlayerConnection playerConnection) throws IOException
 	{
-		LogPlayerHandler logPlayerHandler = new LogPlayerHandler(new RealPlayerConnection(socket), this);
+		LogPlayerHandler logPlayerHandler = new LogPlayerHandler(playerConnection, this);
 		Thread thread = new Thread(logPlayerHandler);
 		thread.start();
 	}
@@ -175,7 +162,6 @@ public class GamesManager
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(gameInfo.getAsString());
 		Game game = new Game(player, bot, gameController, this);
-		games.add(game);
 
 		// Clean up
 		player.cancelInvitation();
@@ -288,15 +274,14 @@ public class GamesManager
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(gameInfo.getAsString());
 		Game game = new Game(blackPlayer, whitePlayer, gameController, this);
-		games.add(game);
-
-		// Clean up
-		whitePlayer.cancelInvitation();
-		blackPlayer.cancelInvitation();
 
 		// Set state
 		whitePlayer.getPlayerInfo().setPlayingGame(game);
 		blackPlayer.getPlayerInfo().setPlayingGame(game);
+		
+		// Clean up
+		whitePlayer.cancelInvitation();
+		blackPlayer.cancelInvitation();
 
 		// Finally, let's start the game thread
 		game.start();
@@ -315,7 +300,6 @@ public class GamesManager
 
 		PlayerConnection whitePlayer = game.getWhitePlayer();
 		PlayerConnection blackPlayer = game.getBlackPlayer();
-		games.remove(game);
 		playingPlayers.remove(whitePlayer.getPlayerName());
 		playingPlayers.remove(blackPlayer.getPlayerName());
 		whitePlayer.getPlayerInfo().setPlayingGame(null);

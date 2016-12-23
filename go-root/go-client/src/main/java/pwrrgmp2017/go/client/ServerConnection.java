@@ -12,25 +12,80 @@ import java.util.logging.Logger;
 
 import pwrrgmp2017.go.clientserverprotocol.ProtocolMessage;
 
+/**
+ * Observable object which is the main form of communication between us and the
+ * server. It connects to the server and lets other classes to receive and send
+ * messages from/to the server. It can also be run as a thread after successful
+ * connection, so it will be constantly listening for messages from the server
+ * and notify observers by events in the form of {@link ProtocolMessage} or
+ * {@link IOException} in case of an error in communication.
+ */
 public class ServerConnection extends Observable implements Runnable
 {
+	/**
+	 * Reference to logger.
+	 */
 	protected static final Logger LOGGER = Logger.getLogger(ClientMain.class.getName());
 
+	/**
+	 * The currently running thread, null if the thread has not been started.
+	 */
 	protected Thread thread;
 
+	/**
+	 * Address of the server to connect to.
+	 */
 	protected String hostname;
+
+	/**
+	 * Port of the server to connect to.
+	 */
 	protected int port;
 
+	/**
+	 * This class is implemented using sockets.
+	 */
 	protected Socket socket;
+
+	/**
+	 * Input from the server.
+	 */
 	protected BufferedReader input;
+
+	/**
+	 * Output to the server.
+	 */
 	protected PrintWriter output;
 
+	/**
+	 * Validates the parameters and tries to connect to the server.
+	 * 
+	 * @param hostname
+	 *            address of the server to connect to
+	 * @param port
+	 *            port of the server to connect to
+	 * @throws InvalidParameterException
+	 *             when the port is wrong
+	 * @throws IOException
+	 *             when there was a problem connecting to the server
+	 */
 	public ServerConnection(String hostname, String port) throws InvalidParameterException, IOException
 	{
 		validateAndSetData(hostname, port);
 		connect();
 	}
 
+	/**
+	 * Less safe constructor, as it doesn't validate the parameters. Useful if
+	 * you validate the data yourself.
+	 * 
+	 * @param hostname
+	 *            address of the server
+	 * @param port
+	 *            port of the server
+	 * @throws IOException
+	 *             when there was a problem with connection
+	 */
 	public ServerConnection(String hostname, int port) throws IOException
 	{
 		this.hostname = hostname;
@@ -38,11 +93,23 @@ public class ServerConnection extends Observable implements Runnable
 		connect();
 	}
 
+	/**
+	 * Access to the currently running thread.
+	 * 
+	 * @return thread if it has been started, null otherwise
+	 * @see #startReceiving()
+	 */
 	public Thread getThread()
 	{
 		return thread;
 	}
 
+	/**
+	 * Starts the thread which constantly listens for messages from the server
+	 * and notifies Observers about events in the form of
+	 * {@link ProtocolMessage} or {@link IOException} in case of an error in
+	 * communication.
+	 */
 	public void startReceiving()
 	{
 		thread = new Thread(this);
@@ -50,6 +117,117 @@ public class ServerConnection extends Observable implements Runnable
 		thread.start();
 	}
 
+	/**
+	 * Reads a message (one line string) from the server.
+	 * <p>
+	 * Should NOT be used after using {@link #startReceiving()}, as using this
+	 * function simultaneously with the thread may result in undefined behaviour
+	 * and there is no reliable way to end the thread without closing the
+	 * connection. Receiving should be done by adding yourself to the observers
+	 * list.
+	 * 
+	 * @return message from the server or null if the connection was closed on
+	 *         the other end
+	 * @throws IOException
+	 *             if there was a problem with communication
+	 */
+	public String receive() throws IOException
+	{
+		return input.readLine();
+	}
+
+	/**
+	 * Sends the message to the server.
+	 * 
+	 * @param message
+	 *            message to send
+	 */
+	public void send(String message)
+	{
+		output.println(message);
+	}
+
+	/**
+	 * Closes the connection with the server. It also stops the thread without
+	 * notifying other observers.
+	 */
+	public void close()
+	{
+		if (socket.isClosed())
+		{
+			LOGGER.warning("Server connection is already closed.");
+			return;
+		}
+
+		LOGGER.info("Ending server connection.");
+		try
+		{
+			socket.close();
+		}
+		catch (IOException e)
+		{
+			LOGGER.warning("Could not close socket: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Checks if the connection was closed.
+	 * 
+	 * @return true if the connection was closed
+	 */
+	public boolean isClosed()
+	{
+		return socket.isClosed();
+	}
+
+	/**
+	 * Thread function. Should not be called directly, instead use {@link #startReceiving()}.
+	 */
+	@Override
+	public void run()
+	{
+		while (!Thread.interrupted())
+		{
+			// Wait for a message
+			String message = null;
+			try
+			{
+				message = receive();
+			}
+			catch (IOException e)
+			{
+				if (!socket.isClosed())
+				{
+					// Error on server side
+					setChanged();
+					this.notifyObservers(e);
+				} // else the client itself closed the connection, no need to
+					// notify
+				return;
+			}
+
+			if (message == null)
+			{
+				close();
+				setChanged();
+				this.notifyObservers(new IOException("Server unexpectedly closed the connection."));
+				return;
+			}
+
+			// Notify observers
+			ProtocolMessage genericMessage = ProtocolMessage.getProtocolMessage(message);
+			LOGGER.info("Received message: " + genericMessage.getFullMessage());
+			setChanged();
+			notifyObservers((Object) genericMessage);
+		}
+	}
+
+	/**
+	 * Connects to the server.
+	 * 
+	 * @throws IOException
+	 *             when there was a problem with connection
+	 */
 	protected void connect() throws IOException
 	{
 		LOGGER.log(Level.INFO, "Server connection is starting.");
@@ -58,6 +236,16 @@ public class ServerConnection extends Observable implements Runnable
 		LOGGER.log(Level.INFO, "Server connection is ok.");
 	}
 
+	/**
+	 * Used in constructor to validate parameters and set appropriate fields.
+	 * 
+	 * @param hostname
+	 *            address of the server
+	 * @param port
+	 *            port of the server
+	 * @throws InvalidParameterException
+	 *             when the parameters are wrong
+	 */
 	protected void validateAndSetData(String hostname, String port) throws InvalidParameterException
 	{
 		if (hostname.isEmpty() || port.isEmpty())
@@ -82,86 +270,26 @@ public class ServerConnection extends Observable implements Runnable
 		}
 	}
 
-	public String receive() throws IOException
-	{
-		return input.readLine();
-	}
-
-	public void send(String message)
-	{
-		output.println(message);
-	}
-
-	public void close()
-	{
-		if (socket.isClosed())
-		{
-			LOGGER.warning("Server connection is already closed.");
-			return;
-		}
-
-		LOGGER.info("Ending server connection.");
-		try
-		{
-			socket.close();
-		}
-		catch (IOException e)
-		{
-			LOGGER.warning("Could not close socket: " + e.getMessage());
-		}
-	}
-
-	public boolean isClosed()
-	{
-		return socket.isClosed();
-	}
-
+	/**
+	 * Creates a socket and sets the appropriate field.
+	 * 
+	 * @throws IOException
+	 *             if something went wrong during connection
+	 */
 	protected void createSocket() throws IOException
 	{
 		this.socket = new Socket(hostname, port);
 	}
 
+	/**
+	 * Creates a reader and writer from/to the server and sets the appropriate
+	 * fields. Is called after creating a socket.
+	 * 
+	 * @throws IOException if streams could not be get from the socket
+	 */
 	protected void createInputOutput() throws IOException
 	{
 		this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		this.output = new PrintWriter(socket.getOutputStream(), true);
-	}
-
-	@Override
-	public void run()
-	{
-		while (!Thread.interrupted())
-		{
-			// Wait for a message
-			String message = null;
-			try
-			{
-				message = receive();
-			}
-			catch (IOException e)
-			{
-				if (!socket.isClosed())
-				{
-					// Error on server side
-					setChanged();
-					this.notifyObservers(e);
-				} // else the client itself closed the connection, no need to notify
-				return;
-			}
-
-			if (message == null)
-			{
-				close();
-				setChanged();
-				this.notifyObservers(new IOException("Server unexpectedly closed the connection."));
-				return;
-			}
-
-			// Notify observers
-			ProtocolMessage genericMessage = ProtocolMessage.getProtocolMessage(message);
-			LOGGER.info("Received message: " + genericMessage.getFullMessage());
-			setChanged();
-			notifyObservers((Object) genericMessage);
-		}
 	}
 }

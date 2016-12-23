@@ -17,11 +17,18 @@ import pwrrgmp2017.go.game.factory.GameInfo;
  */
 public class TestGameBoard extends Application
 {
+	/**
+	 * Launches a JavaFX application.
+	 * @param args command line parameters
+	 */
 	public static void main(String[] args)
 	{
 		launch(args);
 	}
-
+	
+	/**
+	 * Starts the JavaFX application with a mocked server connection.
+	 */
 	@Override
 	public void start(Stage primaryStage) throws IOException
 	{

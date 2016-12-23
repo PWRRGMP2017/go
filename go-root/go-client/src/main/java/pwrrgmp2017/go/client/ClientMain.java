@@ -9,19 +9,26 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Runs the client
+ * Runs the client JavaFX application.
  */
 public class ClientMain extends Application
 {
+	/**
+	 * Launches the JavaFX application.
+	 * @param args command line parameters
+	 */
 	public static void main(String[] args)
 	{
 		launch(args);
 	}
 
+	/**
+	 * Loads the Login window and shows it.
+	 */
 	@Override
 	public void start(Stage primaryStage) throws IOException
 	{
-		Parent root = FXMLLoader.load(getClass().getResource("login/login.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("login/Login.fxml"));
 
 		Scene scene = new Scene(root);
 
@@ -32,6 +39,12 @@ public class ClientMain extends Application
 		primaryStage.show();
 	}
 
+	/**
+	 * Changes the scene of the window (stage) provided in an FXML file in the given path.
+	 * @param stage window to be changed
+	 * @param fxml relative path to the FXML file of the new scene
+	 * @return new root
+	 */
 	public static Parent moveToScene(Stage stage, String fxml)
 	{
 		Parent newRoot = null;

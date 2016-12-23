@@ -38,60 +38,148 @@ import pwrrgmp2017.go.clientserverprotocol.WaitForGameProtocolMessage;
 import pwrrgmp2017.go.game.factory.GameInfo;
 import pwrrgmp2017.go.game.factory.GameInfo.RulesType;
 
+/**
+ * Controller for the Game Settings window.
+ */
 public class GameSettingsController implements Observer
 {
+	/**
+	 * Button for disconnecting from the server.
+	 */
 	@FXML
 	private Button disconnectButton;
 
+	/**
+	 * Button setting the settings to default values.
+	 */
 	@FXML
 	private Button defaultButton;
 
+	/**
+	 * Button sending an invitation to another player.
+	 */
 	@FXML
 	private Button inviteButton;
 
+	/**
+	 * Button searching for any players waiting to play with the same game
+	 * settings.
+	 */
 	@FXML
 	private Button searchButton;
 
+	/**
+	 * Choice box defining the board size.
+	 */
 	@FXML
 	private ChoiceBox<String> boardSizeChoiceBox;
 
+	/**
+	 * Group of radio buttons defining the game rules.
+	 */
 	@FXML
 	private ToggleGroup gameRules;
 
-	@FXML
-	private Pane gameSettingsPane;
-
-	@FXML
-	private TextField komiField;
-
-	@FXML
-	private Button playWithBot;
-
-	@FXML
-	private Label statusLabel;
-
-	@FXML
-	private Button cancelButton;
-
+	/**
+	 * Radio button for Chinese rules.
+	 * 
+	 * @see gameRules
+	 */
 	@FXML
 	private RadioButton chineseRadioButton;
 
+	/**
+	 * Radio button for Japanese rules.
+	 * 
+	 * @see gameRules
+	 */
 	@FXML
 	private RadioButton japaneseRadioButton;
 
+	/**
+	 * The main pane of the window.
+	 */
+	@FXML
+	private Pane gameSettingsPane;
+
+	/**
+	 * Field with the value of Komi.
+	 */
+	@FXML
+	private TextField komiField;
+
+	/**
+	 * Button which starts the game with a bot.
+	 */
+	@FXML
+	private Button playWithBot;
+
+	/**
+	 * Label with a current status of the controller (f.e. waiting for
+	 * invitation, searching for player, etc.)
+	 */
+	@FXML
+	private Label statusLabel;
+
+	/**
+	 * Button which cancels waiting for invitation or other process.
+	 */
+	@FXML
+	private Button cancelButton;
+
+	/**
+	 * Label with the name of the player.
+	 */
 	@FXML
 	private Label nameLabel;
 
+	/**
+	 * The player name.
+	 */
 	private String playerName;
+
+	/**
+	 * Connection to the server (running thread).
+	 */
 	private ServerConnection serverConnection;
+
+	/**
+	 * Our invitation sent to another player or invitation sent to us.
+	 */
 	private InvitationProtocolMessage invitation;
 
+	/**
+	 * Flag specifying if we are currently invited by another player.
+	 */
 	private volatile boolean areWeInvited;
+
+	/**
+	 * Flag specifying if the user accepted the invitation sent by another
+	 * player.
+	 */
 	private volatile boolean didWeAcceptInvitation;
+
+	/**
+	 * Flag specifying if we are currently waiting for response from the server
+	 * if our accepted invitation was not cancelled.
+	 */
 	private volatile boolean waitingForResponse;
-	
+
+	/**
+	 * Information about the game we are waiting for (related to
+	 * {@link #searchButton}, not invitations).
+	 */
 	private volatile GameInfo waitingGame;
 
+	/**
+	 * Initialises the necessary data for the controller, should be called
+	 * during loading of the scene.
+	 * 
+	 * @param serverConnection
+	 *            already established connection to the server
+	 * @param playerName
+	 *            name of the already logged in player
+	 */
 	public void initData(ServerConnection serverConnection, String playerName)
 	{
 		this.playerName = playerName;
@@ -106,6 +194,9 @@ public class GameSettingsController implements Observer
 		waitingGame = null;
 	}
 
+	/**
+	 * JavaFX specific initialisation.
+	 */
 	@FXML
 	public void initialize()
 	{
@@ -121,12 +212,18 @@ public class GameSettingsController implements Observer
 		handleDefault();
 		statusLabel.setText("Waiting for invitation.");
 	}
-	
+
+	/**
+	 * Action on pressing the {@link #searchButton}.
+	 * <p>
+	 * Sets the {@link #waitingGame}, sends the appropriate message to the
+	 * server and disables controls.
+	 */
 	@FXML
 	protected void handleSearch()
 	{
 		waitingGame = createGameInfo(false);
-		
+
 		serverConnection.send(new WaitForGameProtocolMessage(waitingGame).getFullMessage());
 		statusLabel.setText("Searching for player.");
 		disableSettings();
@@ -134,17 +231,28 @@ public class GameSettingsController implements Observer
 		inviteButton.setDisable(true);
 		searchButton.setDisable(true);
 	}
-	
+
+	/**
+	 * Action on pressing the {@link #playWithBot}.
+	 * <p>
+	 * Sends an appropriate message to the server and changes to scene to Game
+	 * Board.
+	 */
 	@FXML
 	protected void onPlayWithBot()
 	{
 		GameInfo gameInfo = createGameInfo(true);
-		
+
 		serverConnection.send(new PlayBotGameProtocolMessage(playerName, gameInfo).getFullMessage());
-		
+
 		moveToGameBoardScene(gameInfo, playerName, "Bot", true);
 	}
 
+	/**
+	 * Action on pressing the {@link #defaultButton}.
+	 * <p>
+	 * Changes the settings controls to their default values.
+	 */
 	@FXML
 	protected void handleDefault()
 	{
@@ -153,6 +261,14 @@ public class GameSettingsController implements Observer
 		japaneseRadioButton.setSelected(true);
 	}
 
+	/**
+	 * Action on pressing the {@link #cancelButton}.
+	 * <p>
+	 * Sends an appropriate message to the server and disables/enables controls
+	 * properly. The cancel button is enabled when we are waiting for a response
+	 * for our invitation ({@link #inviteButton}) or we are searching for a
+	 * player ({@link #searchButton}).
+	 */
 	@FXML
 	protected void handleCancel()
 	{
@@ -167,7 +283,7 @@ public class GameSettingsController implements Observer
 			InvitationResponseProtocolMessage response = new InvitationResponseProtocolMessage(false,
 					"Inviting player cancelled the invitation.");
 			serverConnection.send(response.getFullMessage());
-	
+
 			statusLabel.setText("Waiting for invitation.");
 			inviteButton.setDisable(false);
 			searchButton.setDisable(false);
@@ -176,6 +292,12 @@ public class GameSettingsController implements Observer
 		}
 	}
 
+	/**
+	 * Action on pressing {@link #disconnectButton}.
+	 * <p>
+	 * Sends an appropriate message to the server, closes the connection and
+	 * changes the scene to Login.
+	 */
 	@FXML
 	protected void handleDisconnect()
 	{
@@ -185,6 +307,13 @@ public class GameSettingsController implements Observer
 		ClientMain.moveToScene((Stage) gameSettingsPane.getScene().getWindow(), "login/Login.fxml");
 	}
 
+	/**
+	 * Action on pressing {@link #inviteButton}.
+	 * <p>
+	 * Creates a dialog where the user can specify the name of the player, then
+	 * it sends the appropriate message to the server, sets the proper fields
+	 * ({@link #invitation} and disables/enables some controls.
+	 */
 	@FXML
 	protected void handleInvite()
 	{
@@ -216,7 +345,12 @@ public class GameSettingsController implements Observer
 		cancelButton.setDisable(false);
 		disableSettings();
 	}
-
+	
+	/**
+	 * Creates a GameInfo object based on the settings in GUI.
+	 * @param isBot whether or not we are playing with bot
+	 * @return GameInfo object if it was properly created, null otherwise
+	 */
 	private GameInfo createGameInfo(boolean isBot)
 	{
 		String boardSizeString = boardSizeChoiceBox.getSelectionModel().getSelectedItem();
@@ -258,6 +392,9 @@ public class GameSettingsController implements Observer
 		return new GameInfo(boardSize, komiValue, rulesType, isBot);
 	}
 
+	/**
+	 * Reacts to messages from the server.
+	 */
 	@Override
 	public void update(Observable o, Object arg)
 	{
@@ -408,16 +545,16 @@ public class GameSettingsController implements Observer
 			else if (arg instanceof PlayerFoundProtocolMessage)
 			{
 				PlayerFoundProtocolMessage message = (PlayerFoundProtocolMessage) arg;
-				
+
 				boolean areWeBlack = message.getIsYourColorBlack();
 				String blackPlayerName = areWeBlack ? playerName : message.getOpponentName();
 				String whitePlayerName = areWeBlack ? message.getOpponentName() : playerName;
-				
+
 				if (!areWeBlack)
 				{
 					serverConnection.send(new ConfirmationProtocolMessage().getFullMessage());
 				}
-				
+
 				Platform.runLater(() ->
 				{
 					Alert alert = new Alert(AlertType.INFORMATION);
@@ -444,12 +581,12 @@ public class GameSettingsController implements Observer
 				else
 				{
 					Platform.runLater(() ->
-					{						
+					{
 						Alert alert = new Alert(AlertType.ERROR);
 						alert.setHeaderText("Could not cancel waiting");
 						alert.setContentText("The game was already found.");
 						alert.showAndWait();
-						
+
 						cancelButton.setDisable(false);
 					});
 				}
@@ -470,6 +607,9 @@ public class GameSettingsController implements Observer
 
 	}
 
+	/**
+	 * Disables the controls related to game settings.
+	 */
 	public void disableSettings()
 	{
 		japaneseRadioButton.setDisable(true);
@@ -478,7 +618,10 @@ public class GameSettingsController implements Observer
 		playWithBot.setDisable(true);
 		defaultButton.setDisable(true);
 	}
-
+	
+	/**
+	 * Enables the controls related to game settings.
+	 */
 	public void enableSettings()
 	{
 		japaneseRadioButton.setDisable(false);
@@ -488,6 +631,14 @@ public class GameSettingsController implements Observer
 		defaultButton.setDisable(false);
 	}
 
+	/**
+	 * Changes the scene to game board.
+	 * @param gameInfo information about the game
+	 * @param blackPlayerName name of the black player
+	 * @param whitePlayerName name of the white player
+	 * @param isBlackPlayer flag if we are playing as black
+	 * @return new root
+	 */
 	private Parent moveToGameBoardScene(GameInfo gameInfo, String blackPlayerName, String whitePlayerName,
 			boolean isBlackPlayer)
 	{

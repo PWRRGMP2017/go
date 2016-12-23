@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Response for {@link LoginProtocolMessage}.
+ */
 public class LoginResponseProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "LOGIN RESPONSE";

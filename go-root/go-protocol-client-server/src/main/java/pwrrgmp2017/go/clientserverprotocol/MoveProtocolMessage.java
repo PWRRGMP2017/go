@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used when a player wants to make a move in the game.
+ */
 public class MoveProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "MOVE";

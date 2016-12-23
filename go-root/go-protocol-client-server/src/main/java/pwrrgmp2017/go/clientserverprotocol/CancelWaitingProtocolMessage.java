@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used when player wants to cancel searching for another player.
+ */
 public class CancelWaitingProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "CANCEL WAITING";

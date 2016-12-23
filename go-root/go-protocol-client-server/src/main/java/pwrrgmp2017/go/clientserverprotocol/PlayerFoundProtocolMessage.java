@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used to inform a player that a player was found for him to play with.
+ */
 public class PlayerFoundProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "PLAYER FOUND";

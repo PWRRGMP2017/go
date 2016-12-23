@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used when a player wants to resign.
+ */
 public class ResignProtocolMessage extends ProtocolMessage
 {
 

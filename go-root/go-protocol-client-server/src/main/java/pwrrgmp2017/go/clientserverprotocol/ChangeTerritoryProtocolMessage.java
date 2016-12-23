@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used when a player wants to change a territory at a given position.
+ */
 public class ChangeTerritoryProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "CHANGE TERRITORY";

@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Response for {@link InvitationProtocolMessage}.
+ */
 public class InvitationResponseProtocolMessage extends ProtocolMessage
 {
 

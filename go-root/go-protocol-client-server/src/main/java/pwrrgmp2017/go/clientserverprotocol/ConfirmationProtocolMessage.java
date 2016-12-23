@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used as a confirmation from the client or server. It may be used in several ways.
+ */
 public class ConfirmationProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "CONFIRM";

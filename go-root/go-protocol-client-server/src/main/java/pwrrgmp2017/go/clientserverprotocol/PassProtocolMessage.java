@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used when a player wants to pass.
+ */
 public class PassProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "PASS";

@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used as a response for {@link CancelWaitingProtocolMessage}.
+ */
 public class CancelWaitingResponseProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "CANCEL WAITING RESPONSE";

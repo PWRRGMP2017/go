@@ -22,6 +22,17 @@ public abstract class ProtocolMessage
 		return DELIMITER;
 	}
 
+	/**
+	 * Factory method which creates a proper ProtocolMessage object from a
+	 * string. See ProtocolMessageDiagram.uxf and tests to see how to use it.
+	 * 
+	 * @param message
+	 *            result of {@link #getFullMessage()} of a concrete
+	 *            ProtocolMessage class, otherwise it might throw exceptions or
+	 *            the result is undefined
+	 * @return a concrete ProtocolMessage, {@link UnknownProtocolMessage} if it
+	 *         could not
+	 */
 	public static final ProtocolMessage getProtocolMessage(String message)
 	{
 		String[] parts = message.split(DELIMITER);
@@ -83,13 +94,13 @@ public abstract class ProtocolMessage
 		else if (parts[0].equals(PlayBotGameProtocolMessage.getCommand()))
 		{
 			GameInfo gameInfo = new GameInfo(getRestOfStringFrom(2, parts, GameInfo.DELIMITER));
-			
+
 			return new PlayBotGameProtocolMessage(parts[1], gameInfo);
 		}
 		else if (parts[0].equals(WaitForGameProtocolMessage.getCommand()))
 		{
 			GameInfo gameInfo = new GameInfo(getRestOfStringFrom(1, parts, GameInfo.DELIMITER));
-			
+
 			return new WaitForGameProtocolMessage(gameInfo);
 		}
 		else if (parts[0].equals(PlayerFoundProtocolMessage.getCommand()))
@@ -105,11 +116,21 @@ public abstract class ProtocolMessage
 			return new CancelWaitingResponseProtocolMessage(Boolean.valueOf(parts[1]));
 		}
 		else
-		{	
+		{
 			return new UnknownProtocolMessage(message);
 		}
 	}
-	
+
+	/**
+	 * Helper function. It builds a string from parts starting from index i with
+	 * each part separated by the delimiter. So, getRestOfStringFrom(0, parts,
+	 * DELIMITER) should give the result of {@link #getFullMessage()}.
+	 * 
+	 * @param i from which part to start concatenating
+	 * @param parts reference to the parts
+	 * @param delimiter delimiter to use between each part
+	 * @return string with each part separated by the specified delimiter
+	 */
 	private static String getRestOfStringFrom(int i, String[] parts, String delimiter)
 	{
 		StringBuilder result = new StringBuilder();
@@ -121,7 +142,7 @@ public abstract class ProtocolMessage
 	}
 
 	/**
-	 * Command of the message, e.g. "LOGIN".
+	 * Command identifying the type of the message, e.g. "LOGIN".
 	 * 
 	 * @return message command
 	 */

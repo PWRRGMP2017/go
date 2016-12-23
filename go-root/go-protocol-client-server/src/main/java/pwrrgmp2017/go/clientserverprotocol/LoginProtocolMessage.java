@@ -1,5 +1,8 @@
 package pwrrgmp2017.go.clientserverprotocol;
 
+/**
+ * Used when a player wants to log in to server.
+ */
 public class LoginProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "LOGIN";

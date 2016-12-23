@@ -2,6 +2,9 @@ package pwrrgmp2017.go.clientserverprotocol;
 
 import pwrrgmp2017.go.game.factory.GameInfo;
 
+/**
+ * Used when a player wants to start a game with a bot.
+ */
 public class PlayBotGameProtocolMessage extends ProtocolMessage
 {
 	private static final String COMMAND = "PLAY BOT GAME";

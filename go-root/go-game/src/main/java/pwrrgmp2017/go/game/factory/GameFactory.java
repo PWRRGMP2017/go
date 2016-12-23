@@ -7,15 +7,28 @@ import pwrrgmp2017.go.game.Model.GameBoard;
 import pwrrgmp2017.go.game.Model.GameModel;
 import pwrrgmp2017.go.game.Model.JapanGameModel;
 
+/**
+ * Class which is pure fabrication. SINGLETON, SIMPLE FACTORY
+ * It's a factory of games wrapped in GameController
+ * @author Robert Gawlik
+ *
+ */
 public class GameFactory
 {
-
+	/**Instance of singleton */
 	private volatile static GameFactory INSTANCE;
 
+	/**
+	 * Constructor of the class
+	 */
 	private GameFactory()
 	{
 	}
 
+	/**
+	 * Multi-threading method which gets instance of this factory
+	 * @return
+	 */
 	public static GameFactory getInstance()
 	{
 		if (INSTANCE == null)
@@ -39,6 +52,12 @@ public class GameFactory
 		return INSTANCE;
 	}
 
+	/**
+	 * Method which creates GO game
+	 * @param gameInfoAsString informations of game which must be created
+	 * @return Controller with current GameModel
+	 * @throws IllegalArgumentException bad info about game
+	 */
 	public GameController createGame(String gameInfoAsString) throws IllegalArgumentException
 	{
 		GameInfo gameInfo = new GameInfo(gameInfoAsString);

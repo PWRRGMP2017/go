@@ -7,6 +7,11 @@ import pwrrgmp2017.go.game.Model.GameBoard;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
 import pwrrgmp2017.go.game.Model.GameModel;
 
+/**
+ * Class which represents state of turn of white Player
+ * @author Robert Gawlik
+ *
+ */
 public class WhiteTurn extends PlayerTurn
 {
 	

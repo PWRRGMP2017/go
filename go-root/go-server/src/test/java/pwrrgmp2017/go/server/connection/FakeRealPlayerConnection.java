@@ -75,7 +75,7 @@ public class FakeRealPlayerConnection extends RealPlayerConnection
 	{
 		while (sentMessages.isEmpty()) 
 		{
-			if (isClosed())
+			if (isClosed() && sentMessages.isEmpty())
 			{
 				throw new IOException("Connection is closed");
 			}

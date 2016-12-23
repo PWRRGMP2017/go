@@ -2,6 +2,11 @@ package pwrrgmp2017.go.game.Model;
 
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
 
+/**
+ * Unimplemented class which represents Chinese game
+ * @author Robert Gawlik
+ *
+ */
 public class ChineseGameModel extends GameModel
 {
 
@@ -10,6 +15,9 @@ public class ChineseGameModel extends GameModel
 		super(board, komi);
 	}
 
+	/**
+	 * Method which calculates the score of current situation
+	 */
 	@Override
 	public float calculateScore()
 	{
@@ -18,6 +26,9 @@ public class ChineseGameModel extends GameModel
 		return 0;
 	}
 
+	/**
+	 * Method which returns possible territory
+	 */
 	@Override
 	public Field[][] getPossibleTerritory()
 	{
@@ -26,6 +37,9 @@ public class ChineseGameModel extends GameModel
 		return null;
 	}
 
+	/**
+	 * Method which calculates score of situation in parametre
+	 */
 	@Override
 	public float calculateScore(Field[][] territory)
 	{

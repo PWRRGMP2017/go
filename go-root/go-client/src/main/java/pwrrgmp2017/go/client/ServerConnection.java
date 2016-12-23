@@ -58,7 +58,7 @@ public class ServerConnection extends Observable implements Runnable
 	protected PrintWriter output;
 
 	/**
-	 * Validates the parameters and tries to connect to the server.
+	 * Validates the parameters.
 	 * 
 	 * @param hostname
 	 *            address of the server to connect to
@@ -66,13 +66,10 @@ public class ServerConnection extends Observable implements Runnable
 	 *            port of the server to connect to
 	 * @throws InvalidParameterException
 	 *             when the port is wrong
-	 * @throws IOException
-	 *             when there was a problem connecting to the server
 	 */
-	public ServerConnection(String hostname, String port) throws InvalidParameterException, IOException
+	public ServerConnection(String hostname, String port) throws InvalidParameterException
 	{
 		validateAndSetData(hostname, port);
-		connect();
 	}
 
 	/**
@@ -83,14 +80,11 @@ public class ServerConnection extends Observable implements Runnable
 	 *            address of the server
 	 * @param port
 	 *            port of the server
-	 * @throws IOException
-	 *             when there was a problem with connection
 	 */
-	public ServerConnection(String hostname, int port) throws IOException
+	public ServerConnection(String hostname, int port)
 	{
 		this.hostname = hostname;
 		this.port = port;
-		connect();
 	}
 
 	/**
@@ -112,6 +106,7 @@ public class ServerConnection extends Observable implements Runnable
 	 */
 	public void startReceiving()
 	{
+		LOGGER.info("Starting the server connection thread.");
 		thread = new Thread(this);
 		thread.setDaemon(true);
 		thread.start();
@@ -131,7 +126,7 @@ public class ServerConnection extends Observable implements Runnable
 	 * @throws IOException
 	 *             if there was a problem with communication
 	 */
-	public String receive() throws IOException
+	public synchronized String receive() throws IOException
 	{
 		return input.readLine();
 	}
@@ -196,11 +191,13 @@ public class ServerConnection extends Observable implements Runnable
 			}
 			catch (IOException e)
 			{
-				if (!socket.isClosed())
+				LOGGER.info(isClosed() + "");
+				if (!isClosed())
 				{
 					// Error on server side
 					setChanged();
 					this.notifyObservers(e);
+					LOGGER.info("IO happened");
 				} // else the client itself closed the connection, no need to
 					// notify
 				return;
@@ -228,7 +225,7 @@ public class ServerConnection extends Observable implements Runnable
 	 * @throws IOException
 	 *             when there was a problem with connection
 	 */
-	protected void connect() throws IOException
+	public void connect() throws IOException
 	{
 		LOGGER.log(Level.INFO, "Server connection is starting.");
 		createSocket();

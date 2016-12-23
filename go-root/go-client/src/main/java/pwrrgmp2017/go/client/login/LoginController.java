@@ -93,6 +93,7 @@ public class LoginController implements Observer
 		try
 		{
 			serverConnection = new ServerConnection(serverAddress, serverPort);
+			serverConnection.connect();
 		}
 		catch (InvalidParameterException e)
 		{

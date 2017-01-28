@@ -1,0 +1,27 @@
+@(playerName: String)
+
+@main(playerName) {
+    
+    <div class="page-header">
+        <h1>Game Settings</h1>
+    </div>
+    
+    <div id="onError" class="alert-message error">
+        <p>
+            <strong>Oops!</strong> <span></span>
+        </p>
+    </div>
+
+    <div id="onError2" style="display: none;" class="alert-message error">
+        <p>
+            <strong>Oops!</strong> <span></span>
+        </p>
+    </div>
+    
+    <div id="onChat" class="row">
+    	
+    </div>
+    
+    <script type="text/javascript" charset="utf-8" src="@routes.Application.gameSettingsJS(playerName)"></script>
+    
+}

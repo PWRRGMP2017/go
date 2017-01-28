@@ -158,25 +158,25 @@ public class JapanGameModel extends GameModel
 		territoryPoints+=30*takeTerritoryPoints(i-1, j);
 		territoryPoints+=30*takeTerritoryPoints(i, j+1);
 		territoryPoints+=30*takeTerritoryPoints(i, j-1);
-		territoryPoints+=11*takeTerritoryPoints(i+1, j+1);
-		territoryPoints+=11*takeTerritoryPoints(i-1, j-1);
-		territoryPoints+=11*takeTerritoryPoints(i+1, j-1);
-		territoryPoints+=11*takeTerritoryPoints(i-1, j+1);
-		territoryPoints+=5*takeTerritoryPoints(i+2, j);
-		territoryPoints+=5*takeTerritoryPoints(i-2, j);
-		territoryPoints+=5*takeTerritoryPoints(i, j+2);
-		territoryPoints+=5*takeTerritoryPoints(i, j-2);
-		territoryPoints+=2*takeTerritoryPoints(i+1, j+2);
-		territoryPoints+=2*takeTerritoryPoints(i+1, j-2);
-		territoryPoints+=2*takeTerritoryPoints(i-1, j+2);
-		territoryPoints+=2*takeTerritoryPoints(i-1, j-1);
-		territoryPoints+=2*takeTerritoryPoints(i+2, j+1);
-		territoryPoints+=2*takeTerritoryPoints(i+2, j-1);
-		territoryPoints+=2*takeTerritoryPoints(i-2, j+1);
-		territoryPoints+=2*takeTerritoryPoints(i-2, j-1);
-		if(territoryPoints>30)
+		territoryPoints+=17*takeTerritoryPoints(i+1, j+1);
+		territoryPoints+=17*takeTerritoryPoints(i-1, j-1);
+		territoryPoints+=17*takeTerritoryPoints(i+1, j-1);
+		territoryPoints+=17*takeTerritoryPoints(i-1, j+1);
+		territoryPoints+=8*takeTerritoryPoints(i+2, j);
+		territoryPoints+=8*takeTerritoryPoints(i-2, j);
+		territoryPoints+=8*takeTerritoryPoints(i, j+2);
+		territoryPoints+=8*takeTerritoryPoints(i, j-2);
+		territoryPoints+=5*takeTerritoryPoints(i+1, j+2);
+		territoryPoints+=5*takeTerritoryPoints(i+1, j-2);
+		territoryPoints+=5*takeTerritoryPoints(i-1, j+2);
+		territoryPoints+=5*takeTerritoryPoints(i-1, j-1);
+		territoryPoints+=5*takeTerritoryPoints(i+2, j+1);
+		territoryPoints+=5*takeTerritoryPoints(i+2, j-1);
+		territoryPoints+=5*takeTerritoryPoints(i-2, j+1);
+		territoryPoints+=5*takeTerritoryPoints(i-2, j-1);
+		if(territoryPoints>27)
 			boardReturn[i][j]=Field.BLACKTERRITORY;
-		else if(territoryPoints<-30)
+		else if(territoryPoints<-27)
 			boardReturn[i][j]=Field.WHITETERRITORY;
 	}
 	

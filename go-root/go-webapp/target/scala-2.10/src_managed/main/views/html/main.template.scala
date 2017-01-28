@@ -32,7 +32,7 @@ Seq[Any](format.raw/*1.36*/("""
 
 <html>
     <head>
-        <title>Websocket Chat-Room</title>
+        <title>PWr RG &amp; MP 2017 - Go</title>
         <link rel="stylesheet" media="screen" href=""""),_display_(Seq[Any](/*8.54*/routes/*8.60*/.Assets.at("stylesheets/bootstrap.css"))),format.raw/*8.99*/("""">
         <link rel="stylesheet" media="screen" href=""""),_display_(Seq[Any](/*9.54*/routes/*9.60*/.Assets.at("stylesheets/main.css"))),format.raw/*9.94*/("""">
         <link rel="shortcut icon" type="image/png" href=""""),_display_(Seq[Any](/*10.59*/routes/*10.65*/.Assets.at("images/favicon.png"))),format.raw/*10.97*/("""">
@@ -88,10 +88,10 @@ Seq[Any](format.raw/*1.36*/("""
 }
                 /*
                     -- GENERATED --
-                    DATE: Sat Jan 28 22:04:14 CET 2017
+                    DATE: Sat Jan 28 23:36:11 CET 2017
                     SOURCE: C:/Users/simba/Dropbox/Private/PWr/3sem/tp/lab/4/go/go-root/go-webapp/app/views/main.scala.html
-                    HASH: 77c9e6ac4b45177738af5d643d810838a76a67e8
-                    MATRIX: 778->1|906->35|1074->168|1088->174|1148->213|1239->269|1253->275|1308->309|1405->370|1420->376|1474->408|1535->433|1550->439|1617->484|1876->707|1906->728|1946->730|2072->820|2103->829|2180->870|2195->876|2237->896|2323->964|2336->969|2375->970|2451->1010|2466->1016|2515->1043|2822->1318|3022->1482|3051->1489
+                    HASH: ad0a3cf50f87e880deaa87bdc677e6d82b8ce8e9
+                    MATRIX: 778->1|906->35|1080->174|1094->180|1154->219|1245->275|1259->281|1314->315|1411->376|1426->382|1480->414|1541->439|1556->445|1623->490|1882->713|1912->734|1952->736|2078->826|2109->835|2186->876|2201->882|2243->902|2329->970|2342->975|2381->976|2457->1016|2472->1022|2521->1049|2828->1324|3028->1488|3057->1495
                     LINES: 26->1|29->1|36->8|36->8|36->8|37->9|37->9|37->9|38->10|38->10|38->10|39->11|39->11|39->11|47->19|47->19|47->19|49->21|49->21|50->22|50->22|50->22|52->24|52->24|52->24|53->25|53->25|53->25|57->29|66->38|66->38
                     -- GENERATED --
                 */

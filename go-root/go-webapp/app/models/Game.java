@@ -253,7 +253,7 @@ public class Game extends UntypedActor
 
 		stats.append("Game settings<br />");
 		stats.append("Game rules: Japanese<br />");
-		stats.append("Board size: " + (currentBoard.length - 1) + "x" + (currentBoard.length - 1) + "<br />");
+		stats.append("Board size: " + (currentBoard.length - 2) + "x" + (currentBoard.length - 2) + "<br />");
 		stats.append("Komi: " + controller.getKomi() + "<br />");
 		stats.append("Bot: " + (controller instanceof BotGameController ? "Yes" : "No") + "<br />");
 		stats.append("<br />");

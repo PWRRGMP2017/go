@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>174</x>
+      <y>132</y>
+      <w>144</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>ServerStart
+--
+instance: Server
+--
++main(args: String[])
++createServer(host: int, port: int)
+fg=black
+bg=white
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1152</x>
+      <y>24</y>
+      <w>222</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>GameFactory
+--
++&lt;static&gt;getInstance(): GameFactory
++createGame(String gameInfo): GameController
+--
+/stworzenie całej gry na podstawie GameInfo/
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1446</x>
+      <y>0</y>
+      <w>150</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>JapanGameModel
+--
++calculateScore(): float
++getPossibleTerritory(): Field[][] 
+--
+/wewnątrz jeszcze wiele/
+/prywatnych metod /
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1560</x>
+      <y>60</y>
+      <w>18</w>
+      <h>204</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=light_gray</panel_attributes>
+    <additional_attributes>10.0;320.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1806</x>
+      <y>294</y>
+      <w>198</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+/GameState/
+--
++makeMovement(GameModel model): GameState
++pass(GameModel model): GameState 
++initialiseGame(GameModel model): GameState 
++resign(GameModel model): GameState 
++GameStateEnum getState();
+
+fg=black
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1830</x>
+      <y>372</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+bg=light_gray</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2064</x>
+      <y>366</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+bg=light_gray</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1278</x>
+      <y>288</y>
+      <w>210</w>
+      <h>174</h>
+    </coordinates>
+    <panel_attributes>GameController
+--
+-gameModel: GameModel
+--
++getPossibleMovements(Field colour): boolean[][] 
++addMovement(int x, int y, Field playerField): boolean 
++isTurnPossible(int x, int y, Field playerField): boolean 
++calculateScore(): float 
++getPossibleTerritory(): Field[][] 
++getState(): GameStateEnum 
++getBoardCopy(): Field[][] 
++getKomi(): float 
++initialiseGame(): void 
++pass(): void 
++resign(): void 
+--
+/Interfejs do warstwy logiki gry/
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>246</x>
+      <y>198</y>
+      <w>18</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+fg=black
+bg=white
+m2=1
+m1=1</panel_attributes>
+    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1230</x>
+      <y>402</y>
+      <w>60</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+bg=white
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1746</x>
+      <y>330</y>
+      <w>72</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+bg=light_gray
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>100.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1800</x>
+      <y>414</y>
+      <w>84</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>Beginning
+--
+
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2016</x>
+      <y>414</y>
+      <w>84</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>BlackTurn
+
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2112</x>
+      <y>414</y>
+      <w>84</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>WhiteTurn
+
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1608</x>
+      <y>42</y>
+      <w>270</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>GameBoard
+--
+-board: Field[][] 
+-boardTeritories: Field[][] 
+-size: int
+-xKO, yKO: int 
+-chain: boolean[][] 
+--
+GameBoard(int size)
++getSize(): int
++move(int x, int y): boolean
++getPossibleMovements(Field playerField): boolean[][]
+-isChainKilled(Field playerField, Field concurField, int i, int j): boolean
++getBoardCopy(): Field[][]
+--
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>708</x>
+      <y>42</y>
+      <w>456</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>740.0;10.0;10.0;10.0;10.0;330.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1368</x>
+      <y>24</y>
+      <w>90</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+bg=light_gray
+m2=1
+m1=1</panel_attributes>
+    <additional_attributes>130.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2034</x>
+      <y>318</y>
+      <w>192</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>PlayerTurn
+--
++initialiseGame(GameModel model): GameState 
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2130</x>
+      <y>366</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+bg=light_gray</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1512</x>
+      <y>252</y>
+      <w>240</w>
+      <h>174</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;abstract&gt;&gt;
+GameModel
+--
+-board: GameBoard
+-possibleMovementsWhite: boolean[][] 
+-possibleMovementsBlack: boolean[][]  
+-state: GameState 
+-komi: float
+--
++getPossibleMovements(String colour): boolean[][]
++addMovement(String move): String 
++&lt;abstract&gt; calculateScore(): float
++&lt;abstract&gt; getPossibleTerritory(): Field[][] 
++isTurnPossible(int x, int y): boolean 
++getState(): GameStateEnum
+
+--
+/Klasa przedstawiająca model całej gry/
+
+
+fg=black
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1482</x>
+      <y>342</y>
+      <w>42</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+bg=light_gray
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>50.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1638</x>
+      <y>180</y>
+      <w>18</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+bg=light_gray
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1932</x>
+      <y>90</y>
+      <w>114</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;enum&gt;&gt;
+Field
+--
+WHITE_STONE
+BLACK_STONE
+WHITE_TERRITORY
+BLACK_TERRITORY
+WALL
+EMPTY
+NONETERRITORY
+DEADWHITE
+DEADBLACK
+
+
+
+
+fg=black
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1290</x>
+      <y>498</y>
+      <w>192</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>BotGameController
+--
++move(x: int, y: int)
++pass(String colour)
++resign(StringColour)
++acceptTerritory(StringColour)
+--
+/Implementacja Bota/
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1380</x>
+      <y>456</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=light_gray</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1872</x>
+      <y>96</y>
+      <w>72</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m2=1
+m1=size^2
+
+bg=light_gray</panel_attributes>
+    <additional_attributes>100.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>216</x>
+      <y>288</y>
+      <w>204</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>Server
+--
+socket: Socket
+gamesManager: GamesManager
+--
+run()
+--
+Responsibilites:
+-- Nasłuchiwanie na nowe połączenia
+-- Tworzenie nowych wątków dla każdego połączenia
+
+fg=black
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>414</x>
+      <y>312</y>
+      <w>204</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+fg=black
+bg=white
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>320.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1998</x>
+      <y>330</y>
+      <w>48</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+bg=light_gray</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1332</x>
+      <y>72</y>
+      <w>18</w>
+      <h>228</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+bg=light_gray
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;360.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1398</x>
+      <y>24</y>
+      <w>18</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=1</panel_attributes>
+    <additional_attributes>10.0;140.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1392</x>
+      <y>108</y>
+      <w>150</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>ChineseGameModel
+--
++calculateScore(): float
++getPossibleTerritory(): Field[][] 
+--
+/nie zaimplementowane w projekcie/
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1524</x>
+      <y>156</y>
+      <w>18</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=light_gray</panel_attributes>
+    <additional_attributes>10.0;160.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1938</x>
+      <y>372</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+bg=light_gray</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1908</x>
+      <y>414</y>
+      <w>84</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>End
+--
+
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1002</x>
+      <y>282</y>
+      <w>234</w>
+      <h>204</h>
+    </coordinates>
+    <panel_attributes>Game
+--
+-LOGGER = Logger.getLogger(Game.class.getName()): Logger
+-controller: GameController
+-blackPlayer: PlayerConnection
+-whitePlayer: PlayerConnection
+-gamesManager: GamesManager
+-currentPlayer: PlayerConnection
+-acceptedPreviousTurn: boolean
+--
+~Game(PlayerConnection blackPlayer, PlayerConnection whitePlayer, GameController controller, GamesManager gamesManager): ctor
++run(): void
+-cleanUp(): void
++getBlackPlayer(): PlayerConnection
++getWhitePlayer(): PlayerConnection
+-initializeGame(PlayerConnection player): void
+-getOpponent(PlayerConnection player): PlayerConnection
+-addTurnMessage(PlayerConnection player, int x, int y): void
+-resign(): void
+-pass(PlayerConnection player): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>606</x>
+      <y>240</y>
+      <w>258</w>
+      <h>234</h>
+    </coordinates>
+    <panel_attributes>GamesManager
+--
+-INSTANCE: GamesManager
+-choosingPlayers: ConcurrentHashMap&lt;String, PlayerConnection&gt;
+-playingPlayers: ConcurrentHashMap&lt;String, PlayerConnection&gt;
+-waitingPlayers: ConcurrentSkipListMap&lt;String, PlayerConnection&gt;
+--
+-GamesManager(): ctor
++getInstance(): GamesManager
++closeAllConnections(): void
++createPlayerConnection(RealPlayerConnection playerConnection): void
++addChoosingPlayer(PlayerConnection player, String name): void
++playBotGame(PlayerConnection player, GameInfo gameInfo): void
++getChoosingPlayer(String playerName): PlayerConnection
++waitForGame(PlayerConnection player, GameInfo gameInfo): PlayerConnection
++stopWaiting(PlayerConnection player, String gameInfo): void
++createGame(PlayerConnection blackPlayer, PlayerConnection whitePlayer, GameInfo gameInfo): void
++deleteGame(Game game): void
++deletePlayer(PlayerConnection player): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>714</x>
+      <y>600</y>
+      <w>216</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>/Player/
+--
+#playerInfo: PlayerInfo
+#invitedPlayer = null: PlayerConnection
+#invitingPlayer = null: PlayerConnection
+--
++getPlayerInfo(): PlayerInfo
++getPlayerName(): String
++setPlayerName(String name): void
++getInvitedPlayer(): PlayerConnection
++getInvitingPlayer(): PlayerConnection
++close(): void
++receive(): String
++send(String message): void
++isInvited(): boolean
++isInviting(): boolean
++invitePlayer(PlayerConnection player): boolean
++inviteThisPlayerBy(PlayerConnection player): boolean
++cancelInvitation(): boolean
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1098</x>
+      <y>222</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>UntypedActor</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1122</x>
+      <y>234</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>750</x>
+      <y>468</y>
+      <w>18</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;220.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>858</x>
+      <y>306</y>
+      <w>156</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-&gt;</panel_attributes>
+    <additional_attributes>240.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>924</x>
+      <y>708</y>
+      <w>180</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>280.0;10.0;20.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1092</x>
+      <y>654</y>
+      <w>186</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>PlayerInfo
+--
+-name: String
+-playingGame: Game
+--
++PlayerInfo(String name): ctor
++getName(): String
++isPlaying(): boolean
++getPlayingGame(): Game
++setPlayingGame(Game game): void
++setPlayerName(String name): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>858</x>
+      <y>540</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>UntypedActor</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>882</x>
+      <y>552</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>762</x>
+      <y>174</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>UntypedActor</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>786</x>
+      <y>186</y>
+      <w>18</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+</diagram>

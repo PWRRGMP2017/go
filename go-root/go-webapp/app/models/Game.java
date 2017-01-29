@@ -1,5 +1,6 @@
 package models;
 
+import akka.actor.UntypedActor;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
@@ -7,7 +8,7 @@ import pwrrgmp2017.go.game.Exception.GameStillInProgressException;
 import pwrrgmp2017.go.game.Exceptions.BadFieldException;
 import pwrrgmp2017.go.game.Model.GameBoard.Field;
 
-public class Game
+public class Game extends UntypedActor
 {
 	private GameController controller;
 	private Field[][] territoryBoard;
@@ -113,6 +114,13 @@ public class Game
 	private void refreshTerritory()
 	{
 		this.territoryBoard=this.controller.getPossibleTerritory();
+	}
+
+	@Override
+	public void onReceive(Object arg0) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

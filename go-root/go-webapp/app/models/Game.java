@@ -16,10 +16,10 @@ import pwrrgmp2017.go.game.Model.GameBoard.Field;
 
 public class Game extends UntypedActor
 {
-	private GameController controller;
-	private Field[][] territoryBoard;
-	private boolean acceptedPreviousTurn;
-	private ActorRef blackPlayer, whitePlayer, currentPlayer;
+	protected GameController controller;
+	protected Field[][] territoryBoard;
+	protected boolean acceptedPreviousTurn;
+	protected ActorRef blackPlayer, whitePlayer, currentPlayer;
 
 
 	Game(ActorRef blackPlayer, ActorRef whitePlayer, GameController controller)
@@ -44,7 +44,7 @@ public class Game extends UntypedActor
 		}
 	}
 	
-	private void initializeGame(ActorRef player) throws GameStillInProgressException, BadFieldException
+	protected void initializeGame(ActorRef player) throws GameStillInProgressException, BadFieldException
 	{
 		if (player == blackPlayer)
 			controller.initialiseGame(Field.BLACKSTONE);
@@ -53,17 +53,17 @@ public class Game extends UntypedActor
 	}
 	
 	
-	private ActorRef getOpponent(ActorRef player)
+	protected ActorRef getOpponent(ActorRef player)
 	{
 		return player == blackPlayer ? whitePlayer : blackPlayer;
 	}
 	
-	private void resign() throws GameIsEndedException
+	protected void resign() throws GameIsEndedException
 	{
 		controller.resign();
 	}
 	
-	private void pass(ActorRef player) throws GameBegginsException, GameIsEndedException, BadFieldException
+	protected void pass(ActorRef player) throws GameBegginsException, GameIsEndedException, BadFieldException
 	{
 		if (player == blackPlayer)
 			controller.pass(Field.BLACKSTONE);
@@ -71,7 +71,7 @@ public class Game extends UntypedActor
 			controller.pass(Field.WHITESTONE);
 	}
 	
-	private void changeTerritory(int x, int y)
+	protected void changeTerritory(int x, int y)
 	{
 		switch (territoryBoard[x][y])
 		{
@@ -107,7 +107,7 @@ public class Game extends UntypedActor
 		}
 	}
 	
-	private void refreshTerritory()
+	protected void refreshTerritory()
 	{
 		this.territoryBoard=this.controller.getPossibleTerritory();
 	}
@@ -141,25 +141,25 @@ public class Game extends UntypedActor
 		
 	}
 
-	private void onResumeGame(ResumeGame message)
+	protected void onResumeGame(ResumeGame message)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void onAcceptTerritory(AcceptTerritory message)
+	protected void onAcceptTerritory(AcceptTerritory message)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void onResign(Resign message)
+	protected void onResign(Resign message)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void onPass(Pass message)
+	protected void onPass(Pass message)
 	{
 		// TODO Auto-generated method stub
 		

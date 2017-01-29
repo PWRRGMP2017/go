@@ -50,7 +50,7 @@ $(function()
         $('#acceptButton').prop('disabled', true);
         $('#resumeButton').prop('disabled', true);
 
-        if (color === 'black') {
+        if (playerColor === 'black') {
             $('#blackPlayerName').html(playerName + ' (Black)');
             $('#whitePlayerName').html(opponent + ' (White)');
         } else {
@@ -117,7 +117,7 @@ $(function()
     var updateBoard = function(boardData) {
         if (boardData.state === 'BLACKMOVE')
         {
-            if (color === 'black')
+            if (playerColor === 'black')
             {
                 $('#resignButton').prop('disabled', false);
                 $('#passButton').prop('disabled', false);
@@ -134,7 +134,7 @@ $(function()
         }
         else if (boardData.state === 'WHITEMOVE')
         {
-            if (color === 'black')
+            if (playerColor === 'black')
             {
                 $('#resignButton').prop('disabled', false);
                 $('#passButton').prop('disabled', true);
@@ -169,7 +169,7 @@ $(function()
                 var classToAdd = '';
                 if (data.field === 'EMPTY')
                 {
-                    classToAdd = color+'-empty';
+                    classToAdd = playerColor+'-empty';
                 }
                 else if (data.field === 'BLACKSTONE')
                 {
@@ -189,7 +189,7 @@ $(function()
                 }
                 else if (data.field === 'NONETERRITORY')
                 {
-                    classToAdd = color+'-no-territory';
+                    classToAdd = playerColor+'-no-territory';
                 }
                 else if (data.field === 'DEADWHITE')
                 {
@@ -241,7 +241,7 @@ $(function()
     // gameInfo = {
     //     boardSize: 19
     // }
-    // color = 'black';
+    // playerColor = 'black';
     // initializeGameBoard();
 
     // Click events
@@ -319,7 +319,7 @@ $(function()
             if (data.isAccepted)
             {
                 alert('Invitation accepted!');
-                color = 'black';
+                playerColor = 'black';
                 swapSettingsAndGameBoard();
                 initializeGameBoard();
             }
@@ -371,7 +371,7 @@ $(function()
         if (data.type === 'confirmInvitation')
         {
             alert('The game is about to begin.');
-            color = 'white';
+            playerColor = 'white';
             swapSettingsAndGameBoard();
             initializeGameBoard();
             return;

@@ -290,7 +290,8 @@ $(function()
     });
 
     // WebSocket events
-    var socket = new WebSocket("@routes.Application.joinPlayerRoom(playerName).webSocketURL(request)");
+    var WS = window['MozWebSocket'] ? window['MozWebSocket'] : WebSocket;
+    var socket = new WS("@routes.Application.joinPlayerRoom(playerName).webSocketURL(request)");
 
     var receiveEvent = function(event)
     {

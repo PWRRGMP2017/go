@@ -57,7 +57,7 @@ public class Game extends UntypedActor
 
 		this.currentBoard = controller.getBoardCopy();
 	}
-	
+
 	protected void initializeGame(ActorRef player) throws GameStillInProgressException, BadFieldException
 	{
 		if (player == blackPlayer)
@@ -65,18 +65,17 @@ public class Game extends UntypedActor
 		else
 			controller.initialiseGame(Field.WHITESTONE);
 	}
-	
-	
+
 	protected ActorRef getOpponent(ActorRef player)
 	{
 		return player == blackPlayer ? whitePlayer : blackPlayer;
 	}
-	
+
 	protected void resign() throws GameIsEndedException
 	{
 		controller.resign();
 	}
-	
+
 	protected void pass(ActorRef player) throws GameBegginsException, GameIsEndedException, BadFieldException
 	{
 		if (player == blackPlayer)
@@ -84,7 +83,7 @@ public class Game extends UntypedActor
 		else if (player == whitePlayer)
 			controller.pass(Field.WHITESTONE);
 	}
-	
+
 	protected void changeTerritory(int x, int y)
 	{
 		switch (territoryBoard[x][y])
@@ -120,7 +119,7 @@ public class Game extends UntypedActor
 			break;
 		}
 	}
-	
+
 	protected void refreshTerritory()
 	{
 		this.territoryBoard = this.controller.getPossibleTerritory();
@@ -164,10 +163,105 @@ public class Game extends UntypedActor
 
 	}
 
+	private void onQuit(Quit message)
+	{
+		// TODO Auto-generated method stub
+		// when one player quits, notify the second one
+	}
+
 	protected void onResumeGame(ResumeGame message)
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	private void onRefreshBoard(RefreshBoard message)
+	{
+		ObjectNode json = Json.newObject();
+		this.currentBoard = controller.getBoardCopy();
+		json.put("type", "updatedBoard");
+		json.put("state", controller.getState().toString());
+		json.put("stats", generateStatistics());
+
+		ArrayNode boardArray = json.arrayNode();
+		boolean[][] possibleMovements = new boolean[currentBoard.length - 2][currentBoard.length - 2];
+		try
+		{
+			if (controller.getState() == GameStateEnum.BLACKMOVE && getSender() == blackPlayer)
+			{
+				possibleMovements = controller.getPossibleMovements(Field.BLACKSTONE);
+			}
+			else if (controller.getState() == GameStateEnum.WHITEMOVE && getSender() == whitePlayer)
+			{
+				possibleMovements = controller.getPossibleMovements(Field.WHITESTONE);
+			}
+		}
+		catch (BadFieldException e)
+		{
+			e.printStackTrace();
+
+			return;
+		}
+
+		for (int i = 1; i < currentBoard.length - 1; ++i)
+		{
+			ArrayNode boardRow = json.arrayNode();
+			for (int j = 1; j < currentBoard[i].length - 1; ++j)
+			{
+				ObjectNode field = Json.newObject();
+				field.put("field", currentBoard[i][j].toString());
+				field.put("possible", possibleMovements[i - 1][j - 1]);
+				boardRow.add(field);
+			}
+			boardArray.add(boardRow);
+		}
+		json.put("board", boardArray);
+
+		getSender().tell(new SendBoard(json), getSelf());
+	}
+
+	private String generateStatistics()
+	{
+		StringBuilder stats = new StringBuilder();
+
+		// stats.append("Turn: 0\n"); // Not yet implemented
+		stats.append("State: " + controller.getState().toString() + "<br />");
+		Point lastMove = controller.getLastMovement();
+		stats.append("Last move: (" + lastMove.x + ", " + lastMove.y + ")<br />");
+
+		if (controller.getState() == GameStateEnum.END)
+		{
+			float score = controller.calculateScore(territoryBoard);
+			String winner;
+			if (score < 0)
+			{
+				winner = "white";
+				score *= -1;
+			}
+			else if (score > 0)
+			{
+				winner = "black";
+			}
+			else
+			{
+				winner = "nobody";
+			}
+			stats.append("Score: " + winner + " wins by " + score + " points<br />");
+		}
+
+		stats.append("<br />");
+
+		stats.append("Game settings<br />");
+		stats.append("Game rules: Japanese<br />");
+		stats.append("Board size: " + (currentBoard.length - 1) + "x" + (currentBoard.length - 1) + "<br />");
+		stats.append("Komi: " + controller.getKomi() + "<br />");
+		stats.append("Bot: " + (controller instanceof BotGameController ? "Yes" : "No") + "<br />");
+		stats.append("<br />");
+
+		stats.append("Black player captives: " + controller.getWhiteCaptives() + "<br />");
+		stats.append("White player captives: " + controller.getBlackCaptives() + "<br />");
+
+		return stats.toString();
 	}
 
 	protected void onAcceptTerritory(AcceptTerritory message)
@@ -207,7 +301,7 @@ public class Game extends UntypedActor
 		{
 			try
 			{
-				controller.addMovement(message.x+1, message.y+1, Field.BLACKSTONE);
+				controller.addMovement(message.x + 1, message.y + 1, Field.BLACKSTONE);
 			}
 			catch (BadFieldException | GameBegginsException | GameIsEndedException e)
 			{
@@ -218,7 +312,7 @@ public class Game extends UntypedActor
 		{
 			try
 			{
-				controller.addMovement(message.x+1, message.y+1, Field.WHITESTONE);
+				controller.addMovement(message.x + 1, message.y + 1, Field.WHITESTONE);
 			}
 			catch (BadFieldException | GameBegginsException | GameIsEndedException e)
 			{

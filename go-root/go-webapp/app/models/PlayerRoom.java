@@ -12,6 +12,7 @@ import models.msgs.CancelWaiting;
 import models.msgs.CreateGame;
 import models.msgs.GetPlayer;
 import models.msgs.Join;
+import models.msgs.PlayBotGame;
 import models.msgs.PlayerAccepted;
 import models.msgs.PlayerRejected;
 import models.msgs.Quit;
@@ -98,13 +99,6 @@ public class PlayerRoom extends UntypedActor
 		
 		return (boolean) result;
 	}
-	
-	public static ActorRef playBotGame(final String gameInfo, ActorRef player)
-	{
-		Object result;
-		
-		return null;
-	}
 
 	@Override
 	public void onReceive(Object message) throws Exception
@@ -129,12 +123,15 @@ public class PlayerRoom extends UntypedActor
 		{
 			onCancelWaiting((CancelWaiting) message);
 		}
+		else if (message instanceof PlayBotGame)
+		{
+			onPlayBotGame((PlayBotGame) message);
+		}
 		else
 		{
 			unhandled(message);
 		}
 	}
-
 
 	private void onJoin(Object message)
 	{
@@ -192,5 +189,14 @@ public class PlayerRoom extends UntypedActor
 		}
 		waitingplayers.remove(message.gameInfo);
 		getSender().tell(true, getSelf());
+	}
+	
+	private void onPlayBotGame(PlayBotGame message)
+	{
+		GameFactory director = GameFactory.getInstance();
+		GameController gameController = director.createGame(message.gameInfo.getAsString());
+		ActorRef game = Akka.system().actorOf(Props.create(BotGame.class, message.player, gameController, playerRoom));
+		
+		message.player.tell(new CreateGame(game, true), getSelf());
 	}
 }

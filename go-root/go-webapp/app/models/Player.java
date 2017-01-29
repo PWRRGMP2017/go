@@ -128,7 +128,12 @@ public class Player extends UntypedActor
 					}
 					else if(messageType.equals("playWithBot"))
 					{
-						
+						double komi = event.get("komi").asDouble();
+						int boardSize = event.get("boardSize").asInt();
+						boolean isBot = false;
+						GameInfo gameInfo = new GameInfo(boardSize, (float) komi, RulesType.JAPANESE, isBot);
+						ActorRef player = getSelf();
+						getSelf().tell(new PlayBotGame(gameInfo, player), getSelf());
 					}
 					else if(messageType.equals("resumeGame"))
 					{
@@ -513,7 +518,12 @@ public class Player extends UntypedActor
 	
 	private void onPlayBotGame(PlayBotGame message)
 	{
-		
+		if(state!=State.IN_SETTINGS)
+		{
+			return;
+		}
+		state=State.PLAYING;
+		playerRoom.tell(message, getSelf());
 	}
 	
 	private void onResign(Resign message)
@@ -525,6 +535,7 @@ public class Player extends UntypedActor
 	{
 		this.isBlack=message.isBlack;
 		this.currentGame=message.game;
+		state=State.PLAYING;
 		//TODO Stworzenie planszy w HTML-u
 	}
 	

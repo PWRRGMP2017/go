@@ -1,12 +1,12 @@
 package models.msgs;
 
-import models.Game;
+import akka.actor.ActorRef;
 
 public class ConfirmInvitation
 {
-	public final Game game;
+	public final ActorRef game;
 
-	public ConfirmInvitation(final Game game)
+	public ConfirmInvitation(final ActorRef game)
 	{
 		this.game = game;
 	}

@@ -15,6 +15,8 @@ $(function()
     // Global variables
     var playerName = '@playerName';
     var opponent = '';
+    var playerColor = '';
+    var gameInfo = {};
 
     // Some functions
     var disableControls = function(isdisabled)
@@ -42,13 +44,205 @@ $(function()
         $('#gameBoard').toggle();
     }
 
+    var initializeGameBoard = function() {
+        $('#resignButton').prop('disabled', false);
+        $('#passButton').prop('disabled', true);
+        $('#acceptButton').prop('disabled', true);
+        $('#resumeButton').prop('disabled', true);
+
+        if (color === 'black') {
+            $('#blackPlayerName').html(playerName + ' (Black)');
+            $('#whitePlayerName').html(opponent + ' (White)');
+        } else {
+            $('#blackPlayerName').html(playerName + ' (White)');
+            $('#whitePlayerName').html(opponent + ' (Black)');
+        }
+
+        // Generate empty board
+        var table = '';
+        table += '<table class="borderless">';
+        for (var i = 0; i < gameInfo.boardSize; ++i)
+        {
+            table += '<tr>';
+            for (var j = 0; j < gameInfo.boardSize; ++j)
+            {
+                var cross = '';
+                if (i == 0 && j == 0)
+                {
+                    cross = 'cross-top-left';
+                }
+                else if (i == gameInfo.boardSize-1 && j == 0)
+                {
+                    cross = 'cross-bottom-left';
+                }
+                else if (i == gameInfo.boardSize-1 && j == gameInfo.boardSize-1)
+                {
+                    cross = 'cross-bottom-right';
+                }
+                else if (i == 0 && j == gameInfo.boardSize-1)
+                {
+                    cross = 'cross-top-right';
+                }
+                else if (i == 0)
+                {
+                    cross = 'cross-top-center';
+                }
+                else if (i == gameInfo.boardSize-1)
+                {
+                    cross = 'cross-bottom-center';
+                }
+                else if (j == 0)
+                {
+                    cross = 'cross-center-left';
+                }
+                else if (j == gameInfo.boardSize-1)
+                {
+                    cross = 'cross-center-right';
+                }
+                else
+                {
+                    cross = 'cross-center-center';
+                }
+
+                table += '<td class="background-grid '+cross+'">';
+                table += '<div id="index'+i+'-'+j+'" class="background-stone"></div>';
+                table += '</td>';
+            }
+            table += '</tr>';
+        }
+        table += '</table>';
+        $('#boardArea').empty().append(table);
+    }
+
+    var updateBoard = function(boardData) {
+        if (boardData.state === 'BLACKMOVE')
+        {
+            if (color === 'black')
+            {
+                $('#resignButton').prop('disabled', false);
+                $('#passButton').prop('disabled', false);
+                $('#acceptButton').prop('disabled', true);
+                $('#resumeButton').prop('disabled', true);
+            }
+            else
+            {
+                $('#resignButton').prop('disabled', false);
+                $('#passButton').prop('disabled', true);
+                $('#acceptButton').prop('disabled', true);
+                $('#resumeButton').prop('disabled', true);
+            }
+        }
+        else if (boardData.state === 'WHITEMOVE')
+        {
+            if (color === 'black')
+            {
+                $('#resignButton').prop('disabled', false);
+                $('#passButton').prop('disabled', true);
+                $('#acceptButton').prop('disabled', true);
+                $('#resumeButton').prop('disabled', true);
+            }
+            else
+            {
+                $('#resignButton').prop('disabled', false);
+                $('#passButton').prop('disabled', false);
+                $('#acceptButton').prop('disabled', true);
+                $('#resumeButton').prop('disabled', true);
+            }
+        }
+        else
+        {
+            $('#resignButton').prop('disabled', true);
+            $('#passButton').prop('disabled', true);
+            $('#acceptButton').prop('disabled', true);
+            $('#resumeButton').prop('disabled', true);
+        }
+
+        $('#statsArea').html(boardData.stats);
+
+        for (var i = 0; i < boardData.board.length; ++i)
+        {
+            for (var j = 0; j < boardData.board[i].length; ++j)
+            {
+                var button = $('#index'+i+'-'+j);
+                var data = boardData.board[i][j];
+                button.attr('class', 'background-stone');
+                var classToAdd = '';
+                if (data.field === 'EMPTY')
+                {
+                    classToAdd = color+'-empty';
+                }
+                else if (data.field === 'BLACKSTONE')
+                {
+                    classToAdd = 'black-stone';
+                }
+                else if (data.field === 'WHITESTONE')
+                {
+                    classToAdd = 'white-stone';
+                }
+                else if (data.field === 'WHITETERRITORY')
+                {
+                    classToAdd = 'white-territory';
+                }
+                else if (data.field === 'BLACKTERRITORY')
+                {
+                    classToAdd = 'white-territory';
+                }
+                else if (data.field === 'NONETERRITORY')
+                {
+                    classToAdd = color+'-no-territory';
+                }
+                else if (data.field === 'DEADWHITE')
+                {
+                    classToAdd = 'white-stone-dead';
+                }
+                else if (data.field === 'DEADBLACK')
+                {
+                    classToAdd = 'black-stone-dead';
+                }
+
+                button.addClass(classToAdd);
+
+                if (data.possible)
+                {
+                    button.addClass(classToAdd+'-hover');
+                    button.click((function(x,y) {
+                        return function() {
+                            sendMove(x, y);
+                            disableBoard();
+                        }
+                    })(i,j));
+                }
+            }
+        }
+    }
+
+    var disableBoard = function() {
+        $('#resignButton').prop('disabled', true);
+        $('#passButton').prop('disabled', true);
+        $('#acceptButton').prop('disabled', true);
+        $('#resumeButton').prop('disabled', true);
+        for (var i = 0; i < gameInfo.boardSize; ++i)
+        {
+            for (var j = 0; j < gameInfo.boardSize; ++j)
+            {
+                var button = $('#index'+i+'-'+j);
+                button.off('click');
+            }
+        }
+    }
+
     // Init
     disableControls(false);
     disableCancel(true);
     changeStatus(waitingStatus);
 
     // Debug
-    swapSettingsAndGameBoard();
+    // swapSettingsAndGameBoard();
+    // gameInfo = {
+    //     boardSize: 19
+    // }
+    // color = 'black';
+    // initializeGameBoard();
 
     // Click events
     $('#inviteButton').click(function()
@@ -73,6 +267,26 @@ $(function()
         {
             sendCancelInvitation();
         }
+    });
+
+    $('#resignButton').click(function()
+    {
+        sendResign();
+    });
+
+    $('#passButton').click(function()
+    {
+        sendPass();
+    });
+
+    $('#acceptButton').click(function()
+    {
+        sendAccept();
+    });
+
+    $('#resumeButton').click(function()
+    {
+        sendResume();
     });
 
     // WebSocket events
@@ -104,10 +318,9 @@ $(function()
             if (data.isAccepted)
             {
                 alert('Invitation accepted!');
+                color = 'black';
                 swapSettingsAndGameBoard();
-                changeStatus(waitingStatus);
-                disableControls(false);
-                disableCancel(true);
+                initializeGameBoard();
             }
             else
             {
@@ -122,6 +335,11 @@ $(function()
         if (data.type === 'invitation')
         {
             opponent = data.invitingPlayerName;
+            gameInfo = {
+                komi: data.komi,
+                boardSize: data.boardSize,
+                isBot: false
+            };
             var accepted = confirm(
                 'You received an invitation from ' + data.invitingPlayerName + '!\n' +
                 'Game settings:\n' +
@@ -152,10 +370,9 @@ $(function()
         if (data.type === 'confirmInvitation')
         {
             alert('The game is about to begin.');
+            color = 'white';
             swapSettingsAndGameBoard();
-            changeStatus(waitingStatus);
-            disableControls(false);
-            disableCancel(true);
+            initializeGameBoard();
             return;
         }
 
@@ -181,6 +398,12 @@ $(function()
             disableCancel(true);
             return;
         }
+
+        if (data.type === 'updatedBoard')
+        {
+            updateBoard(data);
+            return;
+        }
     }
 
     var closeEvent = function(event)
@@ -202,13 +425,17 @@ $(function()
     // Communication functions
     var sendInvitation = function()
     {
+        gameInfo.komi = $('#komi').val();
+        gameInfo.boardSize = $('#boardSizeSelect').val();
+        gameInfo.isBot = false;
+
         socket.send(JSON.stringify(
         {
             'type': 'invitation',
             'invitingPlayerName': playerName,
             'invitedPlayerName': opponent,
-            'komi': $('#komi').val(),
-            'boardSize': $('#boardSizeSelect').val(),
+            'komi': gameInfo.komi,
+            'boardSize': gameInfo.boardSize,
             'isBot': false
         }
         ));
@@ -232,5 +459,57 @@ $(function()
             'type': 'cancelInvitation'
         }
         ));
+    }
+
+    var sendResign = function()
+    {
+        socket.send(JSON.stringify(
+        {
+            'type': 'resign'
+        }
+        ));
+    }
+
+    var sendPass = function()
+    {
+        socket.send(JSON.stringify(
+        {
+            'type': 'pass'
+        }
+        ));
+    }
+
+    var sendAccept = function()
+    {
+        socket.send(JSON.stringify(
+        {
+            'type': 'acceptTerritory'
+        }
+        ));
+    }
+
+    var sendResume = function()
+    {
+        socket.send(JSON.stringify(
+        {
+            'type': 'resume'
+        }
+        ));
+    }
+
+    var sendMove = function(x,y)
+    {
+        socket.send(JSON.stringify(
+        {
+            'type': 'move',
+            'x': x,
+            'y': y
+        }
+        ));
+    }
+
+    var sendRefreshBoard = function()
+    {
+        socket.send(JSON.stringify({ 'type': 'refreshBoard' }));
     }
 })

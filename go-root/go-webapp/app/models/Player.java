@@ -3,6 +3,7 @@ package models;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import akka.actor.ActorRef;
+import akka.actor.Props;
 import akka.actor.UntypedActor;
 import models.msgs.AcceptTerritory;
 import models.msgs.CancelInvitation;
@@ -10,18 +11,24 @@ import models.msgs.CancelWaiting;
 import models.msgs.ConfirmInvitation;
 import models.msgs.CreateGame;
 import models.msgs.Invite;
+import models.msgs.Move;
+import models.msgs.Pass;
 import models.msgs.PlayBotGame;
 import models.msgs.Quit;
 import models.msgs.RefreshBoard;
 import models.msgs.Resign;
 import models.msgs.RespondToInvitation;
+import models.msgs.ResumeGame;
+import models.msgs.SendBoard;
 import models.msgs.UnknownMessage;
 import models.msgs.WaitForGame;
 import play.Logger;
+import play.libs.Akka;
 import play.libs.F.Callback;
 import play.libs.F.Callback0;
 import play.libs.Json;
 import play.mvc.WebSocket;
+import pwrrgmp2017.go.game.factory.GameFactory;
 import pwrrgmp2017.go.game.factory.GameInfo;
 import pwrrgmp2017.go.game.factory.GameInfo.RulesType;
 
@@ -42,7 +49,8 @@ public class Player extends UntypedActor
 		QUITTED, IN_SETTINGS, INVITING, INVITED, SEARCHING, PLAYING
 	}
 
-	public Player(final String name, WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out, final ActorRef playerRoom)
+	public Player(final String name, WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out,
+			final ActorRef playerRoom)
 	{
 		this.name = name;
 		this.in = in;
@@ -97,7 +105,7 @@ public class Player extends UntypedActor
 					{
 						getSelf().tell(new CancelInvitation(), getSelf());
 					}
-					else if(messageType.equals("waitForGame"))
+					else if (messageType.equals("waitForGame"))
 					{
 						double komi = event.get("komi").asDouble();
 						int boardSize = event.get("boardSize").asInt();
@@ -106,27 +114,29 @@ public class Player extends UntypedActor
 						ActorRef player = getSelf();
 						getSelf().tell(new WaitForGame(player, gameInfo), getSelf());
 					}
-					else if(messageType.equals("stopWaiting"))
+					else if (messageType.equals("stopWaiting"))
 					{
 						getSelf().tell(new CancelWaiting(getSelf(), null), getSelf());
 					}
-					else if(messageType.equals("move"))
+					else if (messageType.equals("move"))
 					{
-						
+						int x = event.get("x").asInt();
+						int y = event.get("y").asInt();
+						getSelf().tell(new Move(x, y), getSelf());
 					}
-					else if(messageType.equals("pass"))
+					else if (messageType.equals("pass"))
 					{
-						
+						getSelf().tell(new Pass(), getSelf());
 					}
-					else if(messageType.equals("resign"))
+					else if (messageType.equals("resign"))
 					{
-						
+						getSelf().tell(new Resign(), getSelf());
 					}
-					else if(messageType.equals("acceptTerritory"))
+					else if (messageType.equals("acceptTerritory"))
 					{
-						
+						getSelf().tell(new AcceptTerritory(), getSelf());
 					}
-					else if(messageType.equals("playWithBot"))
+					else if (messageType.equals("playWithBot"))
 					{
 						double komi = event.get("komi").asDouble();
 						int boardSize = event.get("boardSize").asInt();
@@ -135,9 +145,13 @@ public class Player extends UntypedActor
 						ActorRef player = getSelf();
 						getSelf().tell(new PlayBotGame(gameInfo, player), getSelf());
 					}
-					else if(messageType.equals("resumeGame"))
+					else if (messageType.equals("resumeGame"))
 					{
-						
+						getSelf().tell(new ResumeGame(), getSelf());
+					}
+					else if (messageType.equals("refreshBoard"))
+					{
+						getSelf().tell(new RefreshBoard(), getSelf());
 					}
 					else
 					{
@@ -217,9 +231,17 @@ public class Player extends UntypedActor
 		{
 			onResign((Resign) message);
 		}
+		else if (message instanceof Pass)
+		{
+			onPass((Pass) message);
+		}
 		else if (message instanceof AcceptTerritory)
 		{
 			onAcceptTerritory((AcceptTerritory) message);
+		}
+		else if (message instanceof ResumeGame)
+		{
+			onResumeGame((ResumeGame) message);
 		}
 		else if (message instanceof PlayBotGame)
 		{
@@ -229,6 +251,14 @@ public class Player extends UntypedActor
 		{
 			onCreateGame((CreateGame) message);
 		}
+		else if (message instanceof Move)
+		{
+			onMove((Move) message);
+		}
+		else if (message instanceof SendBoard)
+		{
+			onSendBoard((SendBoard) message);
+		}
 		else
 		{
 			unhandled(message);
@@ -237,6 +267,43 @@ public class Player extends UntypedActor
 
 	}
 
+	private void onResumeGame(ResumeGame message)
+	{
+		if (state != State.PLAYING)
+		{
+			Logger.warn("Player " + name + " sent resume game message but is in a wrong state.");
+			return;
+		}
+
+		currentGame.tell(message, getSelf());
+	}
+
+	private void onPass(Pass message)
+	{
+		if (state != State.PLAYING)
+		{
+			Logger.warn("Player " + name + " sent pass message but is in a wrong state.");
+			return;
+		}
+
+		currentGame.tell(message, getSelf());
+	}
+
+	private void onMove(Move message)
+	{
+		if (state != State.PLAYING)
+		{
+			Logger.warn("Player " + name + " sent move message but is in a wrong state.");
+			return;
+		}
+
+		currentGame.tell(message, getSelf());
+	}
+
+	private void onSendBoard(SendBoard message)
+	{
+		out.write(message.json);
+	}
 
 	private void onInvitation(Invite message)
 	{
@@ -322,11 +389,16 @@ public class Player extends UntypedActor
 				if (message.isAccepted)
 				{
 					// We create a new game here
-					// this.state = State.PLAYING; //TODO
+					this.currentGame = Akka.system()
+							.actorOf(Props.create(Game.class, invitation.invitingPlayer, invitation.invitedPlayer,
+									GameFactory.getInstance().createGame(invitation.gameInfo.getAsString())));
+					this.state = State.PLAYING;
 
 					// Send the confirmation to the opponent
-					invitation.invitedPlayer.tell(new ConfirmInvitation(null), getSelf());
-					this.state = State.IN_SETTINGS;
+					invitation.invitedPlayer.tell(new ConfirmInvitation(currentGame), getSelf());
+					
+					this.currentGame.tell(new RefreshBoard(), invitation.invitedPlayer);
+					this.currentGame.tell(new RefreshBoard(), invitation.invitingPlayer);
 				}
 				else
 				{
@@ -381,14 +453,12 @@ public class Player extends UntypedActor
 		}
 
 		// We are playing the game
-		// TODO
-		// this.state = State.PLAYING;
-		// this.game = message.game;
+		this.state = State.PLAYING;
+		this.currentGame = message.game;
 
 		ObjectNode json = Json.newObject();
 		json.put("type", "confirmInvitation");
 		out.write(json);
-		this.state = State.IN_SETTINGS;
 	}
 
 	private void onCancelInvitation(CancelInvitation message)
@@ -473,17 +543,24 @@ public class Player extends UntypedActor
 		if (currentGame != null && state != State.PLAYING)
 		{
 			// tell GameEnd to the other player
+			currentGame.tell(new Quit(name), getSelf());
 			currentGame = null;
 		}
 
 		this.state = State.QUITTED;
 	}
-	
+
 	private void onRefreshBoard(RefreshBoard message)
 	{
-		
+		if (state != State.PLAYING)
+		{
+			Logger.warn("Player " + name + " sent refresh board message but is in wrong state.");
+			return;
+		}
+
+		currentGame.tell(message, getSelf());
 	}
-	
+
 	private void onCancelWaiting(CancelWaiting message)
 	{
 		if(state != State.SEARCHING)
@@ -497,7 +574,7 @@ public class Player extends UntypedActor
 			//TODO wyświetlenie ustawień
 		}
 	}
-	
+
 	private void onWaitForGame(WaitForGame message)
 	{
 		if(state != State.IN_SETTINGS)
@@ -510,12 +587,18 @@ public class Player extends UntypedActor
 		playerRoom.tell(message, getSelf());
 		//TODO wyświetlenie stanu czekania
 	}
-	
+
 	private void onAcceptTerritory(AcceptTerritory message)
 	{
-		
+		if (state != State.PLAYING)
+		{
+			Logger.warn("Player " + name + " sent refresh board message but is in a wrong state.");
+			return;
+		}
+
+		currentGame.tell(message, getSelf());
 	}
-	
+
 	private void onPlayBotGame(PlayBotGame message)
 	{
 		if(state!=State.IN_SETTINGS)
@@ -528,7 +611,13 @@ public class Player extends UntypedActor
 	
 	private void onResign(Resign message)
 	{
-		
+		if (state != State.PLAYING)
+		{
+			Logger.warn("Player " + name + " sent resign message but is in a wrong state.");
+			return;
+		}
+
+		currentGame.tell(message, getSelf());
 	}
 	
 	private void onCreateGame(CreateGame message)

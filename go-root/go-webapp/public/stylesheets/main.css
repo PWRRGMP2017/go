@@ -165,7 +165,7 @@ table td {
     background-image: none;
 }
 
-.black-empty:hover {
+.black-empty-hover:hover {
     background-image: url('../images/blackstone.png');
     opacity: 0.5;
 }
@@ -174,16 +174,32 @@ table td {
     background-image: none;
 }
 
-.white-empty:hover {
+.white-empty-hover:hover {
     background-image: url('../images/whitestone.png');
     opacity: 0.5;
+}
+
+.black-stone {
+    background-image: url('../images/blackstone.png');
+}
+
+.black-stone-hover:hover {
+    background-image: url('../images/blackstone-dead.png');
+}
+
+.white-stone {
+    background-image: url('../images/whitestone.png');
+}
+
+.white-stone-hover:hover {
+    background-image: url('../images/white-dead.png');
 }
 
 .black-no-territory {
     background-image: none;
 }
 
-.black-no-territory:hover {
+.black-no-territory-hover:hover {
     background-image: url('../images/black-territory.png');
     opacity: 0.5;
 }
@@ -192,7 +208,7 @@ table td {
     background-image: none;
 }
 
-.white-no-territory:hover {
+.white-no-territory-hover:hover {
     background-image: url('../images/white-territory.png');
     opacity: 0.5;
 }
@@ -201,7 +217,7 @@ table td {
     background-image: url('../images/black-territory.png');
 }
 
-.black-territory:hover {
+.black-territory-hover:hover {
     background-image: url('../images/black-territory-hover.png');
 }
 
@@ -209,7 +225,7 @@ table td {
     background-image: url('../images/white-territory.png');
 }
 
-.white-territory:hover {
+.white-territory-hover:hover {
     background-image: url('../images/white-territory-hover.png');
 }
 
@@ -217,7 +233,7 @@ table td {
     background-image: url('../images/blackstone-dead.png');
 }
 
-.black-stone-dead:hover {
+.black-stone-dead-hover:hover {
     background-image: url('../images/blackstone.png');
 }
 
@@ -225,7 +241,7 @@ table td {
     background-image: url('../images/blackstone-dead.png');
 }
 
-.white-stone-dead:hover {
+.white-stone-dead-hover:hover {
     background-image: url('../images/blackstone.png');
 }
 

@@ -1,5 +1,5 @@
 package models.msgs;
 
-public class Movement
+public class Pass
 {
 }

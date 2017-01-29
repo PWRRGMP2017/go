@@ -1,5 +1,5 @@
 package models.msgs;
 
-public class Resignation
+public class PlayBotGame
 {
 }

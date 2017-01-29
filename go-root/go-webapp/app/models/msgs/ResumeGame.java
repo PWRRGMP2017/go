@@ -1,5 +1,6 @@
 package models.msgs;
 
-public class Passing
+public class ResumeGame
 {
+
 }

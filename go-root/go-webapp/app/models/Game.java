@@ -2,10 +2,11 @@ package models;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-import models.msgs.Movement;
-import models.msgs.Passing;
-import models.msgs.Resignation;
-import models.msgs.TerritoryAcceptation;
+import models.msgs.AcceptTerritory;
+import models.msgs.Move;
+import models.msgs.Pass;
+import models.msgs.Resign;
+import models.msgs.ResumeGame;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
@@ -114,44 +115,57 @@ public class Game extends UntypedActor
 	@Override
 	public void onReceive(Object message) throws Exception
 	{
-		if (message instanceof Movement)
+		if (message instanceof Move)
 		{
-			onMovement((Movement) message);
+			onMove((Move) message);
 		}
-		if (message instanceof Passing)
+		else if (message instanceof Pass)
 		{
-			onPassing((Passing) message);
+			onPass((Pass) message);
 		}
-		if (message instanceof Resignation)
+		else if (message instanceof Resign)
 		{
-			onResignation((Resignation) message);
+			onResign((Resign) message);
 		}
-		if (message instanceof TerritoryAcceptation)
+		else if (message instanceof AcceptTerritory)
 		{
-			onTerritoryAcceptation((TerritoryAcceptation) message);
+			onAcceptTerritory((AcceptTerritory) message);
+		}
+		else if (message instanceof ResumeGame) {
+			onResumeGame((ResumeGame) message);
+		}
+		else
+		{
+			unhandled(message);
 		}
 		
 	}
 
-	private void onTerritoryAcceptation(TerritoryAcceptation message)
+	private void onResumeGame(ResumeGame message)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void onResignation(Resignation message)
+	private void onAcceptTerritory(AcceptTerritory message)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void onPassing(Passing message)
+	private void onResign(Resign message)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void onMovement(Movement message)
+	private void onPass(Pass message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void onMove(Move message)
 	{
 		// TODO Auto-generated method stub
 		

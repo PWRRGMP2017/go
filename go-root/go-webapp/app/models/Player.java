@@ -2,18 +2,19 @@ package models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-import models.msgs.BoardRefresh;
-import models.msgs.BotGame;
+import models.msgs.AcceptTerritory;
 import models.msgs.CancelInvitation;
 import models.msgs.CancelWaiting;
 import models.msgs.ConfirmInvitation;
 import models.msgs.Invite;
+import models.msgs.PlayBotGame;
 import models.msgs.Quit;
-import models.msgs.Resignation;
+import models.msgs.RefreshBoard;
+import models.msgs.Resign;
 import models.msgs.RespondToInvitation;
-import models.msgs.TerritoryAcceptation;
 import models.msgs.UnknownMessage;
 import models.msgs.WaitForGame;
 import play.Logger;
@@ -102,7 +103,7 @@ public class Player extends UntypedActor
 					{
 						
 					}
-					else if(messageType.equals("makeMovement"))
+					else if(messageType.equals("move"))
 					{
 						
 					}
@@ -119,6 +120,10 @@ public class Player extends UntypedActor
 						
 					}
 					else if(messageType.equals("playWithBot"))
+					{
+						
+					}
+					else if(messageType.equals("resumeGame"))
 					{
 						
 					}
@@ -192,21 +197,21 @@ public class Player extends UntypedActor
 		{
 			onWaitForGame((WaitForGame) message);
 		}
-		else if (message instanceof BoardRefresh)
+		else if (message instanceof RefreshBoard)
 		{
-			onBoardRefresh((BoardRefresh) message);
+			onRefreshBoard((RefreshBoard) message);
 		}
-		else if (message instanceof Resignation)
+		else if (message instanceof Resign)
 		{
-			onResignation((Resignation) message);
+			onResig((Resign) message);
 		}
-		else if (message instanceof TerritoryAcceptation)
+		else if (message instanceof AcceptTerritory)
 		{
-			onTerritoryAcceptation((TerritoryAcceptation) message);
+			onAcceptTerritory((AcceptTerritory) message);
 		}
-		else if (message instanceof BotGame)
+		else if (message instanceof PlayBotGame)
 		{
-			onBotGame((BotGame) message);
+			onPlayBotGame((PlayBotGame) message);
 		}
 		else
 		{
@@ -456,7 +461,7 @@ public class Player extends UntypedActor
 		this.state = State.QUITTED;
 	}
 	
-	private void onBoardRefresh(BoardRefresh message)
+	private void onRefreshBoard(RefreshBoard message)
 	{
 		
 	}
@@ -471,17 +476,17 @@ public class Player extends UntypedActor
 		
 	}
 	
-	private void onTerritoryAcceptation(TerritoryAcceptation message)
+	private void onAcceptTerritory(AcceptTerritory message)
 	{
 		
 	}
 	
-	private void onBotGame(BotGame message)
+	private void onPlayBotGame(PlayBotGame message)
 	{
 		
 	}
 	
-	private void onResignation(Resignation message)
+	private void onResig(Resign message)
 	{
 		
 	}

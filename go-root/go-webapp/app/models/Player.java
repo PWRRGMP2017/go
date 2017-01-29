@@ -1,7 +1,6 @@
 package models;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import models.msgs.Quit;
@@ -26,7 +25,7 @@ public class Player extends UntypedActor {
 		PLAYING
 	}
 	
-	public Player(String name, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out, ActorRef playerRoom) {
+	public Player(final String name, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out, final ActorRef playerRoom) {
 		this.name = name;
 		this.in = in;
 		this.out = out;

@@ -51,7 +51,7 @@ public class Player extends UntypedActor {
             @Override
             public void invoke(JsonNode event) {
                 try {
-                	String messageType = event.get("messageType").asText();                
+                	String messageType = event.get("type").asText();                
                 	if (messageType.equals("quit")) {
                 		getSelf().tell(new Quit(name), getSelf());
                 	} else if (messageType.equals("invitationResponse")) {
@@ -61,6 +61,14 @@ public class Player extends UntypedActor {
                 	} else if (messageType.equals("invitation")) {
                 		String invitingPlayerName = event.get("invitingPlayerName").asText();
                 		String invitedPlayerName = event.get("invitedPlayerName").asText();
+                		if (invitedPlayerName.equals(name)) {
+                			ObjectNode json = Json.newObject();
+            				json.put("type", "invitationResponse");
+            				json.put("isAccepted", false);
+            				json.put("reason", "You can't invite yourself!");
+            				out.write(json);
+            				return;
+                		}
                 		double komi = event.get("komi").asDouble();
                 		int boardSize = event.get("boardSize").asInt();
                 		boolean isBot = event.get("isBot").asBoolean();
@@ -77,6 +85,7 @@ public class Player extends UntypedActor {
                 }
                 catch (Exception e) {
                     Logger.error("invokeError");
+                    e.printStackTrace();
                 }
             }
         });
@@ -94,7 +103,7 @@ public class Player extends UntypedActor {
 	@Override
 	public void onReceive(Object message) throws Exception {
 		// Clean up a little bit
-		if (invitation != null && (state != State.INVITED || state != State.INVITING)) {
+		if (invitation != null && state != State.INVITED && state != State.INVITING) {
 			invitation = null;
 		}
 		if (currentGame != null && state != State.PLAYING) {
@@ -111,6 +120,8 @@ public class Player extends UntypedActor {
 			onConfirmInvitation((ConfirmInvitation) message);
 		} else if (message instanceof CancelInvitation) {
 			onCancelInvitation((CancelInvitation) message);
+		} else if (message instanceof Quit) {
+			onQuit((Quit) message);
 		}
 		else {
 			unhandled(message);
@@ -189,6 +200,9 @@ public class Player extends UntypedActor {
 				if (message.isAccepted) {
 					// We create a new game here
 					// this.state = State.PLAYING; //TODO
+					
+					// Send the confirmation to the opponent
+					invitation.invitedPlayer.tell(new ConfirmInvitation(null), getSelf());
 					this.state = State.IN_SETTINGS;
 				} else {
 					// We just come back to the previous state
@@ -286,5 +300,23 @@ public class Player extends UntypedActor {
 		} else {
 			Logger.warn("Player " + name + " received an invitation cancel from an unknown source.");
 		}
+	}
+	
+	private void onQuit(Quit message) {
+		if (invitation != null) {
+			if (state == State.INVITED) {
+				invitation.invitingPlayer.tell(new RespondToInvitation(false, invitation.invitedPlayerName + " has disconnected."), getSelf());
+			} else if (state == State.INVITING) {
+				invitation.invitedPlayer.tell(new CancelInvitation(), getSelf());
+			}
+			invitation = null;
+		}
+		
+		if (currentGame != null && state != State.PLAYING) {
+			// tell GameEnd to the other player
+			currentGame = null;
+		}
+		
+		this.state = state.QUITTED;
 	}
 }

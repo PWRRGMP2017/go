@@ -2,15 +2,20 @@ package models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import models.msgs.BoardRefresh;
+import models.msgs.BotGame;
 import models.msgs.CancelInvitation;
+import models.msgs.CancelWaiting;
 import models.msgs.ConfirmInvitation;
 import models.msgs.Invite;
 import models.msgs.Quit;
+import models.msgs.Resignation;
 import models.msgs.RespondToInvitation;
+import models.msgs.TerritoryAcceptation;
 import models.msgs.UnknownMessage;
+import models.msgs.WaitForGame;
 import play.Logger;
 import play.libs.F.Callback;
 import play.libs.F.Callback0;
@@ -34,7 +39,7 @@ public class Player extends UntypedActor
 		QUITTED, IN_SETTINGS, INVITING, INVITED, SEARCHING, PLAYING
 	}
 
-	public Player(final String name, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out, final ActorRef playerRoom)
+	public Player(final String name, WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out, final ActorRef playerRoom)
 	{
 		this.name = name;
 		this.in = in;
@@ -88,6 +93,34 @@ public class Player extends UntypedActor
 					else if (messageType.equals("cancelInvitation"))
 					{
 						getSelf().tell(new CancelInvitation(), getSelf());
+					}
+					else if(messageType.equals("waitForGame"))
+					{
+						
+					}
+					else if(messageType.equals("stopWaiting"))
+					{
+						
+					}
+					else if(messageType.equals("makeMovement"))
+					{
+						
+					}
+					else if(messageType.equals("pass"))
+					{
+						
+					}
+					else if(messageType.equals("resign"))
+					{
+						
+					}
+					else if(messageType.equals("acceptTerritory"))
+					{
+						
+					}
+					else if(messageType.equals("playWithBot"))
+					{
+						
 					}
 					else
 					{
@@ -151,6 +184,30 @@ public class Player extends UntypedActor
 		{
 			onQuit((Quit) message);
 		}
+		else if (message instanceof CancelWaiting)
+		{
+			onCancelWaiting((CancelWaiting) message);
+		}
+		else if (message instanceof WaitForGame)
+		{
+			onWaitForGame((WaitForGame) message);
+		}
+		else if (message instanceof BoardRefresh)
+		{
+			onBoardRefresh((BoardRefresh) message);
+		}
+		else if (message instanceof Resignation)
+		{
+			onResignation((Resignation) message);
+		}
+		else if (message instanceof TerritoryAcceptation)
+		{
+			onTerritoryAcceptation((TerritoryAcceptation) message);
+		}
+		else if (message instanceof BotGame)
+		{
+			onBotGame((BotGame) message);
+		}
 		else
 		{
 			unhandled(message);
@@ -169,7 +226,7 @@ public class Player extends UntypedActor
 				return;
 			}
 
-			this.invitation = (Invite) message;
+			this.invitation = message;
 			if (this.invitation.invitedPlayer == null)
 			{
 				// The invited player does not exist, so we immediately send a
@@ -398,4 +455,35 @@ public class Player extends UntypedActor
 
 		this.state = State.QUITTED;
 	}
+	
+	private void onBoardRefresh(BoardRefresh message)
+	{
+		
+	}
+	
+	private void onCancelWaiting(CancelWaiting message)
+	{
+		
+	}
+	
+	private void onWaitForGame(WaitForGame message)
+	{
+		
+	}
+	
+	private void onTerritoryAcceptation(TerritoryAcceptation message)
+	{
+		
+	}
+	
+	private void onBotGame(BotGame message)
+	{
+		
+	}
+	
+	private void onResignation(Resignation message)
+	{
+		
+	}
+	
 }

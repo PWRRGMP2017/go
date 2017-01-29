@@ -1,13 +1,10 @@
 package models;
 
-import static akka.pattern.Patterns.*;
-
+import static akka.pattern.Patterns.ask;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
@@ -29,6 +26,7 @@ public class PlayerRoom extends UntypedActor
 {
 	private static final ActorRef playerRoom = Akka.system().actorOf(Props.create(PlayerRoom.class));
 	private static final Map<String, ActorRef> players = new HashMap<>();
+	private static final Map<String, ActorRef> waitingplayers = new HashMap<>();
 
 	public static boolean tryJoin(final String playerName, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out)
 	{
@@ -76,6 +74,48 @@ public class PlayerRoom extends UntypedActor
 		{
 			return null;
 		}
+	}
+	
+	public static ActorRef waitForGame(final String gameInfo, final ActorRef player)
+	{
+		Object result;
+		try
+		{
+			
+		}
+		catch (Exception e) 
+		{
+			
+		}
+		return null;
+	}
+	
+	public static ActorRef cancelWaiting(final String gameInfo, final ActorRef player)
+	{
+		Object result;
+		try
+		{
+			
+		}
+		catch (Exception e) 
+		{
+			
+		}
+		return null;
+	}
+	
+	public static ActorRef playBotGame(final String gameInfo, ActorRef player)
+	{
+		Object result;
+		try
+		{
+			
+		}
+		catch (Exception e) 
+		{
+			
+		}
+		return null;
 	}
 
 	@Override

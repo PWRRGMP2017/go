@@ -2,6 +2,10 @@ package models;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import models.msgs.Movement;
+import models.msgs.Passing;
+import models.msgs.Resignation;
+import models.msgs.TerritoryAcceptation;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
 import pwrrgmp2017.go.game.Exception.GameIsEndedException;
@@ -108,7 +112,46 @@ public class Game extends UntypedActor
 	}
 
 	@Override
-	public void onReceive(Object arg0) throws Exception
+	public void onReceive(Object message) throws Exception
+	{
+		if (message instanceof Movement)
+		{
+			onMovement((Movement) message);
+		}
+		if (message instanceof Passing)
+		{
+			onPassing((Passing) message);
+		}
+		if (message instanceof Resignation)
+		{
+			onResignation((Resignation) message);
+		}
+		if (message instanceof TerritoryAcceptation)
+		{
+			onTerritoryAcceptation((TerritoryAcceptation) message);
+		}
+		
+	}
+
+	private void onTerritoryAcceptation(TerritoryAcceptation message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void onResignation(Resignation message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void onPassing(Passing message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void onMovement(Movement message)
 	{
 		// TODO Auto-generated method stub
 		

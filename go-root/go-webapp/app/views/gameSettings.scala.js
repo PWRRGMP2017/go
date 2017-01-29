@@ -17,7 +17,10 @@ $(function() {
         if (data.type === "error") {
             $("#onError span").text(data.message);
             $("#onError").slideDown(1000);
+            return;
         }
+
+        // Interpret the messages
     }
 
     var closeEvent = function(event) {
@@ -31,4 +34,32 @@ $(function() {
 
     socket.onmessage = receiveEvent;
     socket.onclose = closeEvent;
+
+    // UI
+    var disableControls = function(isdisabled) {
+        $("#inviteButton").prop('disabled', isdisabled);
+        $("#playWithBotButton").prop('disabled', isdisabled);
+        $("#searchForPlayerButton").prop('disabled', isdisabled);
+        $("#boardSizeSelect").prop('disabled', isdisabled);
+        $("#komi").prop('disabled', isdisabled);
+    }
+
+    var changeStatus = function(newstatus) {
+        $('#statusLabel').text(newstatus);
+    }
+
+    var disableCancel = function(isdisabled) {
+        $('#cancelButton').prop('disabled', isdisabled);
+    }
+
+    disableControls(false);
+    disableCancel(true);
+    changeStatus('Waiting for invitation.');
+
+
+    $('#inviteButton').click( function() {
+        console.log("invite");
+        disableControls(true);
+        disableCancel(false);
+    });
 })

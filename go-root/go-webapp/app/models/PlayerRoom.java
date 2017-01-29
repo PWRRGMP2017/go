@@ -11,10 +11,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import models.msgs.GetPlayer;
 import models.msgs.Join;
 import models.msgs.PlayerAccepted;
 import models.msgs.PlayerRejected;
 import models.msgs.Quit;
+import models.msgs.ReturnPlayer;
 import play.libs.Akka;
 import play.mvc.WebSocket;
 import scala.concurrent.Await;
@@ -44,12 +46,30 @@ public class PlayerRoom extends UntypedActor
 		}
 	}
 	
+	public static ActorRef tryGetPlayer(final String playerName) {
+		Object result;
+		try {
+			result = Await.result(ask(playerRoom, new GetPlayer(playerName), 1000), Duration.create(1, TimeUnit.SECONDS));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (result instanceof ReturnPlayer) {
+			return ((ReturnPlayer) result).player;
+		} else {
+			return null;
+		}
+	}
+	
 	@Override
 	public void onReceive(Object message) throws Exception {
 		if (message instanceof Join) {
 			onJoin(message);
 		} else if (message instanceof Quit) {
 			onQuit(message);
+		} else if (message instanceof GetPlayer) {
+			onGetPlayer((GetPlayer)message);
 		}
 		else {
 			unhandled(message);
@@ -71,5 +91,9 @@ public class PlayerRoom extends UntypedActor
 	private void onQuit(Object message) {
 		Quit quitMessage = (Quit) message;
 		players.remove(quitMessage.name);
+	}
+	
+	private void onGetPlayer(GetPlayer message) {
+		getSender().tell(new ReturnPlayer(players.get(message.name)), getSelf());
 	}
 }

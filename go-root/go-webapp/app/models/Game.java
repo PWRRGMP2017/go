@@ -1,5 +1,6 @@
 package models;
 
+import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import pwrrgmp2017.go.game.GameController;
 import pwrrgmp2017.go.game.Exception.GameBegginsException;
@@ -13,10 +14,10 @@ public class Game extends UntypedActor
 	private GameController controller;
 	private Field[][] territoryBoard;
 	private boolean acceptedPreviousTurn;
-	private Player blackPlayer, whitePlayer, currentPlayer;
+	private ActorRef blackPlayer, whitePlayer, currentPlayer;
 
 
-	Game(Player blackPlayer, Player whitePlayer, GameController controller)
+	Game(ActorRef blackPlayer, ActorRef whitePlayer, GameController controller)
 	{
 		this.controller = controller;
 		this.blackPlayer = blackPlayer;
@@ -38,17 +39,7 @@ public class Game extends UntypedActor
 		}
 	}
 	
-	public Player getBlackPlayer()
-	{
-		return blackPlayer;
-	}
-	
-	public Player getWhitePlayer()
-	{
-		return whitePlayer;
-	}
-	
-	private void initializeGame(Player player) throws GameStillInProgressException, BadFieldException
+	private void initializeGame(ActorRef player) throws GameStillInProgressException, BadFieldException
 	{
 		if (player == blackPlayer)
 			controller.initialiseGame(Field.BLACKSTONE);
@@ -57,7 +48,7 @@ public class Game extends UntypedActor
 	}
 	
 	
-	private Player getOpponent(Player player)
+	private ActorRef getOpponent(ActorRef player)
 	{
 		return player == blackPlayer ? whitePlayer : blackPlayer;
 	}
@@ -67,7 +58,7 @@ public class Game extends UntypedActor
 		controller.resign();
 	}
 	
-	private void pass(Player player) throws GameBegginsException, GameIsEndedException, BadFieldException
+	private void pass(ActorRef player) throws GameBegginsException, GameIsEndedException, BadFieldException
 	{
 		if (player == blackPlayer)
 			controller.pass(Field.BLACKSTONE);

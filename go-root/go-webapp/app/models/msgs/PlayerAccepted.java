@@ -1,5 +1,6 @@
 package models.msgs;
 
-public class PlayerAccepted {
+public class PlayerAccepted
+{
 
 }

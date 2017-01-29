@@ -1,6 +1,7 @@
 @(playerName: String)
 
-$(function() {
+$(function()
+{
     // UI
 
     // States
@@ -14,7 +15,8 @@ $(function() {
     var opponent = '';
 
     // Some functions
-    var disableControls = function(isdisabled) {
+    var disableControls = function(isdisabled)
+    {
         $("#inviteButton").prop('disabled', isdisabled);
         $("#playWithBotButton").prop('disabled', isdisabled);
         $("#searchForPlayerButton").prop('disabled', isdisabled);
@@ -22,12 +24,14 @@ $(function() {
         $("#komi").prop('disabled', isdisabled);
     }
 
-    var changeStatus = function(newstatus) {
+    var changeStatus = function(newstatus)
+    {
         state = newstatus;
         $('#statusLabel').text(newstatus);
     }
 
-    var disableCancel = function(isdisabled) {
+    var disableCancel = function(isdisabled)
+    {
         $('#cancelButton').prop('disabled', isdisabled);
     }
 
@@ -37,20 +41,25 @@ $(function() {
     changeStatus(waitingStatus);
 
     // Click events
-    $('#inviteButton').click(function() {
+    $('#inviteButton').click(function()
+    {
         opponent = prompt('Enter the player name: ');
-        if (opponent != null && opponent !== '') {
+        if (opponent != null && opponent !== '')
+        {
             changeStatus(invitingStatus);
             disableControls(true);
             disableCancel(false);
             sendInvitation();
-        } else {
+        } else
+        {
             alert('Wrong name!');
         }
     });
 
-    $('#cancelButton').click(function() {
-        if (state === invitingStatus) {
+    $('#cancelButton').click(function()
+    {
+        if (state === invitingStatus)
+        {
             sendCancelInvitation();
         }
     });
@@ -58,32 +67,38 @@ $(function() {
     // WebSocket events
     var socket = new WebSocket("@routes.Application.joinPlayerRoom(playerName).webSocketURL(request)");
 
-    var receiveEvent = function(event) {
+    var receiveEvent = function(event)
+    {
         var data = JSON.parse(event.data);
 
         // Handle errors
-        if(data.error) {
+        if(data.error)
+        {
             socket.close();
             $("#onError span").text(data.error);
             $("#onError").slideDown(1000);
             return;
         }
 
-        if (data.type === "error") {
+        if (data.type === "error")
+        {
             $("#onError span").text(data.message);
             $("#onError").slideDown(1000);
             return;
         }
 
         // Interpret the messages
-        if (data.type === 'invitationResponse') {
-            if (data.isAccepted) {
+        if (data.type === 'invitationResponse')
+        {
+            if (data.isAccepted)
+            {
                 alert('Invitation accepted!');
                 // Hide settings and start the game
                 changeStatus(waitingStatus);
                 disableControls(false);
                 disableCancel(true);
-            } else {
+            } else
+            {
                 alert('Invitation denied: ' + data.reason);
                 changeStatus(waitingStatus);
                 disableControls(false);
@@ -92,7 +107,8 @@ $(function() {
             return;
         }
 
-        if (data.type === 'invitation') {
+        if (data.type === 'invitation')
+        {
             opponent = data.invitingPlayerName;
             var accepted = confirm(
                 'You received an invitation from ' + data.invitingPlayerName + '!\n' +
@@ -102,12 +118,14 @@ $(function() {
                 'Do you accept the invitation?'
             );
 
-            if (accepted) {
+            if (accepted)
+            {
                 sendInvitationResponse(true, playerName + ' accepted the invitation.');
                 changeStatus(invitedStatus);
                 disableControls(true);
                 disableCancel(true);
-            } else {
+            } else
+            {
                 sendInvitationResponse(false, playerName + ' denied the invitation.');
                 changeStatus(invitedStatus);
                 disableControls(false);
@@ -118,7 +136,8 @@ $(function() {
             return;
         }
 
-        if (data.type === 'confirmInvitation') {
+        if (data.type === 'confirmInvitation')
+        {
             alert('The game is about to begin.');
             // Hide settings and start the game
             changeStatus(waitingStatus);
@@ -127,7 +146,8 @@ $(function() {
             return;
         }
 
-        if (data.type === 'cancelInvitationResponse') {
+        if (data.type === 'cancelInvitationResponse')
+        {
             if (data.success) {
                 changeStatus(waitingStatus);
                 disableControls(false);
@@ -138,7 +158,8 @@ $(function() {
             return;
         }
 
-        if (data.type === 'cancelInvitation') {
+        if (data.type === 'cancelInvitation')
+        {
             alert(opponent + ' canceled the invitation.');
             changeStatus(waitingStatus);
             disableControls(false);
@@ -147,7 +168,8 @@ $(function() {
         }
     }
 
-    var closeEvent = function(event) {
+    var closeEvent = function(event)
+    {
         socket.close();
         $("#onError2 span").text("Server closed the connection. The webpage will be refreshed shortly.");
         $("#onError2").slideDown(1000);
@@ -162,7 +184,8 @@ $(function() {
     socket.onclose = closeEvent;
 
     // Communication functions
-    var sendInvitation = function() {
+    var sendInvitation = function()
+    {
         socket.send(JSON.stringify(
         {
             'type': 'invitation',
@@ -175,7 +198,8 @@ $(function() {
         ));
     }
 
-    var sendInvitationResponse = function(accepted, reason) {
+    var sendInvitationResponse = function(accepted, reason)
+    {
         socket.send(JSON.stringify(
         {
             'type': 'invitationResponse',
@@ -185,7 +209,8 @@ $(function() {
         ));
     }
 
-    var sendCancelInvitation = function() {
+    var sendCancelInvitation = function()
+    {
         socket.send(JSON.stringify(
         {
             'type': 'cancelInvitation'

@@ -29,71 +29,100 @@ public class PlayerRoom extends UntypedActor
 {
 	private static final ActorRef playerRoom = Akka.system().actorOf(Props.create(PlayerRoom.class));
 	private static final Map<String, ActorRef> players = new HashMap<>();
-	
-	public static boolean tryJoin(final String playerName, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
+
+	public static boolean tryJoin(final String playerName, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out)
+	{
 		Object result;
-		try {
-			result = Await.result(ask(playerRoom, new Join(playerName, in, out), 1000), Duration.create(1, TimeUnit.SECONDS));
-		} catch (Exception e) {
+		try
+		{
+			result = Await.result(ask(playerRoom, new Join(playerName, in, out), 1000),
+					Duration.create(1, TimeUnit.SECONDS));
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			return false;
 		}
-		
-		if (result instanceof PlayerAccepted) {
+
+		if (result instanceof PlayerAccepted)
+		{
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
-	
-	public static ActorRef tryGetPlayer(final String playerName) {
+
+	public static ActorRef tryGetPlayer(final String playerName)
+	{
 		Object result;
-		try {
-			result = Await.result(ask(playerRoom, new GetPlayer(playerName), 1000), Duration.create(1, TimeUnit.SECONDS));
-		} catch (Exception e) {
+		try
+		{
+			result = Await.result(ask(playerRoom, new GetPlayer(playerName), 1000),
+					Duration.create(1, TimeUnit.SECONDS));
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			return null;
 		}
-		
-		if (result instanceof ReturnPlayer) {
+
+		if (result instanceof ReturnPlayer)
+		{
 			return ((ReturnPlayer) result).player;
-		} else {
+		}
+		else
+		{
 			return null;
 		}
 	}
-	
+
 	@Override
-	public void onReceive(Object message) throws Exception {
-		if (message instanceof Join) {
+	public void onReceive(Object message) throws Exception
+	{
+		if (message instanceof Join)
+		{
 			onJoin(message);
-		} else if (message instanceof Quit) {
-			onQuit(message);
-		} else if (message instanceof GetPlayer) {
-			onGetPlayer((GetPlayer)message);
 		}
-		else {
+		else if (message instanceof Quit)
+		{
+			onQuit(message);
+		}
+		else if (message instanceof GetPlayer)
+		{
+			onGetPlayer((GetPlayer) message);
+		}
+		else
+		{
 			unhandled(message);
 		}
 	}
-	
-	private void onJoin(Object message) {
+
+	private void onJoin(Object message)
+	{
 		Join joinMessage = (Join) message;
-		if (!players.containsKey(joinMessage.name)) {
-			ActorRef playerActor = Akka.system().actorOf(
-					Props.create(Player.class, joinMessage.name, joinMessage.in, joinMessage.out, playerRoom));
+		if (!players.containsKey(joinMessage.name))
+		{
+			ActorRef playerActor = Akka.system()
+					.actorOf(Props.create(Player.class, joinMessage.name, joinMessage.in, joinMessage.out, playerRoom));
 			players.put(joinMessage.name, playerActor);
 			getSender().tell(new PlayerAccepted(), getSelf());
-		} else {
+		}
+		else
+		{
 			getSender().tell(new PlayerRejected(), getSelf());
 		}
 	}
-	
-	private void onQuit(Object message) {
+
+	private void onQuit(Object message)
+	{
 		Quit quitMessage = (Quit) message;
 		players.remove(quitMessage.name);
 	}
-	
-	private void onGetPlayer(GetPlayer message) {
+
+	private void onGetPlayer(GetPlayer message)
+	{
 		getSender().tell(new ReturnPlayer(players.get(message.name)), getSelf());
 	}
 }

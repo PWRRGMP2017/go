@@ -1,5 +1,6 @@
 package models.msgs;
 
-public class CancelInvitation {
-	
+public class CancelInvitation
+{
+
 }

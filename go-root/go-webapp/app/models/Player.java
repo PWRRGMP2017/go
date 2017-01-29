@@ -2,13 +2,13 @@ package models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import models.msgs.AcceptTerritory;
 import models.msgs.CancelInvitation;
 import models.msgs.CancelWaiting;
 import models.msgs.ConfirmInvitation;
+import models.msgs.CreateGame;
 import models.msgs.Invite;
 import models.msgs.PlayBotGame;
 import models.msgs.Quit;
@@ -34,6 +34,8 @@ public class Player extends UntypedActor
 	private Player.State state;
 	private Invite invitation;
 	private ActorRef currentGame;
+	private boolean isBlack;
+	private String gameInfo;
 
 	public enum State
 	{
@@ -97,11 +99,16 @@ public class Player extends UntypedActor
 					}
 					else if(messageType.equals("waitForGame"))
 					{
-						
+						double komi = event.get("komi").asDouble();
+						int boardSize = event.get("boardSize").asInt();
+						boolean isBot = false;
+						GameInfo gameInfo = new GameInfo(boardSize, (float) komi, RulesType.JAPANESE, isBot);
+						ActorRef player = getSelf();
+						getSelf().tell(new WaitForGame(player, gameInfo), getSelf());
 					}
 					else if(messageType.equals("stopWaiting"))
 					{
-						
+						getSelf().tell(new CancelWaiting(getSelf(), null), getSelf());
 					}
 					else if(messageType.equals("move"))
 					{
@@ -203,7 +210,7 @@ public class Player extends UntypedActor
 		}
 		else if (message instanceof Resign)
 		{
-			onResig((Resign) message);
+			onResign((Resign) message);
 		}
 		else if (message instanceof AcceptTerritory)
 		{
@@ -213,12 +220,18 @@ public class Player extends UntypedActor
 		{
 			onPlayBotGame((PlayBotGame) message);
 		}
+		else if (message instanceof CreateGame)
+		{
+			onCreateGame((CreateGame) message);
+		}
 		else
 		{
 			unhandled(message);
 		}
+		
 
 	}
+
 
 	private void onInvitation(Invite message)
 	{
@@ -468,12 +481,29 @@ public class Player extends UntypedActor
 	
 	private void onCancelWaiting(CancelWaiting message)
 	{
+		if(state != State.SEARCHING)
+		{
+			return;
+		}
 		
+		if(PlayerRoom.cancelWaiting(new CancelWaiting(getSelf(), gameInfo))==true)
+		{
+			state=State.IN_SETTINGS;
+			//TODO wyświetlenie ustawień
+		}
 	}
 	
 	private void onWaitForGame(WaitForGame message)
 	{
-		
+		if(state != State.IN_SETTINGS)
+		{
+			//TODO czekanie nie wiadomo dlaczego
+			return;
+		}
+		state=State.SEARCHING;
+		this.gameInfo=message.gameInfo.getAsString();
+		playerRoom.tell(message, getSelf());
+		//TODO wyświetlenie stanu czekania
 	}
 	
 	private void onAcceptTerritory(AcceptTerritory message)
@@ -486,9 +516,16 @@ public class Player extends UntypedActor
 		
 	}
 	
-	private void onResig(Resign message)
+	private void onResign(Resign message)
 	{
 		
+	}
+	
+	private void onCreateGame(CreateGame message)
+	{
+		this.isBlack=message.isBlack;
+		this.currentGame=message.game;
+		//TODO Stworzenie planszy w HTML-u
 	}
 	
 }

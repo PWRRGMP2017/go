@@ -8,14 +8,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import models.msgs.CancelWaiting;
+import models.msgs.CreateGame;
 import models.msgs.GetPlayer;
 import models.msgs.Join;
 import models.msgs.PlayerAccepted;
 import models.msgs.PlayerRejected;
 import models.msgs.Quit;
 import models.msgs.ReturnPlayer;
+import models.msgs.WaitForGame;
 import play.libs.Akka;
 import play.mvc.WebSocket;
+import pwrrgmp2017.go.game.GameController;
+import pwrrgmp2017.go.game.factory.GameFactory;
 import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 
@@ -76,45 +81,28 @@ public class PlayerRoom extends UntypedActor
 		}
 	}
 	
-	public static ActorRef waitForGame(final String gameInfo, final ActorRef player)
-	{
-		Object result;
-		try
-		{
-			
-		}
-		catch (Exception e) 
-		{
-			
-		}
-		return null;
-	}
 	
-	public static ActorRef cancelWaiting(final String gameInfo, final ActorRef player)
+	public static boolean cancelWaiting(final CancelWaiting message)
 	{
 		Object result;
 		try
 		{
-			
+			result = Await.result(ask(playerRoom, message, 1000),
+					Duration.create(1, TimeUnit.SECONDS));
 		}
 		catch (Exception e) 
 		{
-			
+			e.printStackTrace();
+			return false;
 		}
-		return null;
+		
+		return (boolean) result;
 	}
 	
 	public static ActorRef playBotGame(final String gameInfo, ActorRef player)
 	{
 		Object result;
-		try
-		{
-			
-		}
-		catch (Exception e) 
-		{
-			
-		}
+		
 		return null;
 	}
 
@@ -133,11 +121,20 @@ public class PlayerRoom extends UntypedActor
 		{
 			onGetPlayer((GetPlayer) message);
 		}
+		else if (message instanceof WaitForGame)
+		{
+			onWaitForGame((WaitForGame) message);
+		}
+		else if (message instanceof CancelWaiting)
+		{
+			onCancelWaiting((CancelWaiting) message);
+		}
 		else
 		{
 			unhandled(message);
 		}
 	}
+
 
 	private void onJoin(Object message)
 	{
@@ -164,5 +161,36 @@ public class PlayerRoom extends UntypedActor
 	private void onGetPlayer(GetPlayer message)
 	{
 		getSender().tell(new ReturnPlayer(players.get(message.name)), getSelf());
+	}
+	
+	private void onWaitForGame(WaitForGame message)
+	{
+		ActorRef player2;
+		String gameInfo= message.gameInfo.getAsString();
+		ActorRef player= message.player;
+		if(false==waitingplayers.containsKey(gameInfo))
+		{
+			waitingplayers.put(gameInfo, player);
+			return;
+		}
+		player2 = waitingplayers.remove(gameInfo);
+		GameFactory director = GameFactory.getInstance();
+		GameController gameController = director.createGame(gameInfo);
+		ActorRef game = Akka.system().actorOf(Props.create(Game.class, player, player2, gameController, playerRoom));
+		
+		CreateGame msg= new CreateGame(game, true);
+		player.tell(msg, getSelf());
+		msg= new CreateGame(game, false);
+		player2.tell(msg, getSelf());
+	}
+	
+	private void onCancelWaiting(CancelWaiting message)
+	{
+		if(false==waitingplayers.containsValue(message.player))
+		{
+			getSender().tell(false, getSelf());
+		}
+		waitingplayers.remove(message.gameInfo);
+		getSender().tell(true, getSelf());
 	}
 }

@@ -10,6 +10,8 @@ $(function()
     var invitedStatus = 'Waiting for the game to start.';
     var state = waitingStatus;
 
+    var gameState = '';
+
     // Global variables
     var playerName = '@playerName';
     var opponent = '';
@@ -35,10 +37,18 @@ $(function()
         $('#cancelButton').prop('disabled', isdisabled);
     }
 
+    var swapSettingsAndGameBoard = function() {
+        $('#gameSettings').toggle();
+        $('#gameBoard').toggle();
+    }
+
     // Init
     disableControls(false);
     disableCancel(true);
     changeStatus(waitingStatus);
+
+    // Debug
+    swapSettingsAndGameBoard();
 
     // Click events
     $('#inviteButton').click(function()
@@ -50,7 +60,8 @@ $(function()
             disableControls(true);
             disableCancel(false);
             sendInvitation();
-        } else
+        }
+        else
         {
             alert('Wrong name!');
         }
@@ -93,11 +104,12 @@ $(function()
             if (data.isAccepted)
             {
                 alert('Invitation accepted!');
-                // Hide settings and start the game
+                swapSettingsAndGameBoard();
                 changeStatus(waitingStatus);
                 disableControls(false);
                 disableCancel(true);
-            } else
+            }
+            else
             {
                 alert('Invitation denied: ' + data.reason);
                 changeStatus(waitingStatus);
@@ -124,7 +136,8 @@ $(function()
                 changeStatus(invitedStatus);
                 disableControls(true);
                 disableCancel(true);
-            } else
+            }
+            else
             {
                 sendInvitationResponse(false, playerName + ' denied the invitation.');
                 changeStatus(invitedStatus);
@@ -139,7 +152,7 @@ $(function()
         if (data.type === 'confirmInvitation')
         {
             alert('The game is about to begin.');
-            // Hide settings and start the game
+            swapSettingsAndGameBoard();
             changeStatus(waitingStatus);
             disableControls(false);
             disableCancel(true);
@@ -152,7 +165,9 @@ $(function()
                 changeStatus(waitingStatus);
                 disableControls(false);
                 disableCancel(true);
-            } else {
+            }
+            else
+            {
                 alert('Too late to cancel.');
             }
             return;
@@ -175,7 +190,8 @@ $(function()
         $("#onError2").slideDown(1000);
         disableCancel(true);
         disableControls(true);
-        setTimeout(function () {
+        setTimeout(function ()
+        {
             window.location.href = '@routes.Application.index()';
         }, 5000);
     }

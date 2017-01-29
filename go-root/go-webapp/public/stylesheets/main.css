@@ -67,3 +67,188 @@ body {
 }
 
 
+/* Game Board */
+
+#gameBoard {
+    display: none;
+}
+
+#blackPlayerName {
+    color: #000000;
+    background-color: #ffffff;
+}
+
+#whitePlayerName {
+    color: #ffffff;
+    background-color: #000000;
+}
+
+.borderless td, .borderless th {
+    border: none;
+}
+
+#boardArea {
+    height: 450px;
+}
+
+table {
+    width: 100%;
+    height: 100%;
+    background: rgb(163,68,5);
+    border-collapse: collapse;
+}
+
+table td {
+    padding: 0;
+    margin: 0;
+}
+
+.background-grid {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+    border-color: transparent;
+    border-width: 0;
+    background-color: transparent;
+}
+
+.background-stone {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+    border-color: transparent;
+    border-width: 0;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin : 0;
+}
+
+.cross-top-left {
+    background-image: url('../images/intersection-bg-top-left.png');
+}
+
+.cross-top-center {
+    background-image: url('../images/intersection-bg-top-center.png');
+}
+
+.cross-top-right {
+    background-image: url('../images/intersection-bg-top-right.png');
+}
+
+.cross-center-left {
+    background-image: url('../images/intersection-bg-center-left.png');
+}
+
+.cross-center-center {
+    background-image: url('../images/intersection-bg-center-center.png');
+}
+
+.cross-center-right {
+    background-image: url('../images/intersection-bg-center-right.png');
+}
+
+.cross-bottom-left {
+    background-image: url('../images/intersection-bg-bottom-left.png');
+}
+
+.cross-bottom-center {
+    background-image: url('../images/intersection-bg-bottom-center.png');
+}
+
+.cross-bottom-right {
+    background-image: url('../images/intersection-bg-bottom-right.png');
+}
+
+.black-empty {
+    background-image: none;
+}
+
+.black-empty:hover {
+    background-image: url('../images/blackstone.png');
+    opacity: 0.5;
+}
+
+.white-empty {
+    background-image: none;
+}
+
+.white-empty:hover {
+    background-image: url('../images/whitestone.png');
+    opacity: 0.5;
+}
+
+.black-no-territory {
+    background-image: none;
+}
+
+.black-no-territory:hover {
+    background-image: url('../images/black-territory.png');
+    opacity: 0.5;
+}
+
+.white-no-territory {
+    background-image: none;
+}
+
+.white-no-territory:hover {
+    background-image: url('../images/white-territory.png');
+    opacity: 0.5;
+}
+
+.black-territory {
+    background-image: url('../images/black-territory.png');
+}
+
+.black-territory:hover {
+    background-image: url('../images/black-territory-hover.png');
+}
+
+.white-territory {
+    background-image: url('../images/white-territory.png');
+}
+
+.white-territory:hover {
+    background-image: url('../images/white-territory-hover.png');
+}
+
+.black-stone-dead {
+    background-image: url('../images/blackstone-dead.png');
+}
+
+.black-stone-dead:hover {
+    background-image: url('../images/blackstone.png');
+}
+
+.white-stone-dead {
+    background-image: url('../images/blackstone-dead.png');
+}
+
+.white-stone-dead:hover {
+    background-image: url('../images/blackstone.png');
+}
+
+/*td {
+  width: 33.33%;
+  position: relative;
+}
+
+td:after {
+  content: '';
+  display: block;
+  margin-top: 100%;
+}
+
+td .content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}*/
+
+#statsTextArea {
+    height: 100%;
+    width: 100%;
+}

@@ -18,30 +18,84 @@
         </p>
     </div>
     
-    <div id="settings" class="row">
-        <div class="span12">
-            <fieldset>
-    	        <label for="boardSizeSelect">Board size:&nbsp;</label>
-                <div class="input">
-                    <select id="boardSizeSelect">
-                        <option>9</option>
-                        <option>13</option>
-                        <option>19</option>
-                    </select>
+    <div id="gameSettings">
+        <div id="settings" class="row">
+            <div class="span12">
+                <fieldset>
+        	        <label for="boardSizeSelect">Board size:&nbsp;</label>
+                    <div class="input">
+                        <select id="boardSizeSelect">
+                            <option>9</option>
+                            <option>13</option>
+                            <option>19</option>
+                        </select>
+                    </div>
+
+                    <br />
+
+                    <label for="komi">Komi:&nbsp;</label>
+                    <input name="komi" id="komi" type="number" placeholder="6.5" value="6.5" step="0.5" min="0.0" />
+                </fieldset>
+                <div class="actions">
+                    <button id="inviteButton" type="button" class="btn">Invite Player</button>
+                    <button id="playWithBotButton" type="button" class="btn">Play With Bot</button>
+                    <button id="searchForPlayerButton" type="button" class="btn">Search For Player</button>
+                    <br /><br />
+                    <button id="cancelButton" type="button" class="btn">Cancel</button>
+                    <div id="statusLabel">Waiting For Invitation</div>
                 </div>
+            </div>
+        </div>
+    </div>
 
+    <div id="gameBoard">
+        <div class="row">
+            <div id="boardTitle" class="span12">
+                <span id="blackPlayerName">Black Player</span> <strong>vs</strong> <span id="whitePlayerName">White Player</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="boardArea" class="span8">
+                <table class="borderless">
+                    <tr>
+                        <td class="background-grid cross-center-center"><div class="background-stone black-empty"></div></td>
+                        <td class="background-grid cross-center-center"></td>
+                        <td class="background-grid cross-center-center"></td>
+                    </tr>
+
+                    <tr>
+                        <td class="background-grid cross-center-center"></td>
+                        <td class="background-grid cross-center-center"></td>
+                        <td class="background-grid cross-center-center"></td>
+                    </tr>
+
+                    <tr>
+                        <td class="background-grid cross-center-center"></td>
+                        <td class="background-grid cross-center-center"></td>
+                        <td class="background-grid cross-center-center"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="statsArea" class="span4">
+                Last Move: (0, 0)<br />
                 <br />
+                asdf<br />
+                <br />
+                asdf<br />
+                asdf<br />
+                <br />
+                asdf<br />
+            </div>
+        </div>
 
-                <label for="komi">Komi:&nbsp;</label>
-                <input name="komi" id="komi" type="number" placeholder="6.5" value="6.5" step="0.5" min="0.0" />
-            </fieldset>
+        <div class="row">
             <div class="actions">
-                <button id="inviteButton" type="button" class="btn">Invite Player</button>
-                <button id="playWithBotButton" type="button" class="btn">Play With Bot</button>
-                <button id="searchForPlayerButton" type="button" class="btn">Search For Player</button>
-                <br /><br />
-                <button id="cancelButton" type="button" class="btn">Cancel</button>
-                <div id="statusLabel">Waiting For Invitation</div>
+                <button id="resignButton" type="button" class="btn">Resign</button>
+                <button id="passButton" type="button" class="btn">Pass</button>
+                <button id="acceptButton" type="button" class="btn">Accept</button>
+                <button id="resumeButton" type="button" class="btn">Resume</button>
             </div>
         </div>
     </div>

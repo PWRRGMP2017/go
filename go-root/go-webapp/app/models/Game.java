@@ -1,6 +1,6 @@
 package models;
 
-import java.awt.Point;
+import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import models.msgs.AcceptTerritory;
+import models.msgs.GameEnded;
 import models.msgs.Move;
 import models.msgs.Pass;
 import models.msgs.Quit;
@@ -32,7 +33,9 @@ public class Game extends UntypedActor
 	protected GameController controller;
 	protected Field[][] territoryBoard;
 	protected boolean acceptedPreviousTurn;
+	protected boolean territoryPhase;
 	protected ActorRef blackPlayer, whitePlayer, currentPlayer;
+	private String lastMove;
 
 	Game(ActorRef blackPlayer, ActorRef whitePlayer, GameController controller)
 	{
@@ -40,6 +43,7 @@ public class Game extends UntypedActor
 		this.blackPlayer = blackPlayer;
 		this.whitePlayer = whitePlayer;
 		this.currentPlayer = blackPlayer;
+		this.lastMove = "GameStarted";
 
 		try
 		{
@@ -56,6 +60,8 @@ public class Game extends UntypedActor
 		}
 
 		this.currentBoard = controller.getBoardCopy();
+		this.territoryPhase = false;
+		this.acceptedPreviousTurn = false;
 	}
 
 	protected void initializeGame(ActorRef player) throws GameStillInProgressException, BadFieldException
@@ -165,14 +171,32 @@ public class Game extends UntypedActor
 
 	private void onQuit(Quit message)
 	{
-		// TODO Auto-generated method stub
-		// when one player quits, notify the second one
+		lastMove = "Quit";
+		getOpponent(getSender()).tell(new GameEnded("Your opponent has disconnected."), getSelf());
 	}
 
 	protected void onResumeGame(ResumeGame message)
 	{
-		// TODO Auto-generated method stub
-
+		lastMove = "ResumeGame";
+		
+		if (!territoryPhase || getSender() != currentPlayer)
+		{
+			return;
+		}
+		
+		try
+		{
+			initializeGame(currentPlayer == blackPlayer ? whitePlayer : blackPlayer);
+		}
+		catch (GameStillInProgressException | BadFieldException e)
+		{
+			e.printStackTrace();
+			return;
+		}
+		
+		territoryPhase = false;
+		getSelf().tell(new RefreshBoard(), getSender());
+		getSelf().tell(new RefreshBoard(), getOpponent(getSender()));
 	}
 
 	private void onRefreshBoard(RefreshBoard message)
@@ -180,7 +204,21 @@ public class Game extends UntypedActor
 		ObjectNode json = Json.newObject();
 		this.currentBoard = controller.getBoardCopy();
 		json.put("type", "updatedBoard");
-		json.put("state", controller.getState().toString());
+		if (territoryPhase)
+		{
+			if (currentPlayer == blackPlayer)
+			{
+				json.put("state", "BLACKMOVETERRITORY");
+			}
+			else
+			{
+				json.put("state", "WHITEMOVETERRITORY");
+			}
+		}
+		else
+		{
+			json.put("state", controller.getState().toString());
+		}
 		json.put("stats", generateStatistics());
 
 		ArrayNode boardArray = json.arrayNode();
@@ -194,6 +232,14 @@ public class Game extends UntypedActor
 			else if (controller.getState() == GameStateEnum.WHITEMOVE && getSender() == whitePlayer)
 			{
 				possibleMovements = controller.getPossibleMovements(Field.WHITESTONE);
+			}
+			else if (territoryPhase)
+			{
+				if (getSender() == currentPlayer)
+				{
+					for (int i = 0; i < possibleMovements.length; ++i)
+						Arrays.fill(possibleMovements[i], true);
+				}
 			}
 		}
 		catch (BadFieldException e)
@@ -209,7 +255,14 @@ public class Game extends UntypedActor
 			for (int j = 1; j < currentBoard[i].length - 1; ++j)
 			{
 				ObjectNode field = Json.newObject();
-				field.put("field", currentBoard[i][j].toString());
+				if (territoryPhase)
+				{
+					field.put("field", territoryBoard[i][j].toString());
+				}
+				else
+				{
+					field.put("field", currentBoard[i][j].toString());
+				}
 				field.put("possible", possibleMovements[i - 1][j - 1]);
 				boardRow.add(field);
 			}
@@ -225,9 +278,23 @@ public class Game extends UntypedActor
 		StringBuilder stats = new StringBuilder();
 
 		// stats.append("Turn: 0\n"); // Not yet implemented
-		stats.append("State: " + controller.getState().toString() + "<br />");
-		Point lastMove = controller.getLastMovement();
-		stats.append("Last move: (" + lastMove.x + ", " + lastMove.y + ")<br />");
+		if (territoryPhase)
+		{
+			if (currentPlayer == blackPlayer)
+			{
+				stats.append("BLACKMOVETERRITORY");
+			}
+			else
+			{
+				stats.append("WHITEMOVETERRITORY");
+			}
+		}
+		else
+		{
+			stats.append(controller.getState().toString());
+		}
+		stats.append("<br />");
+		stats.append("Last move: " + lastMove + "<br />");
 
 		if (controller.getState() == GameStateEnum.END)
 		{
@@ -263,18 +330,69 @@ public class Game extends UntypedActor
 
 		return stats.toString();
 	}
+	
+	private String getWinner()
+	{
+		float score;
+		if (territoryPhase)
+		{
+			score = controller.calculateScore(territoryBoard);
+		}
+		else
+		{
+			score = controller.calculateScore();
+		}
+		String winner;
+		if (score < 0)
+		{
+			winner = "White";
+			score *= -1;
+		}
+		else if (score > 0)
+		{
+			winner = "Black";
+		}
+		else
+		{
+			winner = "Nobody";
+		}
+		return winner + " wins by " + score + " points";
+	}
 
 	protected void onAcceptTerritory(AcceptTerritory message)
 	{
-		// TODO
-
+		if (!territoryPhase || getSender() != currentPlayer)
+		{
+			return;
+		}
+		
+		lastMove = "AcceptTerritory";
+		
+		if (acceptedPreviousTurn)
+		{
+			getSender().tell(new GameEnded(getWinner()), getSelf());
+			getOpponent(getSender()).tell(new GameEnded(getWinner()), getSelf());
+			return;
+		}
+		
+		acceptedPreviousTurn = true;
+		currentPlayer = getOpponent(currentPlayer);
+		getSelf().tell(new RefreshBoard(), getSender());
+		getSelf().tell(new RefreshBoard(), getOpponent(getSender()));
 	}
 
 	protected void onResign(Resign message)
 	{
+		lastMove = "Resign";
 		try
 		{
-			resign();
+			if (!territoryPhase)
+			{
+				resign();
+			}
+			
+			getSender().tell(new GameEnded("You lose by resignation."), getSelf());
+			getOpponent(getSender()).tell(new GameEnded("You win by resignation."), getSelf());
 		}
 		catch (GameIsEndedException e)
 		{
@@ -284,9 +402,23 @@ public class Game extends UntypedActor
 
 	protected void onPass(Pass message)
 	{
+		lastMove = "Pass";
+		
 		try
 		{
 			pass(currentPlayer);
+			
+			if (controller.getState() == GameStateEnum.END)
+			{
+				territoryBoard = controller.getPossibleTerritory();
+				territoryPhase = true;
+				acceptedPreviousTurn = false;
+			}
+			
+			currentPlayer = getOpponent(currentPlayer);
+			
+			getSelf().tell(new RefreshBoard(), getSender());
+			getSelf().tell(new RefreshBoard(), getOpponent(getSender()));
 		}
 		catch (GameBegginsException | GameIsEndedException | BadFieldException e)
 		{
@@ -296,6 +428,7 @@ public class Game extends UntypedActor
 
 	private void onMove(Move message)
 	{
+		lastMove = "Move("+message.x+", "+message.y+")";
 		GameStateEnum state = controller.getState();
 		if (state == GameStateEnum.BLACKMOVE && getSender() == blackPlayer)
 		{
@@ -307,6 +440,7 @@ public class Game extends UntypedActor
 			{
 				e.printStackTrace();
 			}
+			currentPlayer = getOpponent(currentPlayer);
 		}
 		else if (state == GameStateEnum.WHITEMOVE && getSender() == whitePlayer)
 		{
@@ -318,13 +452,23 @@ public class Game extends UntypedActor
 			{
 				e.printStackTrace();
 			}
+			currentPlayer = getOpponent(currentPlayer);
+		}
+		else if (territoryPhase)
+		{
+			if (getSender() == currentPlayer)
+			{
+				lastMove += " (territory)";
+				changeTerritory(message.x+1, message.y+1);
+				acceptedPreviousTurn = false;
+			}
 		}
 		else
 		{
 			Logger.warn("Wrong move.");
 			return;
 		}
-
+		
 		getSelf().tell(new RefreshBoard(), getSender());
 		getSelf().tell(new RefreshBoard(), getOpponent(getSender()));
 	}

@@ -87,6 +87,10 @@ body {
     border: none;
 }
 
+#boardTitle {
+    text-align: center;
+}
+
 #boardArea {
     height: 450px;
 }
@@ -192,7 +196,7 @@ table td {
 }
 
 .white-stone-hover:hover {
-    background-image: url('../images/white-dead.png');
+    background-image: url('../images/whitestone-dead.png');
 }
 
 .black-no-territory {
@@ -209,7 +213,7 @@ table td {
 }
 
 .white-no-territory-hover:hover {
-    background-image: url('../images/white-territory.png');
+    background-image: url('../images/black-territory.png');
     opacity: 0.5;
 }
 
@@ -238,11 +242,11 @@ table td {
 }
 
 .white-stone-dead {
-    background-image: url('../images/blackstone-dead.png');
+    background-image: url('../images/whitestone-dead.png');
 }
 
 .white-stone-dead-hover:hover {
-    background-image: url('../images/blackstone.png');
+    background-image: url('../images/whitestone.png');
 }
 
 /*td {

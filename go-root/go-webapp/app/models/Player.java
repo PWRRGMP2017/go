@@ -2,6 +2,7 @@ package models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
@@ -10,6 +11,7 @@ import models.msgs.CancelInvitation;
 import models.msgs.CancelWaiting;
 import models.msgs.ConfirmInvitation;
 import models.msgs.CreateGame;
+import models.msgs.GameEnded;
 import models.msgs.Invite;
 import models.msgs.Move;
 import models.msgs.Pass;
@@ -259,12 +261,32 @@ public class Player extends UntypedActor
 		{
 			onSendBoard((SendBoard) message);
 		}
+		else if (message instanceof GameEnded)
+		{
+			onGameEnded((GameEnded) message);
+		}
 		else
 		{
 			unhandled(message);
 		}
 		
 
+	}
+
+	private void onGameEnded(GameEnded message)
+	{
+		if (state != State.PLAYING)
+		{
+			Logger.warn("Player " + name + " received game ended message but is in a wrong state.");
+			return;
+		}
+
+		ObjectNode json = Json.newObject();
+		json.put("type", "gameEnded");
+		json.put("stats", message.stats);
+		out.write(json);
+		
+		this.state = State.IN_SETTINGS;
 	}
 
 	private void onResumeGame(ResumeGame message)

@@ -149,6 +149,40 @@ $(function()
                 $('#resumeButton').prop('disabled', true);
             }
         }
+        else if (boardData.state === 'BLACKMOVETERRITORY')
+        {
+            if (playerColor === 'black')
+            {
+                $('#resignButton').prop('disabled', false);
+                $('#passButton').prop('disabled', true);
+                $('#acceptButton').prop('disabled', false);
+                $('#resumeButton').prop('disabled', false);
+            }
+            else
+            {
+                $('#resignButton').prop('disabled', false);
+                $('#passButton').prop('disabled', true);
+                $('#acceptButton').prop('disabled', true);
+                $('#resumeButton').prop('disabled', true);
+            }
+        }
+        else if (boardData.state === 'WHITEMOVETERRITORY')
+        {
+            if (playerColor === 'black')
+            {
+                $('#resignButton').prop('disabled', false);
+                $('#passButton').prop('disabled', true);
+                $('#acceptButton').prop('disabled', true);
+                $('#resumeButton').prop('disabled', true);
+            }
+            else
+            {
+                $('#resignButton').prop('disabled', false);
+                $('#passButton').prop('disabled', true);
+                $('#acceptButton').prop('disabled', false);
+                $('#resumeButton').prop('disabled', false);
+            }
+        }
         else
         {
             $('#resignButton').prop('disabled', true);
@@ -185,7 +219,7 @@ $(function()
                 }
                 else if (data.field === 'BLACKTERRITORY')
                 {
-                    classToAdd = 'white-territory';
+                    classToAdd = 'black-territory';
                 }
                 else if (data.field === 'NONETERRITORY')
                 {
@@ -272,21 +306,25 @@ $(function()
     $('#resignButton').click(function()
     {
         sendResign();
+        disableBoard();
     });
 
     $('#passButton').click(function()
     {
         sendPass();
+        disableBoard();
     });
 
     $('#acceptButton').click(function()
     {
         sendAccept();
+        disableBoard();
     });
 
     $('#resumeButton').click(function()
     {
         sendResume();
+        disableBoard();
     });
 
     // WebSocket events
@@ -405,6 +443,15 @@ $(function()
             updateBoard(data);
             return;
         }
+
+        if (data.type === 'gameEnded')
+        {
+            alert(data.stats);
+            swapSettingsAndGameBoard();
+            changeStatus(waitingStatus);
+            disableControls(false);
+            disableCancel(true);
+        }
     }
 
     var closeEvent = function(event)
@@ -493,7 +540,7 @@ $(function()
     {
         socket.send(JSON.stringify(
         {
-            'type': 'resume'
+            'type': 'resumeGame'
         }
         ));
     }

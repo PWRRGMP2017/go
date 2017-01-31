@@ -9,6 +9,7 @@ $(function()
     var invitingStatus = 'Waiting for invitation response.';
     var invitedStatus = 'Waiting for the game to start.';
     var searchingStatus = 'Waiting for player.';
+    var waitingForBotStatus = 'Waiting for bot.';
     var state = waitingStatus;
 
     var gameState = '';
@@ -304,6 +305,14 @@ $(function()
         }
     });
 
+    $('#playWithBotButton').click(function()
+    {
+        changeStatus(waitingForBotStatus);
+        disableControls(true);
+        disableCancel(true);
+        sendPlayBotGame();
+    });
+
     $('#cancelButton').click(function()
     {
         if (state === invitingStatus)
@@ -582,6 +591,21 @@ $(function()
         ));
     }
 
+    var sendPlayBotGame = function()
+    {
+        gameInfo.komi = $('#komi').val();
+        gameInfo.boardSize = $('#boardSizeSelect').val();
+        gameInfo.isBot = true;
+
+        socket.send(JSON.stringify(
+        {
+            'type': 'playWithBot',
+            'komi': gameInfo.komi,
+            'boardSize': gameInfo.boardSize
+        }
+        ));
+    }
+
     var sendInvitationResponse = function(accepted, reason)
     {
         socket.send(JSON.stringify(
@@ -653,4 +677,5 @@ $(function()
     {
         socket.send(JSON.stringify({ 'type': 'refreshBoard' }));
     }
+
 })

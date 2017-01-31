@@ -473,6 +473,7 @@ $(function()
 
         if (data.type === 'createGame')
         {
+        	opponent = data.opponentName;
             alert(opponent + ' will play with you!');
             if (data.isBlack === true)
             {

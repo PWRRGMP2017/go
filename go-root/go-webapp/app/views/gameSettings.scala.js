@@ -54,8 +54,8 @@ $(function()
             $('#blackPlayerName').html(playerName + ' (Black)');
             $('#whitePlayerName').html(opponent + ' (White)');
         } else {
-            $('#blackPlayerName').html(playerName + ' (White)');
-            $('#whitePlayerName').html(opponent + ' (Black)');
+            $('#blackPlayerName').html(opponent + ' (Black)');
+            $('#whitePlayerName').html(playerName + ' (White)');
         }
 
         // Generate empty board

@@ -591,24 +591,30 @@ public class Player extends UntypedActor
 			return;
 		}
 		
+		ObjectNode json = Json.newObject();
+		json.put("type", "cancelWaitingResponse");
 		if(PlayerRoom.cancelWaiting(new CancelWaiting(getSelf(), gameInfo))==true)
 		{
 			state=State.IN_SETTINGS;
-			//TODO wyświetlenie ustawień
+			json.put("success", true);
 		}
+		else
+		{
+			json.put("success", false);
+		}
+		out.write(json);
 	}
 
 	private void onWaitForGame(WaitForGame message)
 	{
 		if(state != State.IN_SETTINGS)
 		{
-			//TODO czekanie nie wiadomo dlaczego
+			Logger.warn("Player " + name + " sent wait for game message but is in wrong state.");
 			return;
 		}
 		state=State.SEARCHING;
 		this.gameInfo=message.gameInfo.getAsString();
 		playerRoom.tell(message, getSelf());
-		//TODO wyświetlenie stanu czekania
 	}
 
 	private void onAcceptTerritory(AcceptTerritory message)
@@ -645,10 +651,14 @@ public class Player extends UntypedActor
 	
 	private void onCreateGame(CreateGame message)
 	{
+		ObjectNode json = Json.newObject();
+		json.put("type", "createGame");
+		json.put("isBlack", message.isBlack);
+		out.write(json);
 		this.isBlack=message.isBlack;
 		this.currentGame=message.game;
+		currentGame.tell(new RefreshBoard(), getSelf());
 		state=State.PLAYING;
-		//TODO Stworzenie planszy w HTML-u
 	}
 	
 }

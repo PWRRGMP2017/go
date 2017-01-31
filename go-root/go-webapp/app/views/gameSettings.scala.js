@@ -8,6 +8,7 @@ $(function()
     var waitingStatus = 'Waiting for invitation.';
     var invitingStatus = 'Waiting for invitation response.';
     var invitedStatus = 'Waiting for the game to start.';
+    var searchingStatus = 'Waiting for player.';
     var state = waitingStatus;
 
     var gameState = '';
@@ -309,6 +310,10 @@ $(function()
         {
             sendCancelInvitation();
         }
+        else if (state == searchingStatus)
+        {
+            sendCancelWaiting();
+        }
     });
 
     $('#resignButton').click(function()
@@ -334,6 +339,14 @@ $(function()
         sendResume();
         disableBoard();
     });
+
+    $("#searchForPlayerButton").click(function()
+    {
+        changeStatus(searchingStatus);
+        disableControls(true);
+        disableCancel(false);
+        sendWaitForGame();
+    })
 
     // WebSocket events
     var WS = window['MozWebSocket'] ? window['MozWebSocket'] : WebSocket;
@@ -458,6 +471,36 @@ $(function()
             return;
         }
 
+        if (data.type === 'createGame')
+        {
+            alert(opponent + ' will play with you!');
+            if (data.isBlack === true)
+            {
+                playerColor = 'black';
+            }
+            else
+            {
+                playerColor = 'white';
+            }
+            initializeGameBoard();
+            swapSettingsAndGameBoard();
+            return;
+        }
+
+        if (data.type === 'cancelWaitingResponse')
+        {
+            if (data.success === true)
+            {
+                changeStatus(waitingStatus);
+                disableControls(false);
+                disableCancel(true);
+            }
+            else
+            {
+                alert('Too late to cancel!');
+            }
+        }
+
         if (data.type === 'updatedBoard')
         {
             updateBoard(data);
@@ -507,6 +550,33 @@ $(function()
             'komi': gameInfo.komi,
             'boardSize': gameInfo.boardSize,
             'isBot': false
+        }
+        ));
+    }
+
+    var sendWaitForGame = function()
+    {
+        gameInfo.komi = $('#komi').val();
+        gameInfo.boardSize = $('#boardSizeSelect').val();
+        gameInfo.isBot = false;
+
+        socket.send(JSON.stringify(
+        {
+            'type': 'waitForGame',
+            'komi': gameInfo.komi,
+            'boardSize': gameInfo.boardSize,
+            'isBot': false
+        }
+        ));
+    }
+
+    var sendCancelWaiting = function()
+    {
+        disableCancel(true);
+
+        socket.send(JSON.stringify(
+        {
+            'type': 'stopWaiting'
         }
         ));
     }

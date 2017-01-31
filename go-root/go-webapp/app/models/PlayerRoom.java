@@ -1,10 +1,13 @@
 package models;
 
-import static akka.pattern.Patterns.ask;
+import static akka.pattern.Patterns.*;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
@@ -173,7 +176,7 @@ public class PlayerRoom extends UntypedActor
 		player2 = waitingplayers.remove(gameInfo);
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(gameInfo);
-		ActorRef game = Akka.system().actorOf(Props.create(Game.class, player, player2, gameController, playerRoom));
+		ActorRef game = Akka.system().actorOf(Props.create(Game.class, player, player2, gameController));
 		
 		CreateGame msg= new CreateGame(game, true);
 		player.tell(msg, getSelf());

@@ -447,11 +447,10 @@ public class Game extends UntypedActor
 				e.printStackTrace();
 			}
 			
-			if (controller instanceof BotGameController)
+			if (!(controller instanceof BotGameController))
 			{
-				return;
+				currentPlayer = getOpponent(currentPlayer);
 			}
-			currentPlayer = getOpponent(currentPlayer);
 		}
 		else if (state == GameStateEnum.WHITEMOVE && getSender() == whitePlayer)
 		{
@@ -464,11 +463,10 @@ public class Game extends UntypedActor
 				e.printStackTrace();
 			}
 			
-			if (controller instanceof BotGameController)
+			if (!(controller instanceof BotGameController))
 			{
-				return;
+				currentPlayer = getOpponent(currentPlayer);
 			}
-			currentPlayer = getOpponent(currentPlayer);
 		}
 		else if (territoryPhase)
 		{

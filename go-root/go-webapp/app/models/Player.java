@@ -173,6 +173,7 @@ public class Player extends UntypedActor
 			@Override
 			public void invoke()
 			{
+				out.close();
 				getSelf().tell(new Quit(name), getSelf());
 				playerRoom.tell(new Quit(name), getSelf());
 			}
@@ -562,7 +563,7 @@ public class Player extends UntypedActor
 			invitation = null;
 		}
 
-		if (currentGame != null && state != State.PLAYING)
+		if (currentGame != null && state == State.PLAYING)
 		{
 			// tell GameEnd to the other player
 			currentGame.tell(new Quit(name), getSelf());

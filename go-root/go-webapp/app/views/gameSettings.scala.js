@@ -14,6 +14,7 @@ $(function()
 
     // Global variables
     var playerName = '@playerName';
+    var boardInitialized = false;
     var opponent = '';
     var playerColor = '';
     var gameInfo = {};
@@ -112,9 +113,16 @@ $(function()
         }
         table += '</table>';
         $('#boardArea').empty().append(table);
+        boardInitialized = true;
     }
 
     var updateBoard = function(boardData) {
+        if (!boardInitialized) {
+            console.log('Waiting for board initialization');
+            setTimeout(updateBoard, 50, boardData);
+            return;
+        }
+
         if (boardData.state === 'BLACKMOVE')
         {
             if (playerColor === 'black')
@@ -331,8 +339,20 @@ $(function()
     var WS = window['MozWebSocket'] ? window['MozWebSocket'] : WebSocket;
     var socket = new WS("@routes.Application.joinPlayerRoom(playerName).webSocketURL(request)");
 
+    window.onbeforeunload = closingCode;
+    function closingCode() {
+        console.log('closing websocket');
+        if (socket != null) {
+            console.log('closed websocket');
+            socket.close();
+        }
+        return null;
+    }
+
     var receiveEvent = function(event)
     {
+        //console.log(event.data);
+
         var data = JSON.parse(event.data);
 
         // Handle errors
@@ -447,10 +467,12 @@ $(function()
         if (data.type === 'gameEnded')
         {
             alert(data.stats);
+            boardInitialized = false;
             swapSettingsAndGameBoard();
             changeStatus(waitingStatus);
             disableControls(false);
             disableCancel(true);
+            return;
         }
     }
 

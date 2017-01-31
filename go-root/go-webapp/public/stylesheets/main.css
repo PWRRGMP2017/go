@@ -102,9 +102,13 @@ table {
     border-collapse: collapse;
 }
 
+table tr {
+}
+
 table td {
     padding: 0;
     margin: 0;
+    height: 1;
 }
 
 .background-grid {
@@ -127,6 +131,7 @@ table td {
     height: 100%;
     padding: 0;
     margin : 0;
+    display: inline-table;
 }
 
 .cross-top-left {
@@ -169,7 +174,7 @@ table td {
     background-image: none;
 }
 
-.black-empty-hover:hover {
+div.black-empty-hover:hover {
     background-image: url('../images/blackstone.png');
     opacity: 0.5;
 }
@@ -178,7 +183,7 @@ table td {
     background-image: none;
 }
 
-.white-empty-hover:hover {
+div.white-empty-hover:hover {
     background-image: url('../images/whitestone.png');
     opacity: 0.5;
 }
@@ -187,7 +192,7 @@ table td {
     background-image: url('../images/blackstone.png');
 }
 
-.black-stone-hover:hover {
+div.black-stone-hover:hover {
     background-image: url('../images/blackstone-dead.png');
 }
 
@@ -195,7 +200,7 @@ table td {
     background-image: url('../images/whitestone.png');
 }
 
-.white-stone-hover:hover {
+div.white-stone-hover:hover {
     background-image: url('../images/whitestone-dead.png');
 }
 
@@ -203,7 +208,7 @@ table td {
     background-image: none;
 }
 
-.black-no-territory-hover:hover {
+div.black-no-territory-hover:hover {
     background-image: url('../images/black-territory.png');
     opacity: 0.5;
 }
@@ -212,7 +217,7 @@ table td {
     background-image: none;
 }
 
-.white-no-territory-hover:hover {
+div.white-no-territory-hover:hover {
     background-image: url('../images/black-territory.png');
     opacity: 0.5;
 }
@@ -221,7 +226,7 @@ table td {
     background-image: url('../images/black-territory.png');
 }
 
-.black-territory-hover:hover {
+div.black-territory-hover:hover {
     background-image: url('../images/black-territory-hover.png');
 }
 
@@ -229,7 +234,7 @@ table td {
     background-image: url('../images/white-territory.png');
 }
 
-.white-territory-hover:hover {
+div.white-territory-hover:hover {
     background-image: url('../images/white-territory-hover.png');
 }
 
@@ -237,7 +242,7 @@ table td {
     background-image: url('../images/blackstone-dead.png');
 }
 
-.black-stone-dead-hover:hover {
+div.black-stone-dead-hover:hover {
     background-image: url('../images/blackstone.png');
 }
 
@@ -245,7 +250,7 @@ table td {
     background-image: url('../images/whitestone-dead.png');
 }
 
-.white-stone-dead-hover:hover {
+div.white-stone-dead-hover:hover {
     background-image: url('../images/whitestone.png');
 }
 

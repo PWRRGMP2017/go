@@ -2,7 +2,6 @@ package models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
@@ -43,7 +42,6 @@ public class Player extends UntypedActor
 	private Player.State state;
 	private Invite invitation;
 	private ActorRef currentGame;
-	private boolean isBlack;
 	private String gameInfo;
 
 	public enum State
@@ -114,7 +112,7 @@ public class Player extends UntypedActor
 						boolean isBot = false;
 						GameInfo gameInfo = new GameInfo(boardSize, (float) komi, RulesType.JAPANESE, isBot);
 						ActorRef player = getSelf();
-						getSelf().tell(new WaitForGame(player, gameInfo), getSelf());
+						getSelf().tell(new WaitForGame(player, gameInfo, name), getSelf());
 					}
 					else if (messageType.equals("stopWaiting"))
 					{
@@ -654,11 +652,10 @@ public class Player extends UntypedActor
 		ObjectNode json = Json.newObject();
 		json.put("type", "createGame");
 		json.put("isBlack", message.isBlack);
+		json.put("opponentName", message.opponentName);
 		out.write(json);
-		this.isBlack=message.isBlack;
 		this.currentGame=message.game;
 		currentGame.tell(new RefreshBoard(), getSelf());
 		state=State.PLAYING;
 	}
-	
 }

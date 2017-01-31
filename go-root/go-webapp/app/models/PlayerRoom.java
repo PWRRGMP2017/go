@@ -1,13 +1,10 @@
 package models;
 
-import static akka.pattern.Patterns.*;
-
+import static akka.pattern.Patterns.ask;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
@@ -35,7 +32,7 @@ public class PlayerRoom extends UntypedActor
 {
 	private static final ActorRef playerRoom = Akka.system().actorOf(Props.create(PlayerRoom.class));
 	private static final Map<String, ActorRef> players = new HashMap<>();
-	private static final Map<String, ActorRef> waitingplayers = new HashMap<>();
+	private static final Map<String, WaitingPlayer> waitingplayers = new HashMap<>();
 
 	public static boolean tryJoin(final String playerName, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out)
 	{
@@ -165,23 +162,23 @@ public class PlayerRoom extends UntypedActor
 	
 	private void onWaitForGame(WaitForGame message)
 	{
-		ActorRef player2;
+		WaitingPlayer player2;
 		String gameInfo= message.gameInfo.getAsString();
 		ActorRef player= message.player;
 		if(false==waitingplayers.containsKey(gameInfo))
 		{
-			waitingplayers.put(gameInfo, player);
+			waitingplayers.put(gameInfo, new WaitingPlayer(player, message.name));
 			return;
 		}
 		player2 = waitingplayers.remove(gameInfo);
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(gameInfo);
-		ActorRef game = Akka.system().actorOf(Props.create(Game.class, player, player2, gameController));
+		ActorRef game = Akka.system().actorOf(Props.create(Game.class, player, player2.player, gameController));
 		
-		CreateGame msg= new CreateGame(game, true);
+		CreateGame msg= new CreateGame(game, true, player2.name);
 		player.tell(msg, getSelf());
-		msg= new CreateGame(game, false);
-		player2.tell(msg, getSelf());
+		msg= new CreateGame(game, false, message.name);
+		player2.player.tell(msg, getSelf());
 	}
 	
 	private void onCancelWaiting(CancelWaiting message)
@@ -198,8 +195,8 @@ public class PlayerRoom extends UntypedActor
 	{
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(message.gameInfo.getAsString());
-		ActorRef game = Akka.system().actorOf(Props.create(BotGame.class, message.player, gameController, playerRoom));
+		ActorRef game = Akka.system().actorOf(Props.create(Game.class, message.player, gameController, playerRoom));
 		
-		message.player.tell(new CreateGame(game, true), getSelf());
+		message.player.tell(new CreateGame(game, true, "Bot"), getSelf());
 	}
 }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import models.msgs.BotPlayer;
 import models.msgs.CancelWaiting;
 import models.msgs.CreateGame;
 import models.msgs.GetPlayer;
@@ -195,7 +196,7 @@ public class PlayerRoom extends UntypedActor
 	{
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(message.gameInfo.getAsString());
-		ActorRef game = Akka.system().actorOf(Props.create(Game.class, message.player, gameController, playerRoom));
+		ActorRef game = Akka.system().actorOf(Props.create(Game.class, message.player, new BotPlayer(), gameController));
 		
 		message.player.tell(new CreateGame(game, true, "Bot"), getSelf());
 	}

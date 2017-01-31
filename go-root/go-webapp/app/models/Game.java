@@ -1,10 +1,8 @@
 package models;
 
 import java.util.Arrays;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import models.msgs.AcceptTerritory;
@@ -410,12 +408,20 @@ public class Game extends UntypedActor
 			
 			if (controller.getState() == GameStateEnum.END)
 			{
+				if (controller instanceof BotGameController)
+				{
+					getSender().tell(new GameEnded(getWinner()), getSelf());
+					return;
+				}
 				territoryBoard = controller.getPossibleTerritory();
 				territoryPhase = true;
 				acceptedPreviousTurn = false;
 			}
 			
-			currentPlayer = getOpponent(currentPlayer);
+			if (! (controller instanceof BotGameController))
+			{
+				currentPlayer = getOpponent(currentPlayer);
+			}
 			
 			getSelf().tell(new RefreshBoard(), getSender());
 			getSelf().tell(new RefreshBoard(), getOpponent(getSender()));
@@ -440,6 +446,11 @@ public class Game extends UntypedActor
 			{
 				e.printStackTrace();
 			}
+			
+			if (controller instanceof BotGameController)
+			{
+				return;
+			}
 			currentPlayer = getOpponent(currentPlayer);
 		}
 		else if (state == GameStateEnum.WHITEMOVE && getSender() == whitePlayer)
@@ -451,6 +462,11 @@ public class Game extends UntypedActor
 			catch (BadFieldException | GameBegginsException | GameIsEndedException e)
 			{
 				e.printStackTrace();
+			}
+			
+			if (controller instanceof BotGameController)
+			{
+				return;
 			}
 			currentPlayer = getOpponent(currentPlayer);
 		}

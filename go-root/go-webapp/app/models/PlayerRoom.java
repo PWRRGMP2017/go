@@ -184,7 +184,13 @@ public class PlayerRoom extends UntypedActor
 	
 	private void onCancelWaiting(CancelWaiting message)
 	{
-		if(false==waitingplayers.containsValue(message.player))
+		
+		if(!waitingplayers.containsKey(message.gameInfo))
+		{
+			getSender().tell(false, getSelf());
+		}
+		WaitingPlayer player2= waitingplayers.get(message.gameInfo);
+		if(player2.player!=message.player)
 		{
 			getSender().tell(false, getSelf());
 		}

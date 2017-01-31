@@ -140,7 +140,7 @@ public class Player extends UntypedActor
 					{
 						double komi = event.get("komi").asDouble();
 						int boardSize = event.get("boardSize").asInt();
-						boolean isBot = false;
+						boolean isBot = true;
 						GameInfo gameInfo = new GameInfo(boardSize, (float) komi, RulesType.JAPANESE, isBot);
 						ActorRef player = getSelf();
 						getSelf().tell(new PlayBotGame(gameInfo, player), getSelf());

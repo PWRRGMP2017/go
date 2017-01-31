@@ -196,7 +196,7 @@ public class PlayerRoom extends UntypedActor
 	{
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(message.gameInfo.getAsString());
-		ActorRef game = Akka.system().actorOf(Props.create(Game.class, message.player, new BotPlayer(), gameController));
+		ActorRef game = Akka.system().actorOf(Props.create(Game.class, message.player, Akka.system().actorOf(Props.create(BotPlayer.class)), gameController));
 		
 		message.player.tell(new CreateGame(game, true, "Bot"), getSelf());
 	}

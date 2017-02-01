@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-
 import akka.actor.ActorRef;
 import models.Game;
 import models.Player;
@@ -36,7 +34,7 @@ public class GameLogAspect
 		try
 		{
 			String logFilePath = (LOG_FILES_PATH + name + ".txt");
-			File logFile = new File(new File(logFilePath).getAbsolutePath().replaceAll(" ", "%20"));
+			File logFile = new File(new File(logFilePath).getAbsolutePath());
 			writer = new PrintWriter(new FileWriter(logFile), true);
 		}
 		catch(IOException e)

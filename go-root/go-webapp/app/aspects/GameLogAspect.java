@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+
 import akka.actor.ActorRef;
 import models.Game;
 import models.Player;
@@ -19,6 +21,7 @@ import models.msgs.Move;
 import models.msgs.Pass;
 import models.msgs.Resign;
 import models.msgs.ResumeGame;
+import play.Logger;
 import pwrrgmp2017.go.game.GameController;
 
 @Aspect
@@ -54,6 +57,11 @@ public class GameLogAspect
 		String blackPlayerName = Player.tryGetName(blackPlayer);
 		String whitePlayerName = Player.tryGetName(whitePlayer);
 		PrintWriter writer = createLogFileWriter(blackPlayerName + "_vs_" + whitePlayerName);
+		if (writer == null)
+		{
+			Logger.warn("Could not create a writer for log file.");
+			return;
+		}
 		GameLog log = new GameLog(writer, gameActor, blackPlayer, whitePlayer, blackPlayerName, whitePlayerName, gameController);
 		gameLogs.put(gameActor, log);
 	}

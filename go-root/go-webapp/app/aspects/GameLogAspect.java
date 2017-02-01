@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-
 import akka.actor.ActorRef;
 import models.Game;
 import models.Player;
@@ -60,17 +58,31 @@ public class GameLogAspect
 		gameLogs.put(gameActor, log);
 	}
 	
-//	@AfterReturning("execution(* models.Game.onMove(..))")
-//	public void logMove(JoinPoint joinPoint)
-//	{
-//		Move move = (Move) joinPoint.getArgs()[0];
-//		GameLog log = gameLogs.get(joinPoint.getThis());
-//		if (log == null)
-//		{
-//			return;
-//		}
-//		log.writeMove(move.x, move.y);
-//	}
+	@AfterReturning("execution(* models.Game.addMovement(..))")
+	public void logMove(JoinPoint joinPoint)
+	{
+		int x = (int) joinPoint.getArgs()[0];
+		int y = (int) joinPoint.getArgs()[0];
+		GameLog log = gameLogs.get(joinPoint.getThis());
+		if (log == null)
+		{
+			return;
+		}
+		log.writeMove(x, y);
+	}
+	
+	@AfterReturning("execution(* models.Game.changeTerritory(..))")
+	public void logChangeTerritory(JoinPoint joinPoint)
+	{
+		int x = (int) joinPoint.getArgs()[0];
+		int y = (int) joinPoint.getArgs()[0];
+		GameLog log = gameLogs.get(joinPoint.getThis());
+		if (log == null)
+		{
+			return;
+		}
+		log.writeChangeTerritory(x, y);
+	}
 	
 	@After("execution(* models.Game.onReceive(..))")
 	public void logGameState(JoinPoint joinPoint)
@@ -86,8 +98,6 @@ public class GameLogAspect
 		Object message = joinPoint.getArgs()[0];
 		if (message instanceof Move)
 		{
-			Move move = (Move) message;
-			log.writeMove(move.x, move.y);
 		}
 		else if (message instanceof Pass)
 		{

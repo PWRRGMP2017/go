@@ -1,10 +1,8 @@
 package models;
 
 import java.util.Arrays;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import models.msgs.AcceptTerritory;
@@ -130,6 +128,11 @@ public class Game extends UntypedActor
 	protected void refreshTerritory()
 	{
 		this.territoryBoard = this.controller.getPossibleTerritory();
+	}
+	
+	protected void addMovement(int x, int y, Field playerField) throws BadFieldException, GameBegginsException, GameIsEndedException
+	{
+		this.controller.addMovement(x, y, playerField);
 	}
 
 	@Override

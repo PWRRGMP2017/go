@@ -1,8 +1,10 @@
 package models;
 
 import java.util.Arrays;
+
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import models.msgs.AcceptTerritory;
@@ -64,6 +66,7 @@ public class Game extends UntypedActor
 
 	protected void initializeGame(ActorRef player) throws GameStillInProgressException, BadFieldException
 	{
+		currentPlayer = player;
 		if (player == blackPlayer)
 			controller.initialiseGame(Field.BLACKSTONE);
 		else

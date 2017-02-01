@@ -1,4 +1,4 @@
-package models.msgs;
+package models;
 
 import akka.actor.UntypedActor;
 

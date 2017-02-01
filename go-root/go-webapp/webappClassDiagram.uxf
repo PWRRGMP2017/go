@@ -4,26 +4,7 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>0</x>
-      <y>132</y>
-      <w>144</w>
-      <h>72</h>
-    </coordinates>
-    <panel_attributes>ServerStart
---
-instance: Server
---
-+main(args: String[])
-+createServer(host: int, port: int)
-fg=black
-bg=white
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>978</x>
+      <x>546</x>
       <y>24</y>
       <w>222</w>
       <h>54</h>
@@ -40,7 +21,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1272</x>
+      <x>840</x>
       <y>0</y>
       <w>150</w>
       <h>66</h>
@@ -59,7 +40,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1386</x>
+      <x>954</x>
       <y>60</y>
       <w>18</w>
       <h>204</h>
@@ -71,7 +52,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1632</x>
+      <x>1200</x>
       <y>294</y>
       <w>198</w>
       <h>84</h>
@@ -92,7 +73,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1656</x>
+      <x>1224</x>
       <y>372</y>
       <w>18</w>
       <h>54</h>
@@ -104,7 +85,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1890</x>
+      <x>1458</x>
       <y>366</y>
       <w>18</w>
       <h>60</h>
@@ -116,7 +97,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1104</x>
+      <x>672</x>
       <y>288</y>
       <w>210</w>
       <h>174</h>
@@ -144,22 +125,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>72</x>
-      <y>198</y>
-      <w>18</w>
-      <h>102</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-fg=black
-bg=white
-m2=1
-m1=1</panel_attributes>
-    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1056</x>
+      <x>624</x>
       <y>402</y>
       <w>60</w>
       <h>24</h>
@@ -173,7 +139,7 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1572</x>
+      <x>1140</x>
       <y>330</y>
       <w>72</w>
       <h>24</h>
@@ -187,7 +153,7 @@ m2=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1626</x>
+      <x>1194</x>
       <y>414</y>
       <w>84</w>
       <h>84</h>
@@ -202,7 +168,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1842</x>
+      <x>1410</x>
       <y>414</y>
       <w>84</w>
       <h>24</h>
@@ -216,7 +182,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1938</x>
+      <x>1506</x>
       <y>414</y>
       <w>84</w>
       <h>24</h>
@@ -230,7 +196,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1434</x>
+      <x>1002</x>
       <y>42</y>
       <w>270</w>
       <h>144</h>
@@ -257,7 +223,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>534</x>
+      <x>102</x>
       <y>42</y>
       <w>456</w>
       <h>210</h>
@@ -270,7 +236,7 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1194</x>
+      <x>762</x>
       <y>24</y>
       <w>90</w>
       <h>24</h>
@@ -284,7 +250,7 @@ m1=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1860</x>
+      <x>1428</x>
       <y>318</y>
       <w>192</w>
       <h>54</h>
@@ -298,7 +264,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1956</x>
+      <x>1524</x>
       <y>366</y>
       <w>18</w>
       <h>60</h>
@@ -310,7 +276,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1338</x>
+      <x>906</x>
       <y>252</y>
       <w>240</w>
       <h>174</h>
@@ -342,7 +308,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1308</x>
+      <x>876</x>
       <y>342</y>
       <w>42</w>
       <h>24</h>
@@ -356,7 +322,7 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1464</x>
+      <x>1032</x>
       <y>180</y>
       <w>18</w>
       <h>84</h>
@@ -370,7 +336,7 @@ m2=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1758</x>
+      <x>1326</x>
       <y>90</y>
       <w>114</w>
       <h>120</h>
@@ -398,7 +364,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1116</x>
+      <x>684</x>
       <y>498</y>
       <w>192</w>
       <h>102</h>
@@ -417,7 +383,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1206</x>
+      <x>774</x>
       <y>456</y>
       <w>18</w>
       <h>54</h>
@@ -429,7 +395,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1698</x>
+      <x>1266</x>
       <y>96</y>
       <w>72</w>
       <h>30</h>
@@ -442,47 +408,9 @@ bg=light_gray</panel_attributes>
     <additional_attributes>100.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>42</x>
-      <y>288</y>
-      <w>204</w>
-      <h>102</h>
-    </coordinates>
-    <panel_attributes>Server
---
-socket: Socket
-gamesManager: GamesManager
---
-run()
---
-Responsibilites:
--- Nasłuchiwanie na nowe połączenia
--- Tworzenie nowych wątków dla każdego połączenia
-
-fg=black
-bg=white</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
     <id>Relation</id>
     <coordinates>
-      <x>240</x>
-      <y>312</y>
-      <w>204</w>
-      <h>24</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
-fg=black
-bg=white
-m1=1
-m2=1</panel_attributes>
-    <additional_attributes>320.0;10.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1824</x>
+      <x>1392</x>
       <y>330</y>
       <w>48</w>
       <h>18</h>
@@ -494,7 +422,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1158</x>
+      <x>726</x>
       <y>72</y>
       <w>18</w>
       <h>228</h>
@@ -508,7 +436,7 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1224</x>
+      <x>792</x>
       <y>24</y>
       <w>18</w>
       <h>96</h>
@@ -520,7 +448,7 @@ m1=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1218</x>
+      <x>786</x>
       <y>108</y>
       <w>150</w>
       <h>54</h>
@@ -538,7 +466,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1350</x>
+      <x>918</x>
       <y>156</y>
       <w>18</w>
       <h>108</h>
@@ -550,7 +478,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1764</x>
+      <x>1332</x>
       <y>372</y>
       <w>18</w>
       <h>54</h>
@@ -562,7 +490,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1734</x>
+      <x>1302</x>
       <y>414</y>
       <w>84</w>
       <h>84</h>
@@ -577,101 +505,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>828</x>
-      <y>282</y>
-      <w>234</w>
-      <h>204</h>
-    </coordinates>
-    <panel_attributes>Game
---
--LOGGER = Logger.getLogger(Game.class.getName()): Logger
--controller: GameController
--blackPlayer: PlayerConnection
--whitePlayer: PlayerConnection
--gamesManager: GamesManager
--currentPlayer: PlayerConnection
--acceptedPreviousTurn: boolean
---
-~Game(PlayerConnection blackPlayer, PlayerConnection whitePlayer, GameController controller, GamesManager gamesManager): ctor
-+run(): void
--cleanUp(): void
-+getBlackPlayer(): PlayerConnection
-+getWhitePlayer(): PlayerConnection
--initializeGame(PlayerConnection player): void
--getOpponent(PlayerConnection player): PlayerConnection
--addTurnMessage(PlayerConnection player, int x, int y): void
--resign(): void
--pass(PlayerConnection player): void
---
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>432</x>
-      <y>240</y>
-      <w>258</w>
-      <h>234</h>
-    </coordinates>
-    <panel_attributes>GamesManager
---
--INSTANCE: GamesManager
--choosingPlayers: ConcurrentHashMap&lt;String, PlayerConnection&gt;
--playingPlayers: ConcurrentHashMap&lt;String, PlayerConnection&gt;
--waitingPlayers: ConcurrentSkipListMap&lt;String, PlayerConnection&gt;
---
--GamesManager(): ctor
-+getInstance(): GamesManager
-+closeAllConnections(): void
-+createPlayerConnection(RealPlayerConnection playerConnection): void
-+addChoosingPlayer(PlayerConnection player, String name): void
-+playBotGame(PlayerConnection player, GameInfo gameInfo): void
-+getChoosingPlayer(String playerName): PlayerConnection
-+waitForGame(PlayerConnection player, GameInfo gameInfo): PlayerConnection
-+stopWaiting(PlayerConnection player, String gameInfo): void
-+createGame(PlayerConnection blackPlayer, PlayerConnection whitePlayer, GameInfo gameInfo): void
-+deleteGame(Game game): void
-+deletePlayer(PlayerConnection player): void
---
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>540</x>
-      <y>600</y>
-      <w>216</w>
-      <h>192</h>
-    </coordinates>
-    <panel_attributes>/Player/
---
-#playerInfo: PlayerInfo
-#invitedPlayer = null: PlayerConnection
-#invitingPlayer = null: PlayerConnection
---
-+getPlayerInfo(): PlayerInfo
-+getPlayerName(): String
-+setPlayerName(String name): void
-+getInvitedPlayer(): PlayerConnection
-+getInvitingPlayer(): PlayerConnection
-+close(): void
-+receive(): String
-+send(String message): void
-+isInvited(): boolean
-+isInviting(): boolean
-+invitePlayer(PlayerConnection player): boolean
-+inviteThisPlayerBy(PlayerConnection player): boolean
-+cancelInvitation(): boolean
---
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>924</x>
+      <x>492</x>
       <y>222</y>
       <w>60</w>
       <h>18</h>
@@ -682,7 +516,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>948</x>
+      <x>516</x>
       <y>234</y>
       <w>18</w>
       <h>60</h>
@@ -693,64 +527,19 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>576</x>
-      <y>468</y>
+      <x>144</x>
+      <y>396</y>
       <w>18</w>
-      <h>144</h>
+      <h>216</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;220.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>684</x>
-      <y>306</y>
-      <w>156</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-&gt;</panel_attributes>
-    <additional_attributes>240.0;10.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>750</x>
-      <y>708</y>
-      <w>180</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>280.0;10.0;20.0;10.0;10.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;.&gt;</panel_attributes>
+    <additional_attributes>10.0;340.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>918</x>
-      <y>654</y>
-      <w>186</w>
-      <h>114</h>
-    </coordinates>
-    <panel_attributes>PlayerInfo
---
--name: String
--playingGame: Game
---
-+PlayerInfo(String name): ctor
-+getName(): String
-+isPlaying(): boolean
-+getPlayingGame(): Game
-+setPlayingGame(Game game): void
-+setPlayerName(String name): void
---
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>684</x>
-      <y>540</y>
+      <x>426</x>
+      <y>600</y>
       <w>60</w>
       <h>18</h>
     </coordinates>
@@ -760,8 +549,8 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>708</x>
-      <y>552</y>
+      <x>450</x>
+      <y>612</y>
       <w>18</w>
       <h>60</h>
     </coordinates>
@@ -771,7 +560,7 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>588</x>
+      <x>156</x>
       <y>174</y>
       <w>60</w>
       <h>18</h>
@@ -782,12 +571,175 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>612</x>
+      <x>180</x>
       <y>186</y>
       <w>18</w>
       <h>66</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>528</x>
+      <y>540</y>
+      <w>18</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-&gt;</panel_attributes>
+    <additional_attributes>10.0;200.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>234</x>
+      <y>540</y>
+      <w>60</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>UntypedActor</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>258</x>
+      <y>552</y>
+      <w>18</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>72</x>
+      <y>600</y>
+      <w>228</w>
+      <h>282</h>
+    </coordinates>
+    <panel_attributes>models::Player
+--
+-name: String
+-in: WebSocket.In&lt;JsonNode&gt;
+-out: WebSocket.Out&lt;JsonNode&gt;
+-playerRoom: ActorRef
+-state: Player.State
+-invitation: Invite
+-currentGame: ActorRef
+-gameInfo: String
+--
++Player(final String name, WebSocket.In&lt;JsonNode&gt; in,
+final WebSocket.Out&lt;JsonNode&gt; out,
+final ActorRef playerRoom): ctor
++onReceive(Object message): void
+-onGameEnded(GameEnded message): void
+-onResumeGame(ResumeGame message): void
+-onPass(Pass message): void
+-onMove(Move message): void
+-onSendBoard(SendBoard message): void
+-onInvitation(Invite message): void
+-onInvitationResponse(RespondToInvitation message): void
+-onConfirmInvitation(ConfirmInvitation message): void
+-onCancelInvitation(CancelInvitation message): void
+-onQuit(Quit message): void
+-onRefreshBoard(RefreshBoard message): void
+-onCancelWaiting(CancelWaiting message): void
+-onWaitForGame(WaitForGame message): void
+-onAcceptTerritory(AcceptTerritory message): void
+-onPlayBotGame(PlayBotGame message): void
+-onResign(Resign message): void
+-onCreateGame(CreateGame message): void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>420</x>
+      <y>282</y>
+      <w>210</w>
+      <h>264</h>
+    </coordinates>
+    <panel_attributes>models::Game
+--
+-currentBoard: Field[][]
+#controller: GameController
+#territoryBoard: Field[][]
+#acceptedPreviousTurn: boolean
+#territoryPhase: boolean
+#blackPlayer, whitePlayer, currentPlayer: ActorRef
+-lastMove: String
+--
+~Game(ActorRef blackPlayer, ActorRef whitePlayer,
+GameController controller): ctor
+#initializeGame(ActorRef player): void
+#getOpponent(ActorRef player): ActorRef
+#resign(): void
+#pass(ActorRef player): void
+#changeTerritory(int x, int y): void
+#refreshTerritory(): void
++onReceive(Object message): void
+-onQuit(Quit message): void
+#onResumeGame(ResumeGame message): void
+-onRefreshBoard(RefreshBoard message): void
+-generateStatistics(): String
+-getWinner(): String
+#onAcceptTerritory(AcceptTerritory message): void
+#onResign(Resign message): void
+#onPass(Pass message): void
+-onMove(Move message): void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>240</y>
+      <w>312</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>models::PlayerRoom
+--
+-playerRoom = Akka.system().actorOf(Props.create(PlayerRoom.class)): ActorRef
+-players = new HashMap(): Map&lt;String, ActorRef&gt;
+-waitingplayers = new HashMap(): Map&lt;String, WaitingPlayer&gt;
+--
++tryJoin(final String playerName, WebSocket.In&lt;JsonNode&gt; in,
+WebSocket.Out&lt;JsonNode&gt; out): boolean
++tryGetPlayer(final String playerName): ActorRef
++cancelWaiting(final CancelWaiting message): boolean
++onReceive(Object message): void
+-onJoin(Object message): void
+-onQuit(Object message): void
+-onGetPlayer(GetPlayer message): void
+-onWaitForGame(WaitForGame message): void
+-onCancelWaiting(CancelWaiting message): void
+-onPlayBotGame(PlayBotGame message): void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>432</x>
+      <y>660</y>
+      <w>126</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>models::BotPlayer
+--
+--
++BotPlayer(): ctor
++onReceive(Object arg0): void
+--
+</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>

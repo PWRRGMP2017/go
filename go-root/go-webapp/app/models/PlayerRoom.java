@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
-import models.msgs.BotPlayer;
 import models.msgs.CancelWaiting;
 import models.msgs.CreateGame;
 import models.msgs.GetPlayer;

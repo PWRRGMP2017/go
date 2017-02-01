@@ -400,8 +400,8 @@ $(function()
             {
                 alert('Invitation accepted!');
                 playerColor = 'black';
-                swapSettingsAndGameBoard();
                 initializeGameBoard();
+                swapSettingsAndGameBoard();
             }
             else
             {
@@ -452,8 +452,8 @@ $(function()
         {
             alert('The game is about to begin.');
             playerColor = 'white';
-            swapSettingsAndGameBoard();
             initializeGameBoard();
+            swapSettingsAndGameBoard();
             return;
         }
 

@@ -1,17 +1,20 @@
 package models;
 
-import static akka.pattern.Patterns.ask;
+import static akka.pattern.Patterns.*;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
-import models.msgs.BotPlayer;
 import models.msgs.CancelWaiting;
 import models.msgs.CreateGame;
 import models.msgs.GetPlayer;
+import models.msgs.GetPlayerName;
 import models.msgs.Join;
 import models.msgs.PlayBotGame;
 import models.msgs.PlayerAccepted;
@@ -65,7 +68,7 @@ public class PlayerRoom extends UntypedActor
 		try
 		{
 			result = Await.result(ask(playerRoom, new GetPlayer(playerName), 1000),
-					Duration.create(1, TimeUnit.SECONDS));
+					Duration.Inf());
 		}
 		catch (Exception e)
 		{
@@ -90,7 +93,7 @@ public class PlayerRoom extends UntypedActor
 		try
 		{
 			result = Await.result(ask(playerRoom, message, 1000),
-					Duration.create(1, TimeUnit.SECONDS));
+					Duration.Inf());
 		}
 		catch (Exception e) 
 		{
@@ -202,8 +205,18 @@ public class PlayerRoom extends UntypedActor
 	{
 		GameFactory director = GameFactory.getInstance();
 		GameController gameController = director.createGame(message.gameInfo.getAsString());
-		ActorRef game = Akka.system().actorOf(Props.create(Game.class, message.player, Akka.system().actorOf(Props.create(BotPlayer.class)), gameController));
+		ActorRef botPlayer = Akka.system().actorOf(Props.create(BotPlayer.class));
+		String botName = "Bot";
+		try
+		{
+			botName = (String) Await.result(ask(botPlayer, new GetPlayerName(), 1000), Duration.Inf());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		ActorRef game = Akka.system().actorOf(Props.create(Game.class, message.player, botPlayer, gameController));
 		
-		message.player.tell(new CreateGame(game, true, "Bot"), getSelf());
+		message.player.tell(new CreateGame(game, true, botName), getSelf());
 	}
 }

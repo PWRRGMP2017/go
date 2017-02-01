@@ -3,6 +3,7 @@
 $(function()
 {
     // UI
+    $("#lastGameLogButton").prop('disabled', true);
 
     // States
     var waitingStatus = 'Waiting for invitation.';
@@ -520,6 +521,17 @@ $(function()
         if (data.type === 'gameEnded')
         {
             alert(data.stats);
+            $("#lastGameLogButton").click(function() {
+                if (playerColor === 'black')
+                {
+                    window.open('assets/gamelogs/'+playerName+'_vs_'+opponent+'.txt');
+                }
+                else
+                {
+                    window.open('assets/gamelogs/'+opponent+'_vs_'+playerName+'.txt');
+                }
+            });
+            $("#lastGameLogButton").prop('disabled', false);
             boardInitialized = false;
             swapSettingsAndGameBoard();
             changeStatus(waitingStatus);

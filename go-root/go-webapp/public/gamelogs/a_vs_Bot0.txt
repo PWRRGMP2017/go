@@ -1,0 +1,21 @@
+Game Started 2017-02-01T17:26:55.414
+Black Player Name: a
+White Player Name: Bot0
+Komi: 6.5
+Board Size: 9
+Bot: true
+
+[Black] Move(6, 5)
+[White] Move(5, 2)
+[Black] Move(5, 4)
+[White] Move(8, 5)
+[Black] Move(7, 3)
+[White] Move(5, 8)
+[Black] Move(6, 2)
+[White] Move(4, 3)
+[Black] Pass
+[White] Pass
+Game Ended 2017-02-01T17:27:00.748
+White wins by 9.5 points
+Average Black Turn Time: 0 days 0 hours 0 minutes 3.452 seconds
+Average White Turn Time: 0 days 0 hours 0 minutes 0.208 seconds

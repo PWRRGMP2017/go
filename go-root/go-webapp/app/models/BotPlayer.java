@@ -21,7 +21,7 @@ public class BotPlayer extends UntypedActor
 	
 	private void onGetPlayerName(GetPlayerName message) 
 	{ 
-		getSender().tell("Bot", getSelf()); 
+		getSender().tell("Bot", getSelf());
 	}
 
 }

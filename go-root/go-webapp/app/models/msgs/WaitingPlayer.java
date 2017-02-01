@@ -1,4 +1,4 @@
-package models;
+package models.msgs;
 
 import akka.actor.ActorRef;
 

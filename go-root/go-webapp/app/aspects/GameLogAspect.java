@@ -27,24 +27,25 @@ import pwrrgmp2017.go.game.GameController;
 @Aspect
 public class GameLogAspect
 {
-	private final Map<ActorRef, GameLog> gameLogs =  new HashMap<>();
-	private final String LOG_FILES_PATH = "./public/gamelogs/";
-	
+	private final Map<ActorRef, GameLog> gameLogs = new HashMap<>();
+	private final String LOG_FILES_PATH = "public/gamelogs/";
+
 	private PrintWriter createLogFileWriter(String name)
 	{
-		File logFile = new File(LOG_FILES_PATH + name + ".txt");
 		PrintWriter writer = null;
 		try
 		{
+			String logFilePath = (LOG_FILES_PATH + name + ".txt");
+			File logFile = new File(new File(logFilePath).getAbsolutePath().replaceAll(" ", "%20"));
 			writer = new PrintWriter(new FileWriter(logFile), true);
 		}
-		catch (IOException e)
+		catch(IOException e)
 		{
 			e.printStackTrace();
 		}
 		return writer;
 	}
-	
+
 	@AfterReturning("execution(models.Game.new(..))")
 	public void createNewLog(JoinPoint joinPoint)
 	{
@@ -65,33 +66,37 @@ public class GameLogAspect
 		GameLog log = new GameLog(writer, gameActor, blackPlayer, whitePlayer, blackPlayerName, whitePlayerName, gameController);
 		gameLogs.put(gameActor, log);
 	}
-	
+
 	@AfterReturning("execution(* models.Game.addMovement(..))")
 	public void logMove(JoinPoint joinPoint)
 	{
 		int x = (int) joinPoint.getArgs()[0];
-		int y = (int) joinPoint.getArgs()[0];
-		GameLog log = gameLogs.get(joinPoint.getThis());
+		int y = (int) joinPoint.getArgs()[1];
+		Game game = (Game)joinPoint.getThis();
+		ActorRef gameActor = game.getSelf();
+		GameLog log = gameLogs.get(gameActor);
 		if (log == null)
 		{
 			return;
 		}
 		log.writeMove(x, y);
 	}
-	
+
 	@AfterReturning("execution(* models.Game.changeTerritory(..))")
 	public void logChangeTerritory(JoinPoint joinPoint)
 	{
 		int x = (int) joinPoint.getArgs()[0];
-		int y = (int) joinPoint.getArgs()[0];
-		GameLog log = gameLogs.get(joinPoint.getThis());
+		int y = (int) joinPoint.getArgs()[1];
+		Game game = (Game)joinPoint.getThis();
+		ActorRef gameActor = game.getSelf();
+		GameLog log = gameLogs.get(gameActor);
 		if (log == null)
 		{
 			return;
 		}
 		log.writeChangeTerritory(x, y);
 	}
-	
+
 	@After("execution(* models.Game.onReceive(..))")
 	public void logGameState(JoinPoint joinPoint)
 	{
@@ -124,7 +129,7 @@ public class GameLogAspect
 			log.writeResume();
 		}
 	}
-	
+
 	@After("execution(* models.Player.onReceive(..))")
 	public void logGameEnded(JoinPoint joinPoint)
 	{

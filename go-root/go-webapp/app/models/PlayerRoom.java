@@ -22,6 +22,7 @@ import models.msgs.PlayerRejected;
 import models.msgs.Quit;
 import models.msgs.ReturnPlayer;
 import models.msgs.WaitForGame;
+import models.msgs.WaitingPlayer;
 import play.libs.Akka;
 import play.mvc.WebSocket;
 import pwrrgmp2017.go.game.GameController;

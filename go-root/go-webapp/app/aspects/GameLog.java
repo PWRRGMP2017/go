@@ -113,6 +113,7 @@ public class GameLog
 
 	public void writeResign(ActorRef loser)
 	{
+		calculateDuration();
 		String player;
 		if (loser == blackPlayer)
 		{
@@ -160,6 +161,10 @@ public class GameLog
 	{
 		Duration total = Duration.ZERO;
 		int size = list.size();
+		if (size == 0)
+		{
+			return total;
+		}
 		for (int i = 0; i < size; ++i)
 		{
 			total = total.plus(list.get(i));

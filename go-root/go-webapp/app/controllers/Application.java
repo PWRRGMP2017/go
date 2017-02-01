@@ -1,5 +1,9 @@
 package controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -61,5 +65,21 @@ public class Application extends Controller
 				}
 			}
 		};
+	}
+	
+	/**
+	 * Get a game log file.
+	 */
+	public static Result getGameLog(final String fileName)
+	{
+		File logFile = new File("public/gamelogs/" + fileName);
+		try
+		{
+			return ok(new FileInputStream(logFile)).as("text/plain");
+		}
+		catch (FileNotFoundException e)
+		{
+			return notFound();
+		}
 	}
 }

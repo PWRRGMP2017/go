@@ -524,11 +524,11 @@ $(function()
             $("#lastGameLogButton").click(function() {
                 if (playerColor === 'black')
                 {
-                    window.open('assets/gamelogs/'+playerName+'_vs_'+opponent+'.txt');
+                    window.open('gamelogs/'+playerName+'_vs_'+opponent+'.txt');
                 }
                 else
                 {
-                    window.open('assets/gamelogs/'+opponent+'_vs_'+playerName+'.txt');
+                    window.open('gamelogs/'+opponent+'_vs_'+playerName+'.txt');
                 }
             });
             $("#lastGameLogButton").prop('disabled', false);

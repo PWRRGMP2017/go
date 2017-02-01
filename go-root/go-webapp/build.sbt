@@ -1,4 +1,6 @@
 import play.Project._
+import com.typesafe.sbt.SbtAspectj._
+import com.typesafe.sbt.SbtAspectj.AspectjKeys._
 
 name := "go-webapp"
 
@@ -8,4 +10,15 @@ javacOptions += "-Xlint:deprecation"
 
 playJavaSettings
 
-libraryDependencies += "org.springframework" % "spring-context" % "4.3.6.RELEASE"
+libraryDependencies += "org.aspectj" % "aspectjrt" % "1.8.10"
+
+libraryDependencies += "org.aspectj" % "aspectjweaver" % "1.8.10"
+
+// enablePlugins(AspectJWeaver)
+
+val main = (project in file("."))
+.settings(aspectjSettings: _*)
+.settings(
+    inputs in Aspectj <+= compiledClasses,
+    products in Compile <<= products in Aspectj,
+    products in Runtime <<= products in Compile)

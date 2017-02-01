@@ -1,7 +1,10 @@
 package models;
 
+import static akka.pattern.Patterns.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
@@ -11,6 +14,7 @@ import models.msgs.CancelWaiting;
 import models.msgs.ConfirmInvitation;
 import models.msgs.CreateGame;
 import models.msgs.GameEnded;
+import models.msgs.GetPlayerName;
 import models.msgs.Invite;
 import models.msgs.Move;
 import models.msgs.Pass;
@@ -32,6 +36,8 @@ import play.mvc.WebSocket;
 import pwrrgmp2017.go.game.factory.GameFactory;
 import pwrrgmp2017.go.game.factory.GameInfo;
 import pwrrgmp2017.go.game.factory.GameInfo.RulesType;
+import scala.concurrent.Await;
+import scala.concurrent.duration.Duration;
 
 public class Player extends UntypedActor
 {
@@ -177,6 +183,22 @@ public class Player extends UntypedActor
 			}
 		});
 	}
+	
+	public static String tryGetName(final ActorRef player)
+	{
+		Object result;
+		try
+		{
+			result = Await.result(ask(player, new GetPlayerName(), 1000),
+					Duration.Inf());
+			return (String) result;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	// Player logic
 	@Override
@@ -264,12 +286,20 @@ public class Player extends UntypedActor
 		{
 			onGameEnded((GameEnded) message);
 		}
+		else if (message instanceof GetPlayerName)
+		{
+			onGetPlayerName((GetPlayerName) message);
+		}
 		else
 		{
 			unhandled(message);
 		}
-		
 
+	}
+
+	private void onGetPlayerName(GetPlayerName message)
+	{
+		getSender().tell(name, getSelf());
 	}
 
 	private void onGameEnded(GameEnded message)

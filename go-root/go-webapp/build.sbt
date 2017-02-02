@@ -10,7 +10,7 @@ javacOptions += "-Xlint:deprecation"
 
 playJavaSettings
 
-libraryDependencies += "org.aspectj" % "aspectjrt" % "1.8.10"
+// libraryDependencies += "org.aspectj" % "aspectjrt" % "1.8.10"
 
 libraryDependencies += "org.aspectj" % "aspectjweaver" % "1.8.10"
 

@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-
 import akka.actor.ActorRef;
 import pwrrgmp2017.go.game.BotGameController;
 import pwrrgmp2017.go.game.GameController;
@@ -53,7 +52,7 @@ public class GameLog
 		end = null;
 		currentIdleTimes = blackIdleTimes;
 
-		writer.println("Game Started " + start.toString());
+		writer.println("Game Started " + start.toString().replaceAll("T", " "));
 		writer.println("Black Player Name: " + blackPlayerName);
 		writer.println("White Player Name: " + whitePlayerName);
 
@@ -143,7 +142,7 @@ public class GameLog
 	public void writeEndGame(ActorRef player, String winMessage)
 	{
 		end = LocalDateTime.now();
-		writer.println("Game Ended " + end.toString());
+		writer.println("Game Ended " + end.toString().replaceAll("T", " "));
 
 		// Statistics
 		if (winMessage.toLowerCase().contains("you"))
